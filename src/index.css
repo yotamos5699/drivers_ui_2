@@ -1,0 +1,13 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer components {
+  .td {
+    @apply w-1/6 px-2 py-2  whitespace-nowrap text-sm font-medium text-gray-900 text-center;
+  }
+
+  .tr {
+    @apply w-1/6 px-2 py-2  whitespace-nowrap text-sm font-medium text-gray-900 text-center hover:bg-blue-400;
+  }
+}
