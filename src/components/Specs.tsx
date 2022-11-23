@@ -35,7 +35,7 @@ function Specs(props: SpecsProps) {
       {data && (
         <table>
           <thead className="bg-white border-b">
-            <tr className="text-sm font-medium text-gray-900 px-6 py-4 text-center">
+            <tr key={"asd"} className="text-sm font-medium text-gray-900 px-6 py-4 text-center">
               {Object.keys(data[0]).map((header, idx) => (
                 <td className="td" key={idx + 1111}>
                   {header}
@@ -46,11 +46,13 @@ function Specs(props: SpecsProps) {
           </thead>
           <tbody>
             {data.map((row: any, idx: number) => (
-              <tr className="tr">
-                {Object.values(row).map((cell: any) => (
-                  <td className="td">{cell}</td>
+              <tr key={idx + 3434} className="tr">
+                {Object.values(row).map((cell: any, ci) => (
+                  <td key={ci + idx} className="td">
+                    {cell}
+                  </td>
                 ))}
-                <td className="td">
+                <td key={"ajshfkdh"} className="td">
                   <input type={"checkbox"} className=""></input>
                 </td>
               </tr>

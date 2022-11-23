@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { driver } from "../typing";
 import Specs from "./Specs";
 import Table from "./Table";
@@ -9,39 +9,52 @@ type DashBoardProps = {
   castumers?: object[];
 };
 
+const getCurrentAccountKeys = (keysArrey: any, userKey: any) => {
+  return keysArrey;
+};
+
 function DashBoard(props: DashBoardProps) {
   const [missions, setMissions] = useState<object[]>();
   const [mission, setCurrentMission] = useState<any>();
-  const [render, setRender] = useState({
+  const [render, setRender] = useState<any>({
     details: false,
     table: true,
+    nav: false,
+    pay: false,
+    isDone: false,
   });
-  const handleRowClick = async (key: any, p: any) => {
-    console.log(props.matrix.mainMatrix);
-    let spec: object[] | any = await props.castumers?.filter((castumer: any, idx) => {
+
+  const handleRowClick = async (e: any, p: any) => {
+    let cellId = e.target.id;
+    console.log({ cellId });
+    let spec: object[] | any = props.castumers?.filter((castumer: any, idx) => {
       if (p.row["נייד"] == castumer["טלפון נייד"]) {
-        console.log({ castumer });
+        console.log({ p, e });
         return castumer;
       }
     });
-    if (spec?.length > 0) {
-      setRender((prev) => ({ ...prev, details: !prev.details, table: !prev.table }));
-    }
-    setCurrentMission(spec[0]);
 
-    console.log({ spec });
+    if (spec?.length > 0) {
+      setCurrentMission(spec[0]);
+      setRender({ ...renderScreen(cellId) });
+    }
+  };
+  const renderScreen = (cellId: string) => {
+    console.log("in render screen ", render);
+    let r: any = {};
+    Object.keys(render).forEach((key) => (key == cellId ? (r[key] = true) : (r[key] = false)));
+    console.log({ r });
+    return r;
   };
 
   const handleClick = async (e: any) => {
-    if (e.target.name == "back_to_table") {
-      setRender((prev) => ({ ...prev, details: !prev.details, table: !prev.table }));
+    console.log("id in handle click ", e.target.id);
+    e.target.id == "table" && setRender({ ...renderScreen(e.target.id) });
+
+    if (!missions) {
+      let tasks = await constractMissions(props.matrix, props.castumers);
+      setMissions(tasks);
     }
-    console.log(e);
-    let tasks = await constractMissions(props.matrix, props.castumers);
-    setMissions(tasks);
-  };
-  const getCurrentAccountKeys = (keysArrey: any, userKey: any) => {
-    return keysArrey;
   };
 
   const constractMissions = async (matrixData: any, castumers: any) => {
@@ -85,9 +98,9 @@ function DashBoard(props: DashBoardProps) {
         >
           המשימות שלך
         </button>
-        {render.details && (
+        {!render.table && (
           <button
-            name="back_to_table"
+            id="table"
             onClick={handleClick}
             className="w-max-7 bg-blue-500 hover:bg-blue-400 text-white font-bold border rounded w-full py-2 px-3 border-blue-700 hover:border-blue-500"
             placeholder="Username"
@@ -98,7 +111,7 @@ function DashBoard(props: DashBoardProps) {
       </div>
       {render.table && <Table missions={missions} handleClick={handleRowClick} />}
 
-      {mission && render.details && <Specs matrix={props.matrix} mission={mission} />}
+      {render.details && <Specs matrix={props.matrix} mission={mission} />}
       {/* <h1>meta data מטריצה</h1>
       <div>{JSON.stringify(missions)}</div>
       <h1>לקוחות</h1>

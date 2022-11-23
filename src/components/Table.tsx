@@ -40,10 +40,16 @@ export function DataRow(props: any) {
           {cell ? cell : "noData"}
         </td>
       ))}
-      <td className="td">D</td>
-      <td className="td">NAV</td>
-      <td className="td">$$</td>
-      <td className="td">
+      <td id="details" className="td">
+        D
+      </td>
+      <td id="nav" className="td">
+        NAV
+      </td>
+      <td id="pay" className="td">
+        $$
+      </td>
+      <td id="isDone" className="td">
         <input type={"checkbox"} className=""></input>
       </td>
     </tr>
