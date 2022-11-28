@@ -1,32 +1,47 @@
 import React, { useEffect, useState } from "react";
-import { DataRow } from "./Table";
+
 //import DataRow fro
-type SpecsProps = {
+type StorageProps = {
   matrix: any;
   mission: any;
+  castumers: any;
 };
 
-function Specs(props: SpecsProps) {
+function Storage(props: StorageProps) {
   console.log({ props });
   const [data, setData] = useState<any>();
   useEffect(() => {
-    let castumerIndex = props.matrix.mainMatrix.AccountKey.indexOf(
-      props.mission["מפתח"]
-    );
+    let AccountKeys = props.matrix.mainMatrix.AccountKey;
+    let AccountNames = AccountKeys.map((Account: any) => {
+      let card: any[] = props.castumers.filter(
+        (cas: any) => cas["מפתח"] == Account
+      );
+      console.log({ card });
+      return card[0]["שם חשבון"];
+    });
+    console.log({ AccountNames });
     let cellsData = props.matrix.mainMatrix.cellsData;
-    let itemsNames: any = props.matrix.mainMatrix.itemsNames;
-    console.log({ itemsNames });
+    console.log({ cellsData });
+    let itemsNames: any[] = props.matrix.mainMatrix.itemsNames;
+    if (itemsNames[0] != "לקוח") {
+      itemsNames.unshift("לקוח");
+    }
     let record: any = {};
+    console.log({ itemsNames });
     let details = [];
-    for (let i = 0; i <= cellsData[castumerIndex].length - 1; i++) {
-      record = {};
-      if (cellsData[castumerIndex][i] != 0) {
-        record["פריט"] = itemsNames[i];
-        record["כמות"] = cellsData[castumerIndex][i];
-        record["isDone"] = false;
-        console.log({ record });
+    try {
+      for (let i = 0; i <= AccountKeys.length - 1; i++) {
+        record = {};
+        record[itemsNames[0]] = AccountNames[i];
+        for (let j = 1; j <= itemsNames.length - 1; j++) {
+          console.log("cells data error ", cellsData[i][j - 1]);
+          record[itemsNames[j]] = cellsData[i][j - 1];
+        }
         details.push(record);
+        console.log({ details, record });
       }
+    } catch (err) {
+      console.log(err);
     }
     record && setData(details);
   }, []);
@@ -103,4 +118,4 @@ function Specs(props: SpecsProps) {
   );
 }
 
-export default Specs;
+export default Storage;

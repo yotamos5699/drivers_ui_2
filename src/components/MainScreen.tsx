@@ -3,12 +3,17 @@ import { useState } from "react";
 import { fetchCastumersData, fetchDriversData, fetchLastMatrix } from "../api";
 import DashBoard from "./DashBoard";
 import { driver } from "../typing";
-function MainScreen() {
+export default function MainScreen() {
   const [driver, setDriver] = useState<driver | undefined>();
   const [input, setInput] = useState("");
-  const queryClient = useQueryClient();
-  const drivers = useQuery({ queryKey: ["drivers"], queryFn: fetchDriversData });
-  const castumers = useQuery({ queryKey: ["castumers"], queryFn: fetchCastumersData });
+  const drivers = useQuery({
+    queryKey: ["drivers"],
+    queryFn: fetchDriversData,
+  });
+  const castumers = useQuery({
+    queryKey: ["castumers"],
+    queryFn: fetchCastumersData,
+  });
   const matrix = useQuery({ queryKey: ["matrix"], queryFn: fetchLastMatrix });
 
   const responseToSubmitRequest = (value: string, driversData: driver[]) => {
@@ -53,50 +58,12 @@ function MainScreen() {
           </button>
         </div>
       ) : (
-        <DashBoard user={driver} matrix={matrix.data} castumers={castumers.data} />
+        <DashBoard
+          user={driver}
+          matrix={matrix.data?.matrixesData}
+          castumers={castumers.data}
+        />
       )}
     </>
   );
-
-  //       {/* <ul>
-  //         {drivers.isLoading ? (
-  //           <h1>is loading....</h1>
-  //         ) : drivers.error ? (
-  //           <h1>{JSON.stringify(drivers.error)}</h1>
-  //         ) : (
-  //           drivers.data?.map((driver: any, idx: number) => <li key={idx}>{driver.name}</li>)
-  //         )}
-  //       </ul>
-
-  //       <ul>
-  //         {castumers.isLoading ? (
-  //           <h1>is loading....</h1>
-  //         ) : castumers.error ? (
-  //           <h1>{JSON.stringify(castumers.error)}</h1>
-  //         ) : (
-  //           castumers.data?.map((castumer: any, idx: number) => <li key={idx}>{JSON.stringify(castumer)}</li>)
-  //         )}
-  //       </ul>
-  //       <ul>
-  //         {matrix.isLoading ? (
-  //           <h1>is loading....</h1>
-  //         ) : matrix.error ? (
-  //           <h1>{JSON.stringify(matrix.error)}</h1>
-  //         ) : (
-  //           matrix.data && <div>{JSON.stringify(matrix)}</div>
-  //         )}
-  //       </ul> */}
-  //       {/* <button
-  //         onClick={() => {
-  //           mutation.mutate({
-  //             id: Date.now(),
-  //             title: 'Do Laundry',
-  //           })
-  //         }}
-  //       >
-  //         Add Todo
-  //       </button> */}
-  //     //</div>
-  //   );
 }
-export default MainScreen;
