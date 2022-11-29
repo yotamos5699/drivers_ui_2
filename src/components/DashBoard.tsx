@@ -13,24 +13,26 @@ const getCurrentAccountKeys = (keysArrey: any, userKey: any) => {
   return keysArrey;
 };
 
-const sortTableData = (missions: any[], Midx: number) => {
+const sortTableData = async (missions: any[], Midx: number) => {
   let a = [];
   missions.forEach((m: any, i: number) => {
     if (i != Midx) a.push(m);
   });
-
-  missions[Midx]["isDone"] == true
-    ? a.push(missions[Midx])
-    : a.unshift(missions[Midx]);
-  console.log({ a });
-  return a;
+  if (missions[Midx]["isDone"] == true) {
+    a.push(missions[Midx]);
+    console.log("in sort table push ", { a, missions });
+    return a;
+  } else {
+    a.unshift(missions[Midx]);
+    console.log("in sort table unshift ", { a, missions });
+    return a;
+  }
 };
 
 function DashBoard(props: DashBoardProps) {
   const [missions, setMissions] = useState<any>();
   const [currentMission, setCurrentMission] = useState<any>();
-  const [rowId, setRowID] = useState<number>();
-  const [triger, setTriger] = useState<boolean>(false);
+
   const [render, setRender] = useState<any>({
     details: false,
     table: true,
@@ -40,39 +42,38 @@ function DashBoard(props: DashBoardProps) {
     log: false,
   });
 
-  useEffect(() => {
-    if (typeof rowId === "number") {
-      let g = sortTableData(missions, rowId);
-      setMissions([...g]);
-    }
-  }, [triger]);
+  // useEffect(() => {
+  //   if (typeof rowId === "number") {
+  //     let g = sortTableData(missions, rowId);
+  //
+  //   }
+  // }, [triger]);
   const handleRowClick = async (e: any, p: any) => {
     let cellId = e.target.id;
 
     console.log({ cellId });
     let spec: object[] | any = props.castumers?.filter((castumer: any) => {
       if (p.row["נייד"] == castumer["טלפון נייד"]) {
-        console.log({ p, e });
+        // console.log({ p, e });
         return castumer;
       }
     });
 
-    console.log({ spec, missions, p, cellId });
     if (cellId == "isDone") {
-      setTriger(!triger);
-      setMissions([
-        ...missions.map((m: any, midx: number) => {
-          if (p.row["נייד"] == m["נייד"]) {
-            setRowID(midx);
-            return { ...m, isDone: !m.isDone };
-          } else return { ...m };
-        }),
-      ]);
+      let rowIndex: number = 0;
+      let nArray = missions.map((m: any, midx: number) => {
+        if (p.row["נייד"] == m["נייד"]) {
+          console.log("data in p.row ", p.row, "data in m ", m);
+          rowIndex = midx;
+          return { ...m, isDone: !m.isDone };
+        } else return m;
+      });
 
-      console.log("missions before ", { missions });
+      let newd = await sortTableData(nArray, rowIndex);
 
-      console.log({ missions });
+      setMissions([...newd]);
     }
+
     if (spec?.length > 0 && cellId != "" && cellId != "isDone") {
       console.log("before set current mission ", spec);
       setCurrentMission(spec[0]);
@@ -83,9 +84,7 @@ function DashBoard(props: DashBoardProps) {
   const renderScreen = (cellId: string) => {
     console.log("in render screen ", render);
     let r: any = {};
-    Object.keys(render).forEach((key) =>
-      key == cellId ? (r[key] = true) : (r[key] = false)
-    );
+    Object.keys(render).forEach((key) => (key == cellId ? (r[key] = true) : (r[key] = false)));
     console.log({ r });
     return r;
   };
@@ -103,10 +102,7 @@ function DashBoard(props: DashBoardProps) {
 
   const constractMissions = async (matrixData: any, castumers: any) => {
     console.log({ matrixData });
-    let currentCasumersKeys = getCurrentAccountKeys(
-      matrixData.mainMatrix.AccountKey,
-      props.user?.pivotKey
-    );
+    let currentCasumersKeys = getCurrentAccountKeys(matrixData.mainMatrix.AccountKey, props.user?.pivotKey);
 
     let thisCastumer: any[] = [];
     let missionsArray: object[] = [];
@@ -123,7 +119,7 @@ function DashBoard(props: DashBoardProps) {
           נייד: thisCastumer[0]["טלפון נייד"],
           חוב: thisCastumer[0]["יתרת חשבון"],
 
-          isDone: true,
+          isDone: false,
         };
         missionsArray.push(record);
       }
@@ -163,20 +159,10 @@ function DashBoard(props: DashBoardProps) {
           </button>
         )}
       </div>
-      {render.table && missions && (
-        <Table missions={missions} handleClick={handleRowClick} />
-      )}
+      {render.table && missions && <Table missions={missions} handleClick={handleRowClick} />}
 
-      {render.details && (
-        <Specs matrix={props.matrix} mission={currentMission} />
-      )}
-      {render.log && (
-        <Storage
-          matrix={props.matrix}
-          mission={currentMission}
-          castumers={props.castumers}
-        />
-      )}
+      {render.details && <Specs matrix={props.matrix} mission={currentMission} />}
+      {render.log && <Storage matrix={props.matrix} mission={currentMission} castumers={props.castumers} />}
       {/* <h1>meta data מטריצה</h1>
       <div>{JSON.stringify(missions)}</div>
       <h1>לקוחות</h1>

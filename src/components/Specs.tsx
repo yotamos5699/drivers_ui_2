@@ -10,9 +10,7 @@ function Specs(props: SpecsProps) {
   console.log({ props });
   const [data, setData] = useState<any>();
   useEffect(() => {
-    let castumerIndex = props.matrix.mainMatrix.AccountKey.indexOf(
-      props.mission["מפתח"]
-    );
+    let castumerIndex = props.matrix.mainMatrix.AccountKey.indexOf(props.mission["מפתח"]);
     let cellsData = props.matrix.mainMatrix.cellsData;
     let itemsNames: any = props.matrix.mainMatrix.itemsNames;
     console.log({ itemsNames });
@@ -49,9 +47,7 @@ function Specs(props: SpecsProps) {
           console.log({ sortedData });
         }
       });
-      newData[rowIndex]["isDone"] == true
-        ? sortedData.push(newData[rowIndex])
-        : sortedData.unshift(newData[rowIndex]);
+      newData[rowIndex]["isDone"] == true ? sortedData.push(newData[rowIndex]) : sortedData.unshift(newData[rowIndex]);
       setData([...sortedData]);
     }
   };
@@ -61,15 +57,17 @@ function Specs(props: SpecsProps) {
       {data && (
         <table>
           <thead className="bg-white border-b">
-            <tr
-              key={"asd"}
-              className="text-sm font-medium text-gray-900 px-6 py-4 text-center"
-            >
-              {Object.keys(data[0]).map((header, idx) => (
-                <td className="td" key={idx + 1111}>
-                  {header}
-                </td>
-              ))}
+            <tr key={"asd"} className="text-sm font-medium text-gray-900 px-6 py-4 text-center">
+              {Object.keys(data[0]).map(
+                (header, idx) =>
+                  header != "isDone" && (
+                    <td className="td" key={idx + 1111}>
+                      {header}
+                    </td>
+                  )
+              )}
+              <td className="td">הוסף</td>
+              <td className="td">החסר</td>
               <td className="td">סופק</td>
             </tr>
           </thead>
@@ -80,18 +78,38 @@ function Specs(props: SpecsProps) {
                 className={row["isDone"] == false ? "tr" : "tr bg-gray-200"}
                 onClick={(e) => handleChange(e, row)}
               >
-                {Object.values(row).map((cell: any, ci) => (
-                  <td key={ci + idx} className="td">
-                    {cell}
-                  </td>
-                ))}
+                {Object.values(row).map(
+                  (cell: any, ci) =>
+                    Object.keys(row)[ci] != "isDone" && (
+                      <td key={ci + idx} className="td">
+                        {cell}
+                      </td>
+                    )
+                )}
+                <td
+                  id="add"
+                  className="text-xl text-center bg-green-100 hover:bg-green-500"
+                  onClick={() => {
+                    setData([
+                      ...data.map((row: any, i: number) => (i == idx ? { ...row, כמות: row["כמות"] + 1 } : row)),
+                    ]);
+                  }}
+                >
+                  +
+                </td>
+                <td
+                  id="sub"
+                  className="text-xl text-center bg-red-100 hover:bg-red-500"
+                  onClick={() => {
+                    setData([
+                      ...data.map((row: any, i: number) => (i == idx ? { ...row, כמות: row["כמות"] - 1 } : row)),
+                    ]);
+                  }}
+                >
+                  -
+                </td>
                 <td>
-                  <input
-                    id="isDone"
-                    type={"checkbox"}
-                    onChange={(e) => handleChange(e, row)}
-                    checked={row["isDone"]}
-                  />
+                  <input id="isDone" type={"checkbox"} onChange={(e) => handleChange(e, row)} checked={row["isDone"]} />
                 </td>
               </tr>
             ))}

@@ -108,11 +108,7 @@ export const fetchCastumersData = async () => {
       headers: headers,
     })
     .then((res) => {
-<<<<<<< HEAD
-      console.log("res .data ////", res.data.data);
-=======
       console.log("castumers data ", res.data.data);
->>>>>>> 29d3ca8b83b37a57231597eadb4e73cfd1e90976
       return res.data.data;
     })
     .catch((err) => console.log);
