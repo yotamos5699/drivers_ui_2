@@ -44,7 +44,7 @@ export const fetchDriversData = async () => {
 export const fetchCastumersData = async () => {
   let data = {
     TID: "2",
-    sortKey: { "קוד מיון": 350 },
+    sortKey: { "קוד מיון": 300 },
   };
 
   const headers = {
@@ -57,7 +57,7 @@ export const fetchCastumersData = async () => {
       headers: headers,
     })
     .then((res) => {
-      //  console.log("res .data ////", res.data.data);
+      console.log("res .data ////", res.data.data);
       return res.data.data;
     })
     .catch((err) => console.log);

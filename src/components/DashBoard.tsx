@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { driver } from "../typing";
 import Specs from "./Specs";
 import Table from "./Table";
-
+import Pay from "./Pay";
 type DashBoardProps = {
   user: driver | undefined;
   matrix?: any;
@@ -112,6 +112,7 @@ function DashBoard(props: DashBoardProps) {
       {render.table && <Table missions={missions} handleClick={handleRowClick} />}
 
       {render.details && <Specs matrix={props.matrix} mission={mission} />}
+      {render.pay && <Pay />}
       {/* <h1>meta data מטריצה</h1>
       <div>{JSON.stringify(missions)}</div>
       <h1>לקוחות</h1>
