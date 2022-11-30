@@ -42,12 +42,14 @@ function DashBoard(props: DashBoardProps) {
     log: false,
   });
 
-  // useEffect(() => {
-  //   if (typeof rowId === "number") {
-  //     let g = sortTableData(missions, rowId);
-  //
-  //   }
-  // }, [triger]);
+  useEffect(() => {
+    const STORED = window.localStorage.getItem("missions");
+    if (STORED != "undefined" && STORED != null) setMissions([...JSON.parse(STORED)]);
+  }, []);
+  useEffect(() => {
+    window.localStorage.setItem("missions", JSON.stringify(missions));
+  }, [missions]);
+
   const handleRowClick = async (e: any, p: any) => {
     let cellId = e.target.id;
 

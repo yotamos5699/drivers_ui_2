@@ -13,6 +13,14 @@ export default function Table(props: any) {
   };
   const [missionss, setMissionss] = useState<any>();
   useEffect(() => {
+    window.localStorage.setItem("tableMissions", JSON.stringify(missionss));
+  }, [missionss]);
+
+  useEffect(() => {
+    const STORED = window.localStorage.getItem("tableMissions");
+    if (STORED != "undefined" && STORED != null) {
+      return setMissionss([...JSON.parse(STORED)]);
+    }
     console.log({ props });
     let m = props?.missions;
     let sorted = [];
@@ -42,12 +50,7 @@ export default function Table(props: any) {
           </thead>
           <tbody>
             {missionss.map((row: any, idx: number) => (
-              <DataRow
-                key={idx}
-                row={row}
-                handleClick={props.handleClick}
-                headers={Object.keys(missionss[0])}
-              />
+              <DataRow key={idx} row={row} handleClick={props.handleClick} headers={Object.keys(missionss[0])} />
             ))}
             <tr></tr>
           </tbody>
@@ -63,10 +66,7 @@ export function DataRow(props: any) {
   let rData = props.row;
   // console.log({ rData });
   return (
-    <tr
-      className={props.row["isDone"] == true ? " tr bg-gray-200" : "tr"}
-      onClick={(e) => props.handleClick(e, props)}
-    >
+    <tr className={props.row["isDone"] == true ? " tr bg-gray-200" : "tr"} onClick={(e) => props.handleClick(e, props)}>
       {Object.values(props.row).map((cell: any, idx) => {
         // console.log(cell, "header ", props.headers[idx]);
         return (

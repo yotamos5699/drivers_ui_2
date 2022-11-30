@@ -10,6 +10,8 @@ function Specs(props: SpecsProps) {
   console.log({ props });
   const [data, setData] = useState<any>();
   useEffect(() => {
+    const STORED = window.localStorage.getItem("specData");
+    if (STORED != "undefined" && STORED != null) return setData([...JSON.parse(STORED)]);
     let castumerIndex = props.matrix.mainMatrix.AccountKey.indexOf(props.mission["מפתח"]);
     let cellsData = props.matrix.mainMatrix.cellsData;
     let itemsNames: any = props.matrix.mainMatrix.itemsNames;
@@ -28,6 +30,10 @@ function Specs(props: SpecsProps) {
     }
     record && setData(details);
   }, []);
+
+  useEffect(() => {
+    window.localStorage.setItem("specData", JSON.stringify(data));
+  }, [data]);
 
   const handleChange = (e: any, p?: any) => {
     console.log({ e, p });
