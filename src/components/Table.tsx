@@ -1,6 +1,6 @@
 import { useAutoAnimate } from "@formkit/auto-animate/react";
 import { useEffect, useState } from "react";
-
+import { BiNavigation, BiDetail } from "react-icons/bi";
 export default function Table(props: any) {
   const sortTableData = (missions: any[], Midx: number) => {
     let a = [];
@@ -44,7 +44,7 @@ export default function Table(props: any) {
               )}
               <td className="td">פירוט</td>
               <td className="td">נווט</td>
-              <td className="td">תשלום</td>
+
               <td className="td">בוצע</td>
             </tr>
           </thead>
@@ -78,13 +78,10 @@ export function DataRow(props: any) {
         );
       })}
       <td id="details" className="td">
-        D
+        <BiDetail id="details" className={"icn1"} />
       </td>
       <td id="nav" className="td">
-        NAV
-      </td>
-      <td id="pay" className="td">
-        $$
+        <BiNavigation className={"icn1"} />
       </td>
       {/* // <td id="isDone" className="td"> */}
       <td>

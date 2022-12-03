@@ -1,6 +1,5 @@
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-
-import MainScreen from "./components/MainScreen";
+import Login from "./components/Login";
 
 // Create a client
 const queryClient = new QueryClient();
@@ -9,7 +8,7 @@ function App() {
   return (
     // Provide the client to your App
     <QueryClientProvider client={queryClient}>
-      <MainScreen />
+      <Login />
     </QueryClientProvider>
   );
 }

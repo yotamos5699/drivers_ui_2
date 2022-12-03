@@ -1,14 +1,21 @@
 import React, { useEffect, useState } from "react";
-import { DataRow } from "./Table";
+import { renderScreen } from "../helper";
+import { GrAddCircle, GrSubtractCircle } from "react-icons/gr";
+import Pay from "./Pay";
 //import DataRow fro
 type SpecsProps = {
   matrix: any;
   mission: any;
+  handleGlobalRender: any;
 };
 
 function Specs(props: SpecsProps) {
   console.log({ props });
   const [data, setData] = useState<any>();
+  const [render, setReder] = useState({
+    main: true,
+    pay: false,
+  });
   useEffect(() => {
     const STORED = window.localStorage.getItem("specData");
     if (STORED != "undefined" && STORED != null) return setData([...JSON.parse(STORED)]);
@@ -58,71 +65,91 @@ function Specs(props: SpecsProps) {
     }
   };
 
+  const handleClick = (e: any) => {
+    setReder({ ...renderScreen(e.target.id, render) });
+  };
   return (
     <div>
-      {data && (
-        <table>
-          <thead className="bg-white border-b">
-            <tr key={"asd"} className="text-sm font-medium text-gray-900 px-6 py-4 text-center">
-              {Object.keys(data[0]).map(
-                (header, idx) =>
-                  header != "isDone" && (
-                    <td className="td" key={idx + 1111}>
-                      {header}
-                    </td>
-                  )
-              )}
-              <td className="td">הוסף</td>
-              <td className="td">החסר</td>
-              <td className="td">סופק</td>
-            </tr>
-          </thead>
-          <tbody>
-            {data.map((row: any, idx: number) => (
-              <tr
-                key={idx + 3434}
-                className={row["isDone"] == false ? "tr" : "tr bg-gray-200"}
-                onClick={(e) => handleChange(e, row)}
-              >
-                {Object.values(row).map(
-                  (cell: any, ci) =>
-                    Object.keys(row)[ci] != "isDone" && (
-                      <td key={ci + idx} className="td">
-                        {cell}
+      {data && render.main && (
+        <div>
+          <table>
+            <thead className="bg-white border-b">
+              <tr key={"asd"} className="text-sm font-medium text-gray-900 px-6 py-4 text-center">
+                {Object.keys(data[0]).map(
+                  (header, idx) =>
+                    header != "isDone" && (
+                      <td className="td" key={idx + 1111}>
+                        {header}
                       </td>
                     )
                 )}
-                <td
-                  id="add"
-                  className="text-xl text-center bg-green-100 hover:bg-green-500"
-                  onClick={() => {
-                    setData([
-                      ...data.map((row: any, i: number) => (i == idx ? { ...row, כמות: row["כמות"] + 1 } : row)),
-                    ]);
-                  }}
-                >
-                  +
-                </td>
-                <td
-                  id="sub"
-                  className="text-xl text-center bg-red-100 hover:bg-red-500"
-                  onClick={() => {
-                    setData([
-                      ...data.map((row: any, i: number) => (i == idx ? { ...row, כמות: row["כמות"] - 1 } : row)),
-                    ]);
-                  }}
-                >
-                  -
-                </td>
-                <td>
-                  <input id="isDone" type={"checkbox"} onChange={(e) => handleChange(e, row)} checked={row["isDone"]} />
-                </td>
+                <td className="td">הוסף</td>
+                <td className="td">החסר</td>
+                <td className="td">סופק</td>
               </tr>
-            ))}
-            <tr></tr>
-          </tbody>
-        </table>
+            </thead>
+            <tbody>
+              {data.map((row: any, idx: number) => (
+                <tr
+                  key={idx + 3434}
+                  className={row["isDone"] == false ? "tr" : "tr bg-gray-200"}
+                  onClick={(e) => handleChange(e, row)}
+                >
+                  {Object.values(row).map(
+                    (cell: any, ci) =>
+                      Object.keys(row)[ci] != "isDone" && (
+                        <td key={ci + idx} className="td">
+                          {cell}
+                        </td>
+                      )
+                  )}
+                  <td
+                    id="add"
+                    className="text-xl text-center bg-green-100 hover:bg-green-500"
+                    onClick={() => {
+                      setData([
+                        ...data.map((row: any, i: number) => (i == idx ? { ...row, כמות: row["כמות"] + 1 } : row)),
+                      ]);
+                    }}
+                  >
+                    <GrAddCircle className="icn1" />
+                  </td>
+                  <td
+                    id="sub"
+                    className="text-xl text-center bg-red-100 hover:bg-red-500"
+                    onClick={() => {
+                      setData([
+                        ...data.map((row: any, i: number) => (i == idx ? { ...row, כמות: row["כמות"] - 1 } : row)),
+                      ]);
+                    }}
+                  >
+                    <GrSubtractCircle className="icn1" />
+                  </td>
+                  <td>
+                    <input
+                      id="isDone"
+                      type={"checkbox"}
+                      onChange={(e) => handleChange(e, row)}
+                      checked={row["isDone"]}
+                    />
+                  </td>
+                </tr>
+              ))}
+              <tr></tr>
+            </tbody>
+          </table>
+          <button id="table" onClick={props.handleGlobalRender} className="btn1">
+            חזור
+          </button>
+          {data?.filter((row: any) => row.isDone === false).length === 0 && (
+            <button id="pay" onClick={handleClick} className="btn1">
+              תשלום
+            </button>
+          )}
+        </div>
       )}
+
+      {render.pay && <Pay />}
     </div>
   );
 }

@@ -1,9 +1,10 @@
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
 import { fetchCastumersData, fetchDriversData, fetchLastMatrix } from "../api";
-import DashBoard from "./DashBoard";
+import Nav from "./Nav";
 import { driver } from "../typing";
-export default function MainScreen() {
+
+export default function Login() {
   const [driver, setDriver] = useState<driver | undefined>();
   const [input, setInput] = useState("");
   const drivers = useQuery({
@@ -58,11 +59,7 @@ export default function MainScreen() {
           </button>
         </div>
       ) : (
-        <DashBoard
-          user={driver}
-          matrix={matrix.data?.matrixesData}
-          castumers={castumers.data}
-        />
+        <Nav user={driver} matrix={matrix.data?.matrixesData} castumers={castumers.data} />
       )}
     </>
   );

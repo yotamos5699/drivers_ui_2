@@ -3,6 +3,8 @@ import { driver } from "../typing";
 import Specs from "./Specs";
 import Table from "./Table";
 import Storage from "./Storage";
+import Header from "./Header";
+import { renderScreen } from "../helper";
 type DashBoardProps = {
   user: driver | undefined;
   matrix?: any;
@@ -29,17 +31,17 @@ const sortTableData = async (missions: any[], Midx: number) => {
   }
 };
 
-function DashBoard(props: DashBoardProps) {
+function Nav(props: DashBoardProps) {
   const [missions, setMissions] = useState<any>();
   const [currentMission, setCurrentMission] = useState<any>();
 
   const [render, setRender] = useState<any>({
     details: false,
-    table: true,
+    table: false,
     nav: false,
     pay: false,
     isDone: false,
-    log: false,
+    storage: true,
   });
 
   useEffect(() => {
@@ -79,22 +81,23 @@ function DashBoard(props: DashBoardProps) {
     if (spec?.length > 0 && cellId != "" && cellId != "isDone") {
       console.log("before set current mission ", spec);
       setCurrentMission(spec[0]);
-      setRender({ ...renderScreen(cellId) });
+      setRender({ ...renderScreen(cellId, render) });
     }
   };
 
-  const renderScreen = (cellId: string) => {
-    console.log("in render screen ", render);
-    let r: any = {};
-    Object.keys(render).forEach((key) => (key == cellId ? (r[key] = true) : (r[key] = false)));
-    console.log({ r });
-    return r;
-  };
+  // const renderScreen = (cellId: string) => {
+  //   console.log("in render screen ", render);
+  //   let r: any = {};
+  //   Object.keys(render).forEach((key) => (key == cellId ? (r[key] = true) : (r[key] = false)));
+  //   console.log({ r });
+  //   return r;
+  // };
 
-  const handleHeaderClick = async (e: any) => {
+  const handleGlobalRender = async (e: any) => {
     console.log("id in handle click ", e.target.id);
-    e.target.id == "table" && setRender({ ...renderScreen(e.target.id) });
-    e.target.id == "log" && setRender({ ...renderScreen(e.target.id) });
+    if (e.target.id === "stockReady") setRender({ ...renderScreen("table", render) });
+    e.target.id == "table" && setRender({ ...renderScreen(e.target.id, render) });
+    e.target.id == "log" && setRender({ ...renderScreen(e.target.id, render) });
     console.log({ props });
     if (!missions) {
       let tasks = await constractMissions(props.matrix, props.castumers);
@@ -131,40 +134,20 @@ function DashBoard(props: DashBoardProps) {
 
   return (
     <div className="flex flex-col">
-      <div className="flex  items-top justify-top  bg-white shadow-md rounded px-4 ">
-        <h2>שלום {props?.user?.name}</h2>
-        <div></div>
-        <button
-          name="password_btn"
-          onClick={handleHeaderClick}
-          className="w-max-7 bg-blue-500 hover:bg-blue-400 text-white font-bold border rounded w-full py-2 px-3 border-blue-700 hover:border-blue-500"
-          placeholder="Username"
-        >
-          המשימות שלך
-        </button>
-        <button
-          id="log"
-          onClick={handleHeaderClick}
-          className="w-max-7 bg-blue-500 hover:bg-blue-400 text-white font-bold border rounded w-full py-2 px-3 border-blue-700 hover:border-blue-500"
-          placeholder="Username"
-        >
-          מחסן
-        </button>
-        {!render.table && (
-          <button
-            id="table"
-            onClick={handleHeaderClick}
-            className="w-max-7 bg-blue-500 hover:bg-blue-400 text-white font-bold border rounded w-full py-2 px-3 border-blue-700 hover:border-blue-500"
-            placeholder="Username"
-          >
-            חזור
-          </button>
-        )}
-      </div>
+      <Header render={render} user={props.user} />
       {render.table && missions && <Table missions={missions} handleClick={handleRowClick} />}
 
-      {render.details && <Specs matrix={props.matrix} mission={currentMission} />}
-      {render.log && <Storage matrix={props.matrix} mission={currentMission} castumers={props.castumers} />}
+      {render.details && (
+        <Specs matrix={props.matrix} mission={currentMission} handleGlobalRender={handleGlobalRender} />
+      )}
+      {render.storage && (
+        <Storage
+          matrix={props.matrix}
+          mission={currentMission}
+          castumers={props.castumers}
+          handleGlobalRender={handleGlobalRender}
+        />
+      )}
       {/* <h1>meta data מטריצה</h1>
       <div>{JSON.stringify(missions)}</div>
       <h1>לקוחות</h1>
@@ -174,4 +157,4 @@ function DashBoard(props: DashBoardProps) {
   );
 }
 
-export default DashBoard;
+export default Nav;

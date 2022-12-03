@@ -5,12 +5,17 @@ type StorageProps = {
   matrix: any;
   mission: any;
   castumers: any;
+  handleGlobalRender: any;
 };
 
 function Storage(props: StorageProps) {
   //console.log({ props });
   const [data, setData] = useState<any>();
   const [styleMatrix, setStyleMatrix] = useState<any>();
+  const [render, setReder] = useState({
+    main: true,
+    cont: false,
+  });
 
   useEffect(() => {
     console.log("updatef local storage in storage object", { data, styleMatrix });
@@ -27,32 +32,22 @@ function Storage(props: StorageProps) {
     } else {
       console.log("stayls s undefined ");
     }
+    checkIfReady();
   }, [data, styleMatrix]);
-
   useEffect(() => {
-    console.log("starting use effect in storage");
     const STORED2 = window.localStorage.getItem("stylesData");
-    if (STORED2 != "undefined" && STORED2 != null) {
-      console.log({ STORED2 });
-      setStyleMatrix([...JSON.parse(STORED2)]);
-    }
-
+    if (STORED2 != "undefined" && STORED2 != null) setStyleMatrix([...JSON.parse(STORED2)]);
     const STORED = window.localStorage.getItem("storageData");
-    if (STORED != "undefined" && STORED != null) {
-      console.log({ STORED });
-      return setData([...JSON.parse(STORED)]);
-    }
-
+    if (STORED != "undefined" && STORED != null) return setData([...JSON.parse(STORED)]);
     console.log("after return in storage");
     let AccountKeys = props.matrix.mainMatrix.AccountKey;
     let AccountNames = AccountKeys.map((Account: any) => {
       let card: any[] = props.castumers.filter((cas: any) => cas["מפתח"] == Account);
-      // console.log({ card });
+
       return card[0]["שם חשבון"];
     });
-    //  console.log({ AccountNames });
+
     let cellsData = props.matrix.mainMatrix.cellsData;
-    //console.log({ cellsData });
     let itemsNames: any[] = props.matrix.mainMatrix.itemsNames;
     if (itemsNames[0] != "לקוח") {
       itemsNames.unshift("לקוח");
@@ -85,11 +80,8 @@ function Storage(props: StorageProps) {
     }
     if (stMtx) {
       setStyleMatrix(stMtx);
-      //  console.log("in set styles matreix ");
-      //  console.log({ styleMatrix, stMtx });
     }
     record && setData(details);
-    // console.log({ styleMatrix });
   }, []);
 
   const handleChange = (e: any, p: any) => {
@@ -125,7 +117,17 @@ function Storage(props: StorageProps) {
       setStyleMatrix([...mtx]);
     }
   };
+  const checkIfReady = () => {
+    let ready: boolean;
+    let filter = data?.filter((row: any) => row.isDone === false);
 
+    if (data && filter.length === 0) ready = true;
+    else ready = false;
+
+    setReder((prev) => {
+      return { ...prev, cont: ready };
+    });
+  };
   return (
     <div>
       {data && (
@@ -184,6 +186,11 @@ function Storage(props: StorageProps) {
             <tr></tr>
           </tbody>
         </table>
+      )}
+      {render.cont && (
+        <button className={"btn1"} id="stockReady" onClick={props.handleGlobalRender}>
+          המשך
+        </button>
       )}
     </div>
   );
