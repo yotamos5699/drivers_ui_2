@@ -11,6 +11,7 @@ export default function Table(props: any) {
     console.log({ a });
     return a;
   };
+  const [counter, setCounter] = useState(0);
   const [missionss, setMissionss] = useState<any>();
   useEffect(() => {
     window.localStorage.setItem("tableMissions", JSON.stringify(missionss));
@@ -18,7 +19,7 @@ export default function Table(props: any) {
 
   useEffect(() => {
     const STORED = window.localStorage.getItem("tableMissions");
-    if (STORED != "undefined" && STORED != null) {
+    if (STORED != "undefined" && STORED != null && !missionss) {
       return setMissionss([...JSON.parse(STORED)]);
     }
     console.log({ props });
@@ -28,6 +29,10 @@ export default function Table(props: any) {
     setMissionss([...m]);
   }, [props.missions]);
   const [listRef] = useAutoAnimate<HTMLDivElement>();
+
+  const handleChange = (e: any) => {
+    console.log("the e ", { e });
+  };
   return (
     <div ref={listRef}>
       {missionss ? (
@@ -50,7 +55,13 @@ export default function Table(props: any) {
           </thead>
           <tbody>
             {missionss.map((row: any, idx: number) => (
-              <DataRow key={idx} row={row} handleClick={props.handleClick} headers={Object.keys(missionss[0])} />
+              <DataRow
+                key={idx}
+                row={row}
+                onChange={handleChange}
+                handleClick={props.handleClick}
+                headers={Object.keys(missionss[0])}
+              />
             ))}
             <tr></tr>
           </tbody>

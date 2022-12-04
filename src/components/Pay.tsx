@@ -22,7 +22,7 @@ const Coins = [
   { img: coin5, amount: 0, billValue: 5 },
   { img: coin10, amount: 0, billValue: 10 },
 ];
-function Pay() {
+function Pay({ handleClick }) {
   const [bills, setBills] = useState([...Bills]);
   const [coins, setCoins] = useState([...Coins]);
   const [totalSum, setTotalSum] = useState(0);
@@ -43,7 +43,9 @@ function Pay() {
   return (
     <div className="flex flex-col">
       <div className="hdr1 ">
-        <button className="btn1 w-1/4">חזור</button>
+        <button id="main" className="btn1 w-1/4" onClick={handleClick}>
+          חזור
+        </button>
         <div className="flex w-1/2">
           <button className="btn1 w-1/2" onClick={() => setRender({ co: !render.co, bi: !render.bi })}>
             {render?.bi ? "מטבעות" : "שטרות"}
@@ -54,7 +56,9 @@ function Pay() {
           </div>
         </div>
 
-        <button className="btn1 w-1/4">הפק</button>
+        <button id="main" onClick={handleClick} className="btn1 w-1/4">
+          הפק
+        </button>
       </div>
       {render?.bi &&
         bills.map((bill, idx) => (

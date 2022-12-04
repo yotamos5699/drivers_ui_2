@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { renderScreen } from "../helper";
 import { GrAddCircle, GrSubtractCircle } from "react-icons/gr";
 import Pay from "./Pay";
+import Returns from "./Returns";
 //import DataRow fro
 type SpecsProps = {
   matrix: any;
@@ -15,6 +16,7 @@ function Specs(props: SpecsProps) {
   const [render, setReder] = useState({
     main: true,
     pay: false,
+    ret: false,
   });
   useEffect(() => {
     const STORED = window.localStorage.getItem("specData");
@@ -141,6 +143,9 @@ function Specs(props: SpecsProps) {
           <button id="table" onClick={props.handleGlobalRender} className="btn1">
             חזור
           </button>
+          <button id="ret" onClick={handleClick} className="btn1">
+            החזרת סחורה
+          </button>
           {data?.filter((row: any) => row.isDone === false).length === 0 && (
             <button id="pay" onClick={handleClick} className="btn1">
               תשלום
@@ -148,8 +153,8 @@ function Specs(props: SpecsProps) {
           )}
         </div>
       )}
-
-      {render.pay && <Pay />}
+      {render.ret && <Returns handleClick={handleClick} />}
+      {render.pay && <Pay handleClick={handleClick} />}
     </div>
   );
 }

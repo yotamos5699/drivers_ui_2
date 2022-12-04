@@ -105,3 +105,25 @@ export const fetchCastumersData = async () => {
     })
     .catch((err) => console.log);
 };
+
+export const fetchItemsData = async () => {
+  let data = {
+    TID: "1",
+    sortKey: { מחסן: 1 },
+  };
+
+  const headers = {
+    "Content-Type": "application/json",
+    Authorization: ofekBarier,
+  };
+
+  return await axios
+    .post(castumersUrl, data, {
+      headers: headers,
+    })
+    .then((res) => {
+      console.log("castumers data ", res.data.data);
+      return res.data.data;
+    })
+    .catch((err) => console.log);
+};
