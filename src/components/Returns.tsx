@@ -3,7 +3,7 @@ import { useQuery } from "@tanstack/react-query";
 import { fetchItemsData } from "../api";
 import Select from "./Select";
 import { GrAddCircle, GrSubtractCircle } from "react-icons/gr";
-
+import { FiDelete } from "react-icons/fi";
 type ReturnsProps = {
   castumer?: any;
   handleClick: any;
@@ -17,14 +17,17 @@ function Returns(props: ReturnsProps) {
   if (items.error) return <h1>error</h1>;
   // if (items.data) console.log("items=> data ", items.data);
 
-  const handleClick = (e: any) => {
-    if (e.amount != "0" && e.item != "") {
+  const handleClick = (e: any, idx: number) => {
+    if (e.amount != "0" && e.item != "" && typeof idx != "number") {
       let newList = list ? list : [];
       newList.push({ ...e });
       setList([...newList]);
     }
-
-    console.log({ e });
+    if (idx) {
+      let newL = list.filter((item: any, i: number) => i != idx);
+      setList([...newL]);
+    }
+    console.log({ e, idx });
   };
 
   return (
@@ -34,10 +37,10 @@ function Returns(props: ReturnsProps) {
           <Select items={items.data} handleClick={handleClick} />
           {list &&
             list.map((item: any, idx: number) => (
-              <div key={idx} className="flex">
-                <div>{item.item}</div>
-                <div>{item.amount}</div>
-                <div>מחק</div>
+              <div key={idx} className="flex w-full border-b-2 border-gray-500 p-4">
+                <div className="w-1/3">{item.item}</div>
+                <div className="w-1/3">{item.amount}</div>
+                <FiDelete id="delete" onClick={() => handleClick(Event, idx)} className="w-1/3" />
               </div>
             ))}
         </div>
