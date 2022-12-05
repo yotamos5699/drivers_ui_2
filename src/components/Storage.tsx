@@ -18,17 +18,20 @@ function Storage(props: StorageProps) {
   });
 
   useEffect(() => {
-    console.log("updatef local storage in storage object", { data, styleMatrix });
+    console.log("updatef local storage in storage object", {
+      data,
+      styleMatrix,
+    });
 
     if (data != "undefined" && data != null) {
       window.localStorage.setItem("storageData", JSON.stringify(data));
-      console.log("updated main data", { data });
+      // console.log("updated main data", { data });
     } else {
       console.log("data is undefined ");
     }
     if (data != "undefined" && data != null) {
       window.localStorage.setItem("stylesData", JSON.stringify(styleMatrix));
-      console.log("updated stayles data", { styleMatrix });
+      // console.log("updated stayles data", { styleMatrix });
     } else {
       console.log("stayls s undefined ");
     }
@@ -36,13 +39,17 @@ function Storage(props: StorageProps) {
   }, [data, styleMatrix]);
   useEffect(() => {
     const STORED2 = window.localStorage.getItem("stylesData");
-    if (STORED2 != "undefined" && STORED2 != null) setStyleMatrix([...JSON.parse(STORED2)]);
+    if (STORED2 != "undefined" && STORED2 != null)
+      setStyleMatrix([...JSON.parse(STORED2)]);
     const STORED = window.localStorage.getItem("storageData");
-    if (STORED != "undefined" && STORED != null) return setData([...JSON.parse(STORED)]);
+    if (STORED != "undefined" && STORED != null)
+      return setData([...JSON.parse(STORED)]);
     console.log("after return in storage");
     let AccountKeys = props.matrix.mainMatrix.AccountKey;
     let AccountNames = AccountKeys.map((Account: any) => {
-      let card: any[] = props.castumers.filter((cas: any) => cas["מפתח"] == Account);
+      let card: any[] = props.castumers.filter(
+        (cas: any) => cas["מפתח"] == Account
+      );
 
       return card[0]["שם חשבון"];
     });
@@ -133,7 +140,10 @@ function Storage(props: StorageProps) {
       {data && (
         <table>
           <thead className="bg-white border-b">
-            <tr key={"asd"} className="text-sm font-medium text-gray-900 px-6 py-4 text-center">
+            <tr
+              key={"asd"}
+              className="text-sm font-medium text-gray-900 px-6 py-4 text-center"
+            >
               {Object.keys(data[0]).map(
                 (header, idx) =>
                   header != "isDone" && (
@@ -167,7 +177,11 @@ function Storage(props: StorageProps) {
                           }
                         }}
                         /*@ts-ignore */
-                        className={styleMatrix[idx][ci] == false ? "td" : ci != 0 && "td bg-green-600 text-white"}
+                        className={
+                          styleMatrix[idx][ci] == false
+                            ? "td"
+                            : ci != 0 && "td bg-green-600 text-white"
+                        }
                       >
                         {cell}
                       </td>
@@ -188,7 +202,11 @@ function Storage(props: StorageProps) {
         </table>
       )}
       {render.cont && (
-        <button className={"btn1"} id="stockReady" onClick={props.handleGlobalRender}>
+        <button
+          className={"btn1"}
+          id="stockReady"
+          onClick={props.handleGlobalRender}
+        >
           המשך
         </button>
       )}

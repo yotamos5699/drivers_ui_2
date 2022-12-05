@@ -59,7 +59,7 @@ export default function Login() {
           </button>
         </div>
       ) : (
-        <Nav user={driver} matrix={matrix.data?.matrixesData} castumers={castumers.data} />
+        <Nav user={driver} matrix={matrix.data} castumers={castumers.data} />
       )}
     </>
   );

@@ -20,8 +20,11 @@ function Specs(props: SpecsProps) {
   });
   useEffect(() => {
     const STORED = window.localStorage.getItem("specData");
-    if (STORED != "undefined" && STORED != null) return setData([...JSON.parse(STORED)]);
-    let castumerIndex = props.matrix.mainMatrix.AccountKey.indexOf(props.mission["מפתח"]);
+    if (STORED != "undefined" && STORED != null)
+      return setData([...JSON.parse(STORED)]);
+    let castumerIndex = props.matrix.mainMatrix.AccountKey.indexOf(
+      props.mission["מפתח"]
+    );
     let cellsData = props.matrix.mainMatrix.cellsData;
     let itemsNames: any = props.matrix.mainMatrix.itemsNames;
     console.log({ itemsNames });
@@ -62,7 +65,9 @@ function Specs(props: SpecsProps) {
           console.log({ sortedData });
         }
       });
-      newData[rowIndex]["isDone"] == true ? sortedData.push(newData[rowIndex]) : sortedData.unshift(newData[rowIndex]);
+      newData[rowIndex]["isDone"] == true
+        ? sortedData.push(newData[rowIndex])
+        : sortedData.unshift(newData[rowIndex]);
       setData([...sortedData]);
     }
   };
@@ -76,7 +81,10 @@ function Specs(props: SpecsProps) {
         <div>
           <table>
             <thead className="bg-white border-b">
-              <tr key={"asd"} className="text-sm font-medium text-gray-900 px-6 py-4 text-center">
+              <tr
+                key={"asd"}
+                className="text-sm font-medium text-gray-900 px-6 py-4 text-center"
+              >
                 {Object.keys(data[0]).map(
                   (header, idx) =>
                     header != "isDone" && (
@@ -110,7 +118,9 @@ function Specs(props: SpecsProps) {
                     className="text-xl text-center bg-green-100 hover:bg-green-500"
                     onClick={() => {
                       setData([
-                        ...data.map((row: any, i: number) => (i == idx ? { ...row, כמות: row["כמות"] + 1 } : row)),
+                        ...data.map((row: any, i: number) =>
+                          i == idx ? { ...row, כמות: row["כמות"] + 1 } : row
+                        ),
                       ]);
                     }}
                   >
@@ -121,7 +131,9 @@ function Specs(props: SpecsProps) {
                     className="text-xl text-center bg-red-100 hover:bg-red-500"
                     onClick={() => {
                       setData([
-                        ...data.map((row: any, i: number) => (i == idx ? { ...row, כמות: row["כמות"] - 1 } : row)),
+                        ...data.map((row: any, i: number) =>
+                          i == idx ? { ...row, כמות: row["כמות"] - 1 } : row
+                        ),
                       ]);
                     }}
                   >
@@ -140,16 +152,25 @@ function Specs(props: SpecsProps) {
               <tr></tr>
             </tbody>
           </table>
-          <button id="table" onClick={props.handleGlobalRender} className="btn1">
+          <button
+            id="table"
+            onClick={props.handleGlobalRender}
+            className="btn1"
+          >
             חזור
           </button>
           <button id="ret" onClick={handleClick} className="btn1">
             החזרת סחורה
           </button>
           {data?.filter((row: any) => row.isDone === false).length === 0 && (
-            <button id="pay" onClick={handleClick} className="btn1">
-              תשלום
-            </button>
+            <div className="flex">
+              <button id="pay" onClick={handleClick} className="btn1">
+                תשלום
+              </button>
+              <button id="pay" onClick={handleClick} className="btn1">
+                חתימה
+              </button>
+            </div>
           )}
         </div>
       )}

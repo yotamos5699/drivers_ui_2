@@ -5,11 +5,17 @@ const mockMatrix = {
   matrixName: "מטריצה עם שם חדש",
   matrixesData: {
     mainMatrix: {
-      matrixID: "66afcadc5a695e869b1b99a400787206debe958825867edb08c883bf343afa05",
+      matrixID:
+        "66afcadc5a695e869b1b99a400787206debe958825867edb08c883bf343afa05",
       ActionID: [2, 1, 1, 1],
       AccountKey: ["6027", "6028", "6036", "6043"],
       DocumentID: [1, 1, 1, 1],
-      DriverID: ["qewr135256edrfh", "qewr135256edrfh", "qewr135256edrfh", "qewr135256edrfh"],
+      DriverID: [
+        "qewr135256edrfh",
+        "qewr135256edrfh",
+        "qewr135256edrfh",
+        "qewr135256edrfh",
+      ],
       ActionAutho: ["Default", "Default", "Default", "Default"],
       itemsHeaders: ["HI250SA", "SX250SA", "AB500SA", "XR100SA"],
       itemsNames: ["הרנה 250 גרם", "גת SPXP", "אבו מיסמר גדול", "גת XR"],
@@ -49,28 +55,27 @@ const driversUrl =
 const castumersUrl = "https://bizmod-ha-api-001.onrender.com/api/getrecords";
 
 export const fetchLastMatrix = async () => {
-  // const headers = {
-  //   "Content-Type": "application/json",
-  //   authorization: ofekBarier,
-  // };
+  const headers = {
+    "Content-Type": "application/json",
+    authorization: ofekBarier,
+  };
 
-  // return await axios
-  //   .post(
-  //     lastMatrixUrl,
-  //     {},
-  //     {
-  //       withCredentials: false,
-  //       headers: headers,
-  //     }
-  //   )
-  //   .then((res) => {
-  //     console.log("last matrix ", res.data);
-  //   return res.data.result.data[0].matrixesData;
-  console.log({ mockMatrix });
-  return mockMatrix;
+  return await axios
+    .post(
+      lastMatrixUrl,
+      {},
+      {
+        withCredentials: false,
+        headers: headers,
+      }
+    )
+    .then((res) => {
+      console.log("last matrix ", res.data.result.data[0].matrixesData);
+      return res.data.result.data[0].matrixesData;
+    });
 };
-// })
-
+//console.log({ mockMatrix });
+//return mockMatrix;
 // .catch((err) => console.log);
 //};
 

@@ -46,7 +46,9 @@ function Nav(props: DashBoardProps) {
 
   useEffect(() => {
     const STORED = window.localStorage.getItem("missions");
-    if (STORED != "undefined" && STORED != null) setMissions([...JSON.parse(STORED)]);
+    if (STORED != "undefined" && STORED != null)
+      setMissions([...JSON.parse(STORED)]);
+    constractMissions(props.matrix, props.castumers);
   }, []);
   useEffect(() => {
     window.localStorage.setItem("missions", JSON.stringify(missions));
@@ -95,8 +97,10 @@ function Nav(props: DashBoardProps) {
 
   const handleGlobalRender = async (e: any) => {
     console.log("id in handle click ", e.target.id);
-    if (e.target.id === "stockReady") setRender({ ...renderScreen("table", render) });
-    e.target.id == "table" && setRender({ ...renderScreen(e.target.id, render) });
+    if (e.target.id === "stockReady")
+      setRender({ ...renderScreen("table", render) });
+    e.target.id == "table" &&
+      setRender({ ...renderScreen(e.target.id, render) });
     e.target.id == "log" && setRender({ ...renderScreen(e.target.id, render) });
     console.log({ props });
     if (!missions) {
@@ -107,7 +111,10 @@ function Nav(props: DashBoardProps) {
 
   const constractMissions = async (matrixData: any, castumers: any) => {
     console.log({ matrixData });
-    let currentCasumersKeys = getCurrentAccountKeys(matrixData.mainMatrix.AccountKey, props.user?.pivotKey);
+    let currentCasumersKeys = getCurrentAccountKeys(
+      matrixData.mainMatrix.AccountKey,
+      props.user?.pivotKey
+    );
 
     let thisCastumer: any[] = [];
     let missionsArray: object[] = [];
@@ -135,10 +142,16 @@ function Nav(props: DashBoardProps) {
   return (
     <div className="flex flex-col">
       <Header render={render} user={props.user} />
-      {render.table && missions && <Table missions={missions} handleClick={handleRowClick} />}
+      {render.table && missions && (
+        <Table missions={missions} handleClick={handleRowClick} />
+      )}
 
       {render.details && (
-        <Specs matrix={props.matrix} mission={currentMission} handleGlobalRender={handleGlobalRender} />
+        <Specs
+          matrix={props.matrix}
+          mission={currentMission}
+          handleGlobalRender={handleGlobalRender}
+        />
       )}
       {render.storage && (
         <Storage
