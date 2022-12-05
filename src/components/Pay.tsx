@@ -22,7 +22,7 @@ const Coins = [
   { img: coin5, amount: 0, billValue: 5 },
   { img: coin10, amount: 0, billValue: 10 },
 ];
-function Pay({ handleClick }) {
+function Pay(props: any) {
   const [bills, setBills] = useState([...Bills]);
   const [coins, setCoins] = useState([...Coins]);
   const [totalSum, setTotalSum] = useState(0);
@@ -43,7 +43,7 @@ function Pay({ handleClick }) {
   return (
     <div className="flex flex-col">
       <div className="hdr1 ">
-        <button id="main" className="btn1 w-1/4" onClick={handleClick}>
+        <button id="main" className="btn1 w-1/4" onClick={props.handleClick}>
           חזור
         </button>
         <div className="flex w-1/2">
@@ -56,7 +56,7 @@ function Pay({ handleClick }) {
           </div>
         </div>
 
-        <button id="main" onClick={handleClick} className="btn1 w-1/4">
+        <button id="main" onClick={props.handleClick} className="btn1 w-1/4">
           הפק
         </button>
       </div>
