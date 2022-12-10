@@ -58,8 +58,12 @@ export default function Login() {
             כנס
           </button>
         </div>
+      ) : matrix.isLoading || castumers.isLoading ? (
+        <h1>laoding ....</h1>
+      ) : matrix.error || castumers.error ? (
+        <h1>error ....</h1>
       ) : (
-        <Nav user={driver} matrix={matrix.data} castumers={castumers.data} />
+        matrix.data && castumers.data && <Nav user={driver} matrix={matrix.data} castumers={castumers.data} />
       )}
     </>
   );

@@ -1,38 +1,20 @@
 import { useEffect, useState } from "react";
 import { driver } from "../typing";
 import Specs from "./Specs";
-import Table from "./Table";
+import Table from "./Missions";
 import Storage from "./Storage";
 import Header from "./Header";
-import { renderScreen } from "../helper";
+import { constractMissions, renderScreen, sortTableData } from "../helper";
+import Missions from "./Missions";
+//import { updateNavData } from "../localStorage";
 type DashBoardProps = {
   user: driver | undefined;
   matrix?: any;
   castumers?: object[];
 };
 
-const getCurrentAccountKeys = (keysArrey: any, userKey: any) => {
-  return keysArrey;
-};
-
-const sortTableData = async (missions: any[], Midx: number) => {
-  let a = [];
-  missions.forEach((m: any, i: number) => {
-    if (i != Midx) a.push(m);
-  });
-  if (missions[Midx]["isDone"] == true) {
-    a.push(missions[Midx]);
-    console.log("in sort table push ", { a, missions });
-    return a;
-  } else {
-    a.unshift(missions[Midx]);
-    console.log("in sort table unshift ", { a, missions });
-    return a;
-  }
-};
-
 function Nav(props: DashBoardProps) {
-  const [missions, setMissions] = useState<any>();
+  const [missions, setMissions] = useState<any>(constractMissions(props.matrix, props.castumers));
   const [currentMission, setCurrentMission] = useState<any>();
 
   const [render, setRender] = useState<any>({
@@ -43,16 +25,6 @@ function Nav(props: DashBoardProps) {
     isDone: false,
     storage: true,
   });
-
-  useEffect(() => {
-    const STORED = window.localStorage.getItem("missions");
-    if (STORED != "undefined" && STORED != null)
-      setMissions([...JSON.parse(STORED)]);
-    constractMissions(props.matrix, props.castumers);
-  }, []);
-  useEffect(() => {
-    window.localStorage.setItem("missions", JSON.stringify(missions));
-  }, [missions]);
 
   const handleRowClick = async (e: any, p: any) => {
     let cellId = e.target.id;
@@ -65,20 +37,9 @@ function Nav(props: DashBoardProps) {
       }
     });
 
-    if (cellId == "isDone") {
-      let rowIndex: number = 0;
-      let nArray = missions.map((m: any, midx: number) => {
-        if (p.row["נייד"] == m["נייד"]) {
-          console.log("data in p.row ", p.row, "data in m ", m);
-          rowIndex = midx;
-          return { ...m, isDone: !m.isDone };
-        } else return m;
-      });
-
-      let newd = await sortTableData(nArray, rowIndex);
-
-      setMissions([...newd]);
-    }
+    let { nArray, rowIndex } = updateStatus(cellId, p, missions);
+    let newd = await sortTableData(nArray, rowIndex);
+    setMissions([...newd]);
 
     if (spec?.length > 0 && cellId != "" && cellId != "isDone") {
       console.log("before set current mission ", spec);
@@ -86,21 +47,25 @@ function Nav(props: DashBoardProps) {
       setRender({ ...renderScreen(cellId, render) });
     }
   };
-
-  // const renderScreen = (cellId: string) => {
-  //   console.log("in render screen ", render);
-  //   let r: any = {};
-  //   Object.keys(render).forEach((key) => (key == cellId ? (r[key] = true) : (r[key] = false)));
-  //   console.log({ r });
-  //   return r;
-  // };
+  const updateStatus = (cellId: string, p: any, missions: any) => {
+    let nArray = [],
+      rowIndex = 0;
+    if (cellId == "isDone") {
+      nArray = missions.map((m: any, midx: number) => {
+        if (p.row["נייד"] == m["נייד"]) {
+          console.log("data in p.row ", p.row, "data in m ", m);
+          rowIndex = midx;
+          return { ...m, isDone: !m.isDone };
+        } else return m;
+      });
+    }
+    return { nArray, rowIndex };
+  };
 
   const handleGlobalRender = async (e: any) => {
     console.log("id in handle click ", e.target.id);
-    if (e.target.id === "stockReady")
-      setRender({ ...renderScreen("table", render) });
-    e.target.id == "table" &&
-      setRender({ ...renderScreen(e.target.id, render) });
+    if (e.target.id === "stockReady") setRender({ ...renderScreen("table", render) });
+    e.target.id == "table" && setRender({ ...renderScreen(e.target.id, render) });
     e.target.id == "log" && setRender({ ...renderScreen(e.target.id, render) });
     console.log({ props });
     if (!missions) {
@@ -109,49 +74,17 @@ function Nav(props: DashBoardProps) {
     }
   };
 
-  const constractMissions = async (matrixData: any, castumers: any) => {
-    console.log({ matrixData });
-    let currentCasumersKeys = getCurrentAccountKeys(
-      matrixData.mainMatrix.AccountKey,
-      props.user?.pivotKey
-    );
-
-    let thisCastumer: any[] = [];
-    let missionsArray: object[] = [];
-
-    for (let i = 0; i <= currentCasumersKeys.length - 1; i++) {
-      thisCastumer = await castumers.filter((castumer: any) => {
-        return castumer["מפתח"] == currentCasumersKeys[i].toString();
-      });
-      if (thisCastumer?.length) {
-        console.log("resets missions !!!");
-        let record = {
-          שם: thisCastumer[0]["שם חשבון"],
-          כתובת: thisCastumer[0]["כתובת"],
-          נייד: thisCastumer[0]["טלפון נייד"],
-          חוב: thisCastumer[0]["יתרת חשבון"],
-
-          isDone: false,
-        };
-        missionsArray.push(record);
-      }
-    }
-    return missionsArray;
-  };
-
   return (
     <div className="flex flex-col">
       <Header render={render} user={props.user} />
-      {render.table && missions && (
-        <Table missions={missions} handleClick={handleRowClick} />
+      {render.table && missions && Array.isArray(missions) ? (
+        <Missions missions={missions} handleClick={handleRowClick} />
+      ) : (
+        <h1>loading...</h1>
       )}
 
       {render.details && (
-        <Specs
-          matrix={props.matrix}
-          mission={currentMission}
-          handleGlobalRender={handleGlobalRender}
-        />
+        <Specs matrix={props.matrix} mission={currentMission} handleGlobalRender={handleGlobalRender} />
       )}
       {render.storage && (
         <Storage
