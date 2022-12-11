@@ -14,6 +14,7 @@ export default function DataRow(props: any) {
 
   return (
     <tr
+      className="text-center"
       ref={setNodeRef}
       id={props.id}
       {...attributes}

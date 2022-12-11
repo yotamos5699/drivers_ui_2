@@ -84,8 +84,8 @@ export default function Missions(props: any) {
     <div>
       {tableData ? (
         <table>
-          <thead className="bg-white border-b">
-            <tr className="text-sm font-medium text-gray-900 px-6 py-4 text-center">
+          <thead>
+            <tr className="tr">
               {Object.keys(tableData[0]).map(
                 (header, idx) =>
                   header != "isDone" && (
