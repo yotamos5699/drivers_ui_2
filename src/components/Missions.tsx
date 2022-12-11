@@ -83,45 +83,47 @@ export default function Missions(props: any) {
     // <div ref={listRef}>
     <div>
       {tableData ? (
-        <table>
-          <thead>
-            <tr className="tr">
-              {Object.keys(tableData[0]).map(
-                (header, idx) =>
-                  header != "isDone" && (
-                    <td className="td" key={idx + 1111}>
-                      {header}
-                    </td>
-                  )
-              )}
-              <td className="td">פירוט</td>
-              <td className="td">נווט</td>
+        // <table>
+        //   <thead>
+        //     <tr className="tr">
+        //       {Object.keys(tableData[0]).map(
+        //         (header, idx) =>
+        //           header != "isDone" && (
+        //             <td className="td" key={idx + 1111}>
+        //               {header}
+        //             </td>
+        //           )
+        //       )}
+        //       <td className="td">פירוט</td>
+        //       <td className="td">נווט</td>
 
-              <td className="td">בוצע</td>
-            </tr>
-          </thead>
+        //       <td className="td">בוצע</td>
+        //     </tr>
+        //   </thead>
 
-          <tbody>
-            <DndContext sensors={sensor} collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
-              <SortableContext items={tableData.map((row: any) => row.id)} strategy={verticalListSortingStrategy}>
-                {tableData.map((row: any, idx: number) => {
-                  return (
-                    <DataRow
-                      id={row.id}
-                      key={idx}
-                      index={idx}
-                      row={row}
-                      //  onChange={handleChange}
-                      // handleClick={handleClick}
-                      headers={Object.keys(tableData[0])}
-                    />
-                  );
-                })}
-              </SortableContext>
-            </DndContext>
-          </tbody>
-        </table>
+        //   <tbody>
+        <DndContext sensors={sensor} collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
+          <SortableContext items={tableData.map((row: any) => row.id)} strategy={verticalListSortingStrategy}>
+            <div className="flex flex-col w-full items-center justify-center gap-2">
+              {tableData.map((row: any, idx: number) => {
+                return (
+                  <DataRow
+                    id={row.id}
+                    key={idx}
+                    index={idx}
+                    row={row}
+                    //  onChange={handleChange}
+                    // handleClick={handleClick}
+                    headers={Object.keys(tableData[0])}
+                  />
+                );
+              })}
+            </div>
+          </SortableContext>
+        </DndContext>
       ) : (
+        //   </tbody>
+        // </table>
         <h1>loading.....</h1>
       )}
     </div>

@@ -1,20 +1,18 @@
 import { CSS } from "@dnd-kit/utilities";
 import { BiNavigation, BiDetail } from "react-icons/bi";
 import { useSortable } from "@dnd-kit/sortable";
+import { AiOutlinePhone } from "react-icons/ai";
 export default function DataRow(props: any) {
   const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({ id: props.id });
   const style = {
     transition,
     transform: CSS.Transform.toString(transform),
-    border: "2px solid black",
-    marginBottom: 5,
-    marginTop: 20,
+    //:center,
   };
-  let rData = props.row;
 
   return (
-    <tr
-      className="text-center"
+    <div
+      className={"flex flex-col items-center px-2 py-4 w-4/5 bg-gray-100 shadow-md rounded-md gap-1"}
       ref={setNodeRef}
       id={props.id}
       {...attributes}
@@ -22,35 +20,45 @@ export default function DataRow(props: any) {
       style={style}
       onClick={(e) => props.handleClick(e, props)}
     >
-      {Object.values(props.row).map((cell: any, idx) => {
-        // console.log(cell, "header ", props.headers[idx]);
-        return (
-          props.headers[idx] != "isDone" && (
-            <td
-            // className="td"
-            //key={idx}
-            >
-              {cell == 0 ? 0 : cell ? cell : "noData"}
-            </td>
-          )
-        );
-      })}
-      <td id="details" className="td">
-        <BiDetail id="details" className={"icn1"} />
-      </td>
-      <td id="nav" className="td">
-        <BiNavigation className={"icn1"} />
-      </td>
-      {/* // <td id="isDone" className="td"> */}
-      <td>
-        <input
-          id="isDone"
-          type={"checkbox"}
-          onChange={(e) => props.handleClick(e, props)}
-          checked={props.row["isDone"]}
-        />
-      </td>
+      <div className="flex gap-2">
+        <span className="font-bold"> שם </span>
+        <span> {props.row["שם"]} </span>
+        <span className="font-bold"> נייד </span>
+        <span> {props.row["נייד"]} </span>
+        <span className="font-bold">חייג</span>
+        <span>
+          <AiOutlinePhone />
+        </span>
+      </div>
+      <div className="flex gap-2">
+        <span className="font-bold"> כתובת </span>
+        <span> {props.row["כתובת"]} </span>
+        <span className="font-bold">נווט</span>
+        <span>
+          <BiNavigation className="font-bold" />{" "}
+        </span>
+      </div>
+      <div className="flex gap-2">
+        <span className="font-bold">פרטים </span>
+        <BiDetail id="details" />
+        <span className="font-bold">בוצע </span>
+        <span>
+          <input
+            id="isDone"
+            type={"checkbox"}
+            onChange={(e) => props.handleClick(e, props)}
+            checked={props.row["isDone"]}
+          />
+        </span>
+      </div>
       {/* </td> */}
-    </tr>
+    </div>
   );
 }
+
+id: 0;
+isDone: false;
+חוב: -390;
+כתובת: 'רש"י 1';
+נייד: "505933420";
+שם: "קסם משקאות";
