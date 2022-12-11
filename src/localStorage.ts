@@ -14,9 +14,9 @@ export function updateLocalData(props: any) {
     window.localStorage.setItem("data", JSON.stringify(localData));
   }, [localData]);
 
-  useEffect(() => {
-    if (localData.missions != "undefined") setLocalData([...props.missions]);
-  }, [props.missions]);
+  // useEffect(() => {
+  //   if (localData.missions != "undefined") setLocalData([...props.missions]);
+  // }, [props.missions]);
 
   return;
 }
