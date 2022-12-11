@@ -7,12 +7,13 @@ export default function DataRow(props: any) {
   const style = {
     transition,
     transform: CSS.Transform.toString(transform),
+
     //:center,
   };
 
   return (
     <div
-      className={"flex flex-col items-center px-2 py-4 w-4/5 bg-gray-100 shadow-md rounded-md gap-1"}
+      className={"flex flex-col items-center px-2 py-4 w-4/5 bg-gray-100 shadow-md rounded-md gap-1 touch-none"}
       ref={setNodeRef}
       id={props.id}
       {...attributes}
@@ -34,16 +35,20 @@ export default function DataRow(props: any) {
         <span className="font-bold"> כתובת </span>
         <span> {props.row["כתובת"]} </span>
         <span className="font-bold">נווט</span>
-        <span>
+        <span className="items-center">
           <BiNavigation className="font-bold" />{" "}
         </span>
       </div>
       <div className="flex gap-2">
         <span className="font-bold">פרטים </span>
-        <BiDetail id="details" />
+
+        <span className="icn1">
+          <BiDetail id="details" />
+        </span>
         <span className="font-bold">בוצע </span>
         <span>
           <input
+            className="icn1"
             id="isDone"
             type={"checkbox"}
             onChange={(e) => props.handleClick(e, props)}
