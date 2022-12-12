@@ -26,34 +26,15 @@ function Nav(props: DashBoardProps) {
   });
 
   const handleRowClick = async (e: any) => {
-    console.log("in handle row click", { e });
     const MissionID = e?.active?.id ? e.active.id : null;
     const cellId = e.activatorEvent?.target?.id;
-    console.log({ MissionID });
-    if (MissionID) {
-      console.log("mission id ", { MissionID });
-      let spec: object[] | any = props.castumers?.filter((castumer: any) => {
-        if (MissionID == castumer["מפתח"]) {
-          return castumer;
-        }
-      });
 
-      if (spec?.length > 0 && cellId != "" && cellId != "isDone") {
-        console.log("before set current mission ", spec);
-        setCurrentMission(spec[0]);
-        // setRender({ ...renderScreen(cellId, render) });
-      }
-    }
+    if (MissionID)
+      useNavActions({ type: cellId, payload: { MissionID: MissionID, cellId: cellId } }, props, setCurrentMission);
   };
 
   const handleGlobalRender = async (e: any, p: any) => {
-    console.log("in global render function", { e });
-    console.log("id in handle click ", e.target.id);
-    if (e.target.id === "stockReady") setRender({ ...renderScreen("table", render) });
-    e.target.id == "table" && setRender({ ...renderScreen(e.target.id, render) });
-    e.target.id == "log" && setRender({ ...renderScreen(e.target.id, render) });
-    e.target.id == "details" && setRender({ ...renderScreen("details", render) });
-    console.log({ props });
+    useRendererActions({ type: e.target.id }, render, renderScreen, setRender);
     if (!missions) {
       let tasks = await constractMissions(props.matrix, props.castumers);
       setMissions(tasks);
@@ -85,3 +66,45 @@ function Nav(props: DashBoardProps) {
 }
 
 export default Nav;
+
+type UseRender = {
+  type: string;
+};
+
+export const useRendererActions = (action: UseRender, render: any, renderScreen: any, setRender: any) => {
+  switch (action.type) {
+    case "stockReady":
+      setRender({ ...renderScreen("table", render) });
+      return console.log("rendered ", { action });
+    case "table":
+      setRender({ ...renderScreen("table", render) });
+      return console.log("rendered ", { action });
+    case "log":
+      setRender({ ...renderScreen("log", render) });
+      return console.log("rendered ", { action });
+    case "details":
+      setRender({ ...renderScreen("details", render) });
+      return console.log("rendered ", { action });
+
+    default:
+      return console.log("no screen to render", { action });
+  }
+};
+
+export const useNavActions = (action: any, props: any, seter: any) => {
+  switch (action.type) {
+    case "details":
+      let spec: object[] | any = props.castumers?.filter((castumer: any) => {
+        if (action.payload.MissionID == castumer["מפתח"]) {
+          return castumer;
+        }
+      });
+
+      if (spec?.length) {
+        console.log("before set current mission ", spec);
+        seter(spec[0]);
+        return console.log("current mission ok");
+      }
+      return console.log("current doesnt exist");
+  }
+};

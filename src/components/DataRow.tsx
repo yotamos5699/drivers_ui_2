@@ -26,12 +26,15 @@ export default function DataRow(props: any) {
         <span> {props.row["שם"]} </span>
         <span className="font-bold"> נייד </span>
         <span> {props.row["נייד"]} </span>
-        <span className="font-bold" id={"dial"}>
-          חייג
-        </span>
-        <span id={"dial"}>
-          <AiOutlinePhone id={"dial"} />
-        </span>
+        <a className="flex" href={`tel:+972${props.row["נייד"]}`}>
+          {" "}
+          <span className="font-bold" id={"dial"}>
+            חייג
+          </span>
+          <span id={"dial"}>
+            <AiOutlinePhone href={`tel:+972${props.row["נייד"]}`} id={"dial"} />
+          </span>
+        </a>
       </div>
       <div className="flex gap-2">
         <span className="font-bold"> כתובת </span>
