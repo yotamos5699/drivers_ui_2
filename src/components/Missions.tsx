@@ -1,129 +1,66 @@
 import { useAutoAnimate } from "@formkit/auto-animate/react";
-import { useQuery } from "@tanstack/react-query";
-import { useEffect, useState } from "react";
-
+import { useEffect, useReducer, useRef, useState } from "react";
 import { DndContext, closestCenter, useSensor, PointerSensor } from "@dnd-kit/core";
-import { arrayMove, SortableContext, verticalListSortingStrategy } from "@dnd-kit/sortable";
+import { SortableContext, verticalListSortingStrategy } from "@dnd-kit/sortable";
 import DataRow from "./DataRow";
+import { missionsReducer } from "../helper";
 
 export default function Missions(props: any) {
-  // const sortTableData = (missions: any[], Midx: number) => {
-  //   let a = [];
-  //   missions.forEach((m: any, i: number) => {
-  //     if (i != Midx) a.push(m);
-  //   });
-  //   a.push(missions[Midx]);
-  //   console.log({ a });
-  //   return a;
-  // };
-  const dddd = ["sss", "fff", "Asd", "isuid"];
-  console.log({ props });
+  console.log("missions props ", { props });
+  const [tableData, dispatch] = useReducer(missionsReducer, {
+    data: props.missions,
+    startIndex: 0,
+    endIndex: 0,
+  });
 
-  // const setMissions = (missions: any) => {
-  //   let sorted: any[] = [];
-  //   let m = missions;
-  //   m.map((m: any) => (m.isDone == true ? sorted.push(m) : sorted.unshift(m)));
-
-  //   return sorted;
-  // };
-  //const queryClient = useQueryClient();
   const sensor = [useSensor(PointerSensor)];
-  const [tableData, setTableData] = useState(() =>
-    props.missions.map((row: any, i: number) => {
-      return { id: i, ...row };
-    })
-  );
+  const [td, setTd] = useState<any[]>();
 
-  // setTableData([...newTdata]);
-
-  // async function updateRowStatus(data: any) {
-  //   console.log("update table data props ", { data });
-  //   if (data.cellID == "isDone") {
-  //     console.log("is is done !!");
-  //     let newTableData = [];
-  //     for (let i = 0; i <= data.tableData.length - 1; i++) {
-  //       let parsedIndex = parseInt(data.index);
-  //       if (i === parsedIndex) {
-  //         console.log({ i, parsedIndex });
-  //         newTableData.push({ ...data.tableData[i], isDone: !data.tableData[i].isDone });
-  //       } else {
-  //         newTableData.push(data.tableData[i]);
-  //         console.log;
-  //       }
-  //     }
-
-  //     console.log({ newTableData });
-  //     setTableData([...newTableData]);
-  //   }
-  // }
-  // const handleChange = (e: any) => {
-  //   console.log("the e ", { e });
-  // };
-
-  // const handleClick = (e: any, props: any) => {
-  //   const cid = e.target.id;
-  //   console.log(props.index, " ", { tableData, cid });
-  //   cid == "isDone" && updateRowStatus({ tableData: tableData, index: props.index, cellID: cid });
-  // };
+  useEffect(() => {
+    setTd([...tableData.data]);
+  }, [tableData.data]);
 
   const handleDragEnd = (e: any) => {
-    if (e.active.id !== e.over.id) {
-      console.log("sheet is on");
+    const nativeEvent = e.activatorEvent?.target?.id ? e.activatorEvent.target.id : null;
 
-      const oldIndex = tableData.findIndex((row: any) => row.id === e.active.id);
-      const newIndex = tableData.findIndex((row: any) => row.id === e.over.id);
-
-      setTableData([...arrayMove(tableData, parseInt(oldIndex), parseInt(newIndex))]);
+    if (!isNaN(nativeEvent) && e?.active?.id !== e?.over?.id) {
+      dispatch({ type: "dnd", payload: { startIndex: e.active.id, endIndex: e.over.id } });
+    } else if (nativeEvent && isNaN(nativeEvent) && nativeEvent != null) {
+      if (nativeEvent == "isDone") {
+        dispatch({ type: "isDone", payload: { startIndex: e.active.id } });
+      }
+      if (nativeEvent == "details") {
+        props.handleGlobalRender(e.activatorEvent);
+        props.handleClick(e);
+      }
     }
-    console.log({ tableData });
   };
 
-  //  const [listRef] = useAutoAnimate<HTMLDivElement>();
+  const [listRef] = useAutoAnimate<HTMLDivElement>();
   return (
-    // <div ref={listRef}>
     <div>
-      {tableData ? (
-        // <table>
-        //   <thead>
-        //     <tr className="tr">
-        //       {Object.keys(tableData[0]).map(
-        //         (header, idx) =>
-        //           header != "isDone" && (
-        //             <td className="td" key={idx + 1111}>
-        //               {header}
-        //             </td>
-        //           )
-        //       )}
-        //       <td className="td">פירוט</td>
-        //       <td className="td">נווט</td>
-
-        //       <td className="td">בוצע</td>
-        //     </tr>
-        //   </thead>
-
-        //   <tbody>
-        <DndContext sensors={sensor} collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
-          <SortableContext items={tableData.map((row: any) => row.id)} strategy={verticalListSortingStrategy}>
-            <div className="flex flex-col w-full items-center justify-center gap-2">
-              {tableData.map((row: any, idx: number) => {
-                return (
-                  <DataRow
-                    id={row.id}
-                    key={idx}
-                    index={idx}
-                    row={row}
-                    //  onChange={handleChange}
-                    // handleClick={handleClick}
-                    headers={Object.keys(tableData[0])}
-                  />
-                );
-              })}
-            </div>
-          </SortableContext>
-        </DndContext>
+      {tableData.data ? (
+        td && (
+          <DndContext sensors={sensor} collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
+            <SortableContext items={td.map((row: any) => row.id)} strategy={verticalListSortingStrategy}>
+              <div ref={listRef} className="flex flex-col w-full items-center justify-center gap-2">
+                {td.map((row: any, idx: number) => {
+                  return (
+                    <DataRow
+                      id={row.id}
+                      key={idx}
+                      index={idx}
+                      row={row}
+                      handleDragEnd={handleDragEnd}
+                      headers={Object.keys(td[0])}
+                    />
+                  );
+                })}
+              </div>
+            </SortableContext>
+          </DndContext>
+        )
       ) : (
-        //   </tbody>
-        // </table>
         <h1>loading.....</h1>
       )}
     </div>

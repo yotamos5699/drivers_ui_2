@@ -19,39 +19,49 @@ export default function DataRow(props: any) {
       {...attributes}
       {...listeners}
       style={style}
-      onClick={(e) => props.handleClick(e, props)}
+      //  onClick={(e) => props.handleClick(e, props)}
     >
       <div className="flex gap-2">
         <span className="font-bold"> שם </span>
         <span> {props.row["שם"]} </span>
         <span className="font-bold"> נייד </span>
         <span> {props.row["נייד"]} </span>
-        <span className="font-bold">חייג</span>
-        <span>
-          <AiOutlinePhone />
+        <span className="font-bold" id={"dial"}>
+          חייג
+        </span>
+        <span id={"dial"}>
+          <AiOutlinePhone id={"dial"} />
         </span>
       </div>
       <div className="flex gap-2">
         <span className="font-bold"> כתובת </span>
+
         <span> {props.row["כתובת"]} </span>
-        <span className="font-bold">נווט</span>
-        <span className="items-center">
-          <BiNavigation className="font-bold" />{" "}
+        <span className="font-bold" id={"navigate"}>
+          נווט
+        </span>
+        <span className="items-center" id={"navigate"}>
+          <BiNavigation className="font-bold" id={"navigate"} />{" "}
         </span>
       </div>
-      <div className="flex gap-2">
-        <span className="font-bold">פרטים </span>
+      <div className="flex gap-2" id={"details"}>
+        <span className="font-bold" id={"details"}>
+          פרטים{" "}
+        </span>
 
-        <span className="icn1">
+        <span className="icn1" id={"details"}>
           <BiDetail id="details" />
         </span>
-        <span className="font-bold">בוצע </span>
-        <span>
+        <span className="font-bold" id={"isDone"}>
+          בוצע{" "}
+        </span>
+        <span id={"isDone"}>
           <input
             className="icn1"
             id="isDone"
             type={"checkbox"}
-            onChange={(e) => props.handleClick(e, props)}
+            //   value={props.row["isDone"]}
+            onChange={(e) => props.handleDragEnd(e, props)}
             checked={props.row["isDone"]}
           />
         </span>
@@ -60,10 +70,3 @@ export default function DataRow(props: any) {
     </div>
   );
 }
-
-id: 0;
-isDone: false;
-חוב: -390;
-כתובת: 'רש"י 1';
-נייד: "505933420";
-שם: "קסם משקאות";

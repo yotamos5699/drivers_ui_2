@@ -1,3 +1,4 @@
+import { arrayMove } from "@dnd-kit/sortable";
 export const d = "s";
 
 export const renderScreen = (cellId: string, render: any) => {
@@ -42,11 +43,47 @@ export const constractMissions = (matrixData: any, castumers: any) => {
         כתובת: thisCastumer[0]["כתובת"],
         נייד: thisCastumer[0]["טלפון נייד"],
         חוב: thisCastumer[0]["יתרת חשבון"],
-
+        id: thisCastumer[0]["מפתח"],
         isDone: false,
       };
       missionsArray.push(record);
     }
   }
   return missionsArray;
+};
+
+export const missionsReducer = (state: any, action: any) => {
+  switch (action.type) {
+    case "dnd":
+      console.log("dispatch is dnd");
+      const oldIndex: number = state.data.findIndex((row: any) => row.id === action.payload.startIndex);
+      const newIndex: number = state.data.findIndex((row: any) => row.id === action.payload.endIndex);
+      return { ...state, data: arrayMove(state.data, oldIndex, newIndex) };
+
+    case "isDone":
+      console.log("dispatch is IsDone");
+      return {
+        ...state,
+        data: [
+          ...state.data.map((row: any) => {
+            if (row.id == action.payload.startIndex) return { ...row, isDone: !row.isDone };
+            else return row;
+          }),
+        ],
+      };
+
+    case "details":
+      console.log("dispatch is details");
+      return state;
+    case "navigate":
+      console.log("dispatch is navigate");
+      return state;
+    case "dail":
+      console.log("dispatch is dail");
+      return state;
+    // case 'reset':
+    //   return init(action.payload);
+    default:
+      console.log("Unsupported action in missions reduser");
+  }
 };

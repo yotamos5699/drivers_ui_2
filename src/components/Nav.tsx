@@ -25,12 +25,12 @@ function Nav(props: DashBoardProps) {
     storage: true,
   });
 
-  const handleRowClick = async (e: any, p: any) => {
-    let cellId = e.target.id;
-
-    console.log({ cellId });
+  const handleRowClick = async (e: any) => {
+    console.log("in handle row click", { e });
+    const MissionID = e.active.id;
+    const cellId = e.activatorEvent?.target?.id;
     let spec: object[] | any = props.castumers?.filter((castumer: any) => {
-      if (p.row["נייד"] == castumer["טלפון נייד"]) {
+      if (MissionID == castumer["מפתח"]) {
         // console.log({ p, e });
         return castumer;
       }
@@ -46,6 +46,7 @@ function Nav(props: DashBoardProps) {
       setRender({ ...renderScreen(cellId, render) });
     }
   };
+
   const updateStatus = (cellId: string, p: any, missions: any) => {
     let nArray = [],
       rowIndex = 0;
@@ -61,11 +62,13 @@ function Nav(props: DashBoardProps) {
     return { nArray, rowIndex };
   };
 
-  const handleGlobalRender = async (e: any) => {
+  const handleGlobalRender = async (e: any, p: any) => {
+    console.log("in global render function", { e });
     console.log("id in handle click ", e.target.id);
     if (e.target.id === "stockReady") setRender({ ...renderScreen("table", render) });
     e.target.id == "table" && setRender({ ...renderScreen(e.target.id, render) });
     e.target.id == "log" && setRender({ ...renderScreen(e.target.id, render) });
+    e.target.id == "details" && setRender({ ...renderScreen("details", render) });
     console.log({ props });
     if (!missions) {
       let tasks = await constractMissions(props.matrix, props.castumers);
@@ -77,12 +80,12 @@ function Nav(props: DashBoardProps) {
     <div className="flex flex-col">
       <Header render={render} user={props.user} />
       {render.table && missions && Array.isArray(missions) ? (
-        <Missions missions={missions} handleClick={handleRowClick} />
+        <Missions missions={missions} handleClick={handleRowClick} handleGlobalRender={handleGlobalRender} />
       ) : (
         <h1>loading...</h1>
       )}
 
-      {render.details && (
+      {render.details && currentMission && (
         <Specs matrix={props.matrix} mission={currentMission} handleGlobalRender={handleGlobalRender} />
       )}
       {render.storage && (
@@ -93,12 +96,7 @@ function Nav(props: DashBoardProps) {
           handleGlobalRender={handleGlobalRender}
         />
       )}
-      {/* <h1>meta data מטריצה</h1>
-      <div>{JSON.stringify(missions)}</div>
-      <h1>לקוחות</h1>
-      <div>{props.castumers ? JSON.stringify(props.castumers[0]) : "error blaaat"}</div> */}
     </div>
-    // Provide the client to your App
   );
 }
 
