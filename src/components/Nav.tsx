@@ -27,39 +27,23 @@ function Nav(props: DashBoardProps) {
 
   const handleRowClick = async (e: any) => {
     console.log("in handle row click", { e });
-    const MissionID = e.active.id;
+    const MissionID = e?.active?.id ? e.active.id : null;
     const cellId = e.activatorEvent?.target?.id;
-    let spec: object[] | any = props.castumers?.filter((castumer: any) => {
-      if (MissionID == castumer["מפתח"]) {
-        // console.log({ p, e });
-        return castumer;
-      }
-    });
-
-    let { nArray, rowIndex } = updateStatus(cellId, p, missions);
-    let newd = await sortTableData(nArray, rowIndex);
-    setMissions([...newd]);
-
-    if (spec?.length > 0 && cellId != "" && cellId != "isDone") {
-      console.log("before set current mission ", spec);
-      setCurrentMission(spec[0]);
-      setRender({ ...renderScreen(cellId, render) });
-    }
-  };
-
-  const updateStatus = (cellId: string, p: any, missions: any) => {
-    let nArray = [],
-      rowIndex = 0;
-    if (cellId == "isDone") {
-      nArray = missions.map((m: any, midx: number) => {
-        if (p.row["נייד"] == m["נייד"]) {
-          console.log("data in p.row ", p.row, "data in m ", m);
-          rowIndex = midx;
-          return { ...m, isDone: !m.isDone };
-        } else return m;
+    console.log({ MissionID });
+    if (MissionID) {
+      console.log("mission id ", { MissionID });
+      let spec: object[] | any = props.castumers?.filter((castumer: any) => {
+        if (MissionID == castumer["מפתח"]) {
+          return castumer;
+        }
       });
+
+      if (spec?.length > 0 && cellId != "" && cellId != "isDone") {
+        console.log("before set current mission ", spec);
+        setCurrentMission(spec[0]);
+        // setRender({ ...renderScreen(cellId, render) });
+      }
     }
-    return { nArray, rowIndex };
   };
 
   const handleGlobalRender = async (e: any, p: any) => {
