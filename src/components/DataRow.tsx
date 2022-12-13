@@ -55,7 +55,7 @@ export default function DataRow(props: any) {
       </div>
       <div className="flex gap-2">
         <a
-          href={`"https://www.waze.com/ul?q=${new URLSearchParams(
+          href={`https://www.waze.com/ul?q=${new URLSearchParams(
             props.row["כתובת"]
           )}&navigate=yes`}
         >
