@@ -1,19 +1,22 @@
 import { useState } from "react";
-import { driver } from "../typing";
+import { driver, Tasks } from "../typing";
 import Specs from "./Specs";
 import Storage from "./Storage";
 import Header from "./Header";
-import { constractMissions, renderScreen, sortTableData } from "../helper";
+import { constractMissions, renderScreen } from "../helper";
 import Missions from "./Missions";
 
 type DashBoardProps = {
+  driver: string | number;
   user: driver | undefined;
   matrix?: any;
   castumers?: object[];
 };
 
 function Nav(props: DashBoardProps) {
-  const [missions, setMissions] = useState<any>(constractMissions(props.matrix, props.castumers));
+  const [missions, setMissions] = useState<Tasks>(
+    constractMissions(props.matrix, props.castumers, props.driver)
+  );
   const [currentMission, setCurrentMission] = useState<any>();
 
   const [render, setRender] = useState<any>({
@@ -30,36 +33,63 @@ function Nav(props: DashBoardProps) {
     const cellId = e.activatorEvent?.target?.id;
 
     if (MissionID)
-      useNavActions({ type: cellId, payload: { MissionID: MissionID, cellId: cellId } }, props, setCurrentMission);
+      useNavActions(
+        { type: cellId, payload: { MissionID: MissionID, cellId: cellId } },
+        props,
+        setCurrentMission
+      );
   };
 
-  const handleGlobalRender = async (e: any, p: any) => {
+  const handleGlobalRender = async (e: any) => {
     useRendererActions({ type: e.target.id }, render, renderScreen, setRender);
     if (!missions) {
-      let tasks = await constractMissions(props.matrix, props.castumers);
+      let tasks: Tasks = constractMissions(
+        props.matrix,
+        props.castumers,
+        props.driver
+      );
       setMissions(tasks);
     }
   };
 
   return (
-    <div className="flex flex-col">
+    <div className="flex flex-col border-4 border-red-500">
       <Header render={render} user={props.user} />
-      {render.table && missions && Array.isArray(missions) ? (
-        <Missions missions={missions} handleClick={handleRowClick} handleGlobalRender={handleGlobalRender} />
+      {render.table && missions.missions && Array.isArray(missions.missions) ? (
+        <Missions
+          missions={missions.missions}
+          handleClick={handleRowClick}
+          handleGlobalRender={handleGlobalRender}
+        />
       ) : (
         <h1>loading...</h1>
       )}
 
       {render.details && currentMission && (
-        <Specs matrix={props.matrix} mission={currentMission} handleGlobalRender={handleGlobalRender} />
+        <Specs
+          matrix={props.matrix}
+          mission={currentMission}
+          handleGlobalRender={handleGlobalRender}
+        />
       )}
-      {render.storage && (
+      {render.storage && missions?.missions?.length > 0 ? (
         <Storage
           matrix={props.matrix}
           mission={currentMission}
           castumers={props.castumers}
           handleGlobalRender={handleGlobalRender}
+          filterdKeys={missions.filterdKeys}
         />
+      ) : (
+        render.storage && (
+          <h1
+            className={
+              "text-center text-9xl justify-center border-4 border-red-500"
+            }
+          >
+            אין משימות לנהג
+          </h1>
+        )
       )}
     </div>
   );
@@ -71,7 +101,12 @@ type UseRender = {
   type: string;
 };
 
-export const useRendererActions = (action: UseRender, render: any, renderScreen: any, setRender: any) => {
+export const useRendererActions = (
+  action: UseRender,
+  render: any,
+  renderScreen: any,
+  setRender: any
+) => {
   switch (action.type) {
     case "stockReady":
       setRender({ ...renderScreen("table", render) });

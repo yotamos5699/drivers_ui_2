@@ -7,6 +7,7 @@ import { driver } from "../typing";
 export default function Login() {
   const [driver, setDriver] = useState<driver | undefined>();
   const [input, setInput] = useState("");
+
   const drivers = useQuery({
     queryKey: ["drivers"],
     queryFn: fetchDriversData,
@@ -63,7 +64,16 @@ export default function Login() {
       ) : matrix.error || castumers.error ? (
         <h1>error ....</h1>
       ) : (
-        matrix.data && castumers.data && <Nav user={driver} matrix={matrix.data} castumers={castumers.data} />
+        matrix.data &&
+        castumers.data &&
+        driver && (
+          <Nav
+            user={driver}
+            matrix={matrix.data}
+            castumers={castumers.data}
+            driver={driver.pivotKey}
+          />
+        )
       )}
     </>
   );

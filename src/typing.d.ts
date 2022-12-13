@@ -4,3 +4,8 @@ export type driver = {
   name: string;
   password: string;
 };
+
+export type Tasks = {
+  missions: object[];
+  filterdKeys: string[];
+};

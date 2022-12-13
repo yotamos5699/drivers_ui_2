@@ -1,10 +1,13 @@
 import { arrayMove } from "@dnd-kit/sortable";
+import { Tasks } from "./typing";
 export const d = "s";
 
 export const renderScreen = (cellId: string, render: any) => {
   console.log("in render screen ", render);
   let r: any = {};
-  Object.keys(render).forEach((key) => (key == cellId ? (r[key] = true) : (r[key] = false)));
+  Object.keys(render).forEach((key) =>
+    key == cellId ? (r[key] = true) : (r[key] = false)
+  );
   console.log({ r });
   return r;
 };
@@ -25,10 +28,19 @@ export const sortTableData = async (missions: any[], Midx: number) => {
   }
 };
 
-export const constractMissions = (matrixData: any, castumers: any) => {
+export const constractMissions = (
+  matrixData: any,
+  castumers: any,
+  driver: any
+): Tasks => {
   console.log({ matrixData });
-  let currentCasumersKeys = matrixData.mainMatrix.AccountKey;
-
+  console.log({ matrixData, castumers, driver });
+  let currentCasumersKeys = matrixData.mainMatrix.AccountKey.filter(
+    (key: string, i: number) => {
+      if (matrixData.mainMatrix.DriverID[i] == driver) return key;
+    }
+  );
+  console.log({ currentCasumersKeys });
   let thisCastumer: any[] = [];
   let missionsArray: object[] = [];
 
@@ -49,15 +61,21 @@ export const constractMissions = (matrixData: any, castumers: any) => {
       missionsArray.push(record);
     }
   }
-  return missionsArray;
+  const filterdKeys = currentCasumersKeys;
+  console.log({ missionsArray });
+  return { missions: missionsArray, filterdKeys: filterdKeys };
 };
 
 export const missionsReducer = (state: any, action: any) => {
   switch (action.type) {
     case "dnd":
       console.log("dispatch is dnd");
-      const oldIndex: number = state.data.findIndex((row: any) => row.id === action.payload.startIndex);
-      const newIndex: number = state.data.findIndex((row: any) => row.id === action.payload.endIndex);
+      const oldIndex: number = state.data.findIndex(
+        (row: any) => row.id === action.payload.startIndex
+      );
+      const newIndex: number = state.data.findIndex(
+        (row: any) => row.id === action.payload.endIndex
+      );
       return { ...state, data: arrayMove(state.data, oldIndex, newIndex) };
 
     case "isDone":
@@ -66,7 +84,8 @@ export const missionsReducer = (state: any, action: any) => {
         ...state,
         data: [
           ...state.data.map((row: any) => {
-            if (row.id == action.payload.startIndex) return { ...row, isDone: !row.isDone };
+            if (row.id == action.payload.startIndex)
+              return { ...row, isDone: !row.isDone };
             else return row;
           }),
         ],

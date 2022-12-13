@@ -83,7 +83,7 @@ function Specs(props: SpecsProps) {
             <thead className="bg-white border-b">
               <tr
                 key={"asd"}
-                className="text-sm font-medium text-gray-900 px-6 py-4 text-center"
+                className="text-sm font-medium text-gray-900 px-6 py-4 text-center  items-center w-4/5 bg-gray- shadow-md rounded-md gap-1 touch-none"
               >
                 {Object.keys(data[0]).map(
                   (header, idx) =>
@@ -102,7 +102,11 @@ function Specs(props: SpecsProps) {
               {data.map((row: any, idx: number) => (
                 <tr
                   key={idx + 3434}
-                  className={row["isDone"] == false ? "tr" : "tr bg-gray-200"}
+                  className={
+                    row["isDone"] == false
+                      ? "text-sm font-medium text-gray-900 px-6 py-4 text-center  items-center w-4/5 bg-gray- shadow-md rounded-md gap-1 touch-none"
+                      : "tr bg-gray-200  text-gray-900 px-6 py-4 text-center  items-center w-4/5  shadow-md rounded-md gap-1 touch-none"
+                  }
                   onClick={(e) => handleChange(e, row)}
                 >
                   {Object.values(row).map(

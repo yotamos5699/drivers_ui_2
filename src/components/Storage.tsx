@@ -3,6 +3,7 @@ import React, { useEffect, useState } from "react";
 //import DataRow fro
 type StorageProps = {
   matrix: any;
+  filterdKeys: string[];
   mission: any;
   castumers: any;
   handleGlobalRender: any;
@@ -18,34 +19,18 @@ function Storage(props: StorageProps) {
   });
 
   useEffect(() => {
-    console.log("updatef local storage in storage object", {
-      data,
-      styleMatrix,
-    });
-
-    if (data != "undefined" && data != null) {
-      window.localStorage.setItem("storageData", JSON.stringify(data));
-      // console.log("updated main data", { data });
-    } else {
-      console.log("data is undefined ");
-    }
-    if (data != "undefined" && data != null) {
-      window.localStorage.setItem("stylesData", JSON.stringify(styleMatrix));
-      // console.log("updated stayles data", { styleMatrix });
-    } else {
-      console.log("stayls s undefined ");
-    }
     checkIfReady();
   }, [data, styleMatrix]);
   useEffect(() => {
-    const STORED2 = window.localStorage.getItem("stylesData");
-    if (STORED2 != "undefined" && STORED2 != null)
-      setStyleMatrix([...JSON.parse(STORED2)]);
-    const STORED = window.localStorage.getItem("storageData");
-    if (STORED != "undefined" && STORED != null)
-      return setData([...JSON.parse(STORED)]);
+    // const STORED2 = window.localStorage.getItem("stylesData");
+    // if (STORED2 != "undefined" && STORED2 != null)
+    //   setStyleMatrix([...JSON.parse(STORED2)]);
+    // const STORED = window.localStorage.getItem("storageData");
+    // if (STORED != "undefined" && STORED != null)
+    //   return setData([...JSON.parse(STORED)]);
     console.log("after return in storage");
-    let AccountKeys = props.matrix.mainMatrix.AccountKey;
+    let AccountKeys = props.filterdKeys;
+    // props.matrix.mainMatrix.AccountKey;
     let AccountNames = AccountKeys.map((Account: any) => {
       let card: any[] = props.castumers.filter(
         (cas: any) => cas["מפתח"] == Account
@@ -61,26 +46,28 @@ function Storage(props: StorageProps) {
     }
     let record: any = {};
     let innerArray;
-    // console.log({ itemsNames });
     let details = [];
     let stMtx: boolean[][] = [];
-
+    let AllMatrixKeys = props.matrix.mainMatrix.AccountKey;
     try {
       for (let i = 0; i <= AccountKeys.length - 1; i++) {
         record = {};
         innerArray = [];
         innerArray.push(false);
-        record[itemsNames[0]] = AccountNames[i];
-        for (let j = 1; j <= itemsNames.length - 1; j++) {
-          //  console.log("cells data error ", cellsData[i][j - 1]);
-          record[itemsNames[j]] = cellsData[i][j - 1];
-          innerArray.push(false);
+        for (let x = 0; x <= AllMatrixKeys.length - 1; x++) {
+          if (AccountKeys[i] == AllMatrixKeys[x]) {
+            record[itemsNames[0]] = AccountNames[i];
+            for (let j = 1; j <= itemsNames.length - 1; j++) {
+              record[itemsNames[j]] = cellsData[x][j - 1];
+              innerArray.push(false);
+            }
+
+            record["isDone"] = false;
+            details.push(record);
+
+            innerArray.length > 0 && stMtx.push(innerArray);
+          }
         }
-        record["isDone"] = false;
-        details.push(record);
-        // console.log({ innerArray, stMtx, i });
-        innerArray.length > 0 && stMtx.push(innerArray);
-        //  console.log({ details, record });
       }
     } catch (err) {
       console.log(err);
