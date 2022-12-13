@@ -19,7 +19,7 @@ export default function DataRow(props: any) {
   };
 
   //   url = q=Hawaii";
-  //   Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
+  //   Intent intent = new Iddntent(Intent.ACTION_VIEW, Uri.parse(url));
   //   startActivity(intent);
   // } catch (ActivityNotFoundException ex) {
   //   // If Waze is not installed, open it in Google Play:
