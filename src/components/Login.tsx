@@ -3,7 +3,8 @@ import { useState } from "react";
 import { fetchCastumersData, fetchDriversData, fetchLastMatrix } from "../api";
 import Nav from "./Nav";
 import { driver } from "../typing";
-
+// הוספת כתובות חלופיים וכתובת ברירת
+// מצב מסלול, משימות שהסתיימו
 export default function Login() {
   const [driver, setDriver] = useState<driver | undefined>();
   const [input, setInput] = useState("");
