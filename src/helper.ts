@@ -40,7 +40,7 @@ export const constractMissions = (matrixData: any, castumers: any) => {
       console.log("resets missions !!!");
       let record = {
         שם: thisCastumer[0]["שם חשבון"],
-        כתובת: thisCastumer[0]["כתובת"],
+        כתובת: `${thisCastumer[0]["כתובת"]} ${thisCastumer[0]["עיר"]}`,
         נייד: thisCastumer[0]["טלפון נייד"],
         חוב: thisCastumer[0]["יתרת חשבון"],
         id: thisCastumer[0]["מפתח"],
