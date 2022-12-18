@@ -39,7 +39,7 @@ function Select(props: any) {
         placeholder="כמות"
         className="text-center w-1/3"
       ></input>
-      <button className="btn1 w-1/3" onClick={() => props.handleClick(selectVal)}>
+      <button id={"add"} className="btn1 w-1/3" onClick={() => props.handleClick(selectVal, "", "add")}>
         הוסף
       </button>
     </div>

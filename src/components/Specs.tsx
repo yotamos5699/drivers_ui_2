@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { renderScreen } from "../helper";
+import { renderScreen, updateResponseDB } from "../helper";
 import { GrAddCircle, GrSubtractCircle } from "react-icons/gr";
 import Pay from "./Pay";
 import Returns from "./Returns";
@@ -20,14 +20,11 @@ function Specs(props: SpecsProps) {
   });
   useEffect(() => {
     const STORED = window.localStorage.getItem("specData");
-    if (STORED != "undefined" && STORED != null)
-      return setData([...JSON.parse(STORED)]);
-    let castumerIndex = props.matrix.mainMatrix.AccountKey.indexOf(
-      props.mission["מפתח"]
-    );
+    if (STORED != "undefined" && STORED != null) return setData([...JSON.parse(STORED)]);
+    let castumerIndex = props.matrix.mainMatrix.AccountKey.indexOf(props.mission["מפתח"]);
     let cellsData = props.matrix.mainMatrix.cellsData;
     let itemsNames: any = props.matrix.mainMatrix.itemsNames;
-    console.log({ itemsNames });
+    //  console.log({ itemsNames });
     let record: any = {};
     let details = [];
     for (let i = 0; i <= cellsData[castumerIndex].length - 1; i++) {
@@ -36,7 +33,7 @@ function Specs(props: SpecsProps) {
         record["פריט"] = itemsNames[i];
         record["כמות"] = cellsData[castumerIndex][i];
         record["isDone"] = false;
-        console.log({ record });
+        // console.log({ record });
         details.push(record);
       }
     }
@@ -44,11 +41,11 @@ function Specs(props: SpecsProps) {
   }, []);
 
   useEffect(() => {
-    window.localStorage.setItem("specData", JSON.stringify(data));
+    if (data) window.localStorage.setItem("specData", JSON.stringify(data));
   }, [data]);
 
   const handleChange = (e: any, p?: any) => {
-    console.log({ e, p });
+    // console.log({ e, p });
     if (e.target.id == "isDone") {
       let rowIndex = 0;
       let newData = data.map((row: any, idx: number) => {
@@ -62,17 +59,34 @@ function Specs(props: SpecsProps) {
       newData.forEach((row: object, i: number) => {
         if (i != rowIndex) {
           sortedData.push(row);
-          console.log({ sortedData });
+          // console.log({ sortedData });
         }
       });
-      newData[rowIndex]["isDone"] == true
-        ? sortedData.push(newData[rowIndex])
-        : sortedData.unshift(newData[rowIndex]);
+      newData[rowIndex]["isDone"] == true ? sortedData.push(newData[rowIndex]) : sortedData.unshift(newData[rowIndex]);
       setData([...sortedData]);
     }
   };
 
-  const handleClick = (e: any) => {
+  const handleClick = (e: any, data?: any) => {
+    if (e.target.id == "main" && e.target?.name == "cash") {
+      updateResponseDB(data, "payments", "מזומן", props.mission);
+      console.log('updateResponseDB(data,payment,"מזומן",props.mission)', { data, e });
+    }
+    if (e.target.id == "main" && e.target?.name == "check") {
+      updateResponseDB(data, "payments", "שיק", props.mission);
+      console.log('updateResponseDB(data,payment,"שיק",props.mission)', { data, e });
+    }
+    if (e.target.id == "main" && e.target.name == "sub") {
+      updateResponseDB(
+        {
+          list: data.list,
+        },
+        "returns",
+        "",
+        props.mission
+      );
+    }
+    console.log({ e, data });
     setReder({ ...renderScreen(e.target.id, render) });
   };
   return (
@@ -122,9 +136,7 @@ function Specs(props: SpecsProps) {
                     className="text-xl text-center bg-green-100 hover:bg-green-500"
                     onClick={() => {
                       setData([
-                        ...data.map((row: any, i: number) =>
-                          i == idx ? { ...row, כמות: row["כמות"] + 1 } : row
-                        ),
+                        ...data.map((row: any, i: number) => (i == idx ? { ...row, כמות: row["כמות"] + 1 } : row)),
                       ]);
                     }}
                   >
@@ -135,9 +147,7 @@ function Specs(props: SpecsProps) {
                     className="text-xl text-center bg-red-100 hover:bg-red-500"
                     onClick={() => {
                       setData([
-                        ...data.map((row: any, i: number) =>
-                          i == idx ? { ...row, כמות: row["כמות"] - 1 } : row
-                        ),
+                        ...data.map((row: any, i: number) => (i == idx ? { ...row, כמות: row["כמות"] - 1 } : row)),
                       ]);
                     }}
                   >
@@ -156,11 +166,7 @@ function Specs(props: SpecsProps) {
               <tr></tr>
             </tbody>
           </table>
-          <button
-            id="table"
-            onClick={props.handleGlobalRender}
-            className="btn1"
-          >
+          <button id="table" onClick={props.handleGlobalRender} className="btn1">
             חזור
           </button>
           <button id="ret" onClick={handleClick} className="btn1">

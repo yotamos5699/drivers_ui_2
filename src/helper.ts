@@ -1,13 +1,17 @@
+import { Action } from "@dnd-kit/core/dist/store";
 import { arrayMove } from "@dnd-kit/sortable";
+import { GrCurrency } from "react-icons/gr";
+import Returns from "./components/Returns";
 import { Tasks } from "./typing";
+//const ResApiUrl = "https://script.google.com/macros/s/AKfycbyTQJsXqMszO_cxlQCgRYiamH6cTW5Eoj-4-Fers5I/dev";
+const ResApiUrl =
+  "https://script.google.com/macros/s/AKfycbwYsPdgqWD6QNjllH8ZB_-Wde6br0CYcXUE2yShDvGb0486ojgzEKkF5_HbBb5Q34iV/exec";
 export const d = "s";
 
 export const renderScreen = (cellId: string, render: any) => {
   console.log("in render screen ", render);
   let r: any = {};
-  Object.keys(render).forEach((key) =>
-    key == cellId ? (r[key] = true) : (r[key] = false)
-  );
+  Object.keys(render).forEach((key) => (key == cellId ? (r[key] = true) : (r[key] = false)));
   console.log({ r });
   return r;
 };
@@ -28,18 +32,18 @@ export const sortTableData = async (missions: any[], Midx: number) => {
   }
 };
 
-export const constractMissions = (
-  matrixData: any,
-  castumers: any,
-  driver: any
-): Tasks => {
+export const constractMissions = (matrixData: any, castumers: any, driver: any) => {
+  const m = window.localStorage.getItem("missions");
+  console.log({ m });
+  if (m != null && m != "undefined") {
+    let M = JSON.parse(m);
+    return M;
+  }
   console.log({ matrixData });
   console.log({ matrixData, castumers, driver });
-  let currentCasumersKeys = matrixData.mainMatrix.AccountKey.filter(
-    (key: string, i: number) => {
-      if (matrixData.mainMatrix.DriverID[i] == driver) return key;
-    }
-  );
+  let currentCasumersKeys = matrixData.mainMatrix.AccountKey.filter((key: string, i: number) => {
+    if (matrixData.mainMatrix.DriverID[i] == driver) return key;
+  });
   console.log({ currentCasumersKeys });
   let thisCastumer: any[] = [];
   let missionsArray: object[] = [];
@@ -66,31 +70,96 @@ export const constractMissions = (
   return { missions: missionsArray, filterdKeys: filterdKeys };
 };
 
+export const updateResponseDB = async (data: any, type: string, payType?: string, mission?: any) => {
+  console.log("in updateResponseDB", { type, data, payType });
+  // console.log({ mission });
+  const LS = window.localStorage.getItem("driver");
+  if (LS === null || LS === "undefined") return;
+  const driver = await JSON.parse(LS);
+
+  if (type == "mission") {
+    console.log("in updateResponseDB=> missions");
+    let params = "";
+    params += "uuid=" + Math.floor(Math.random() * 100000) + "&";
+    for (const [key, value] of Object.entries(data)) {
+      params += `${key}=${value}&`;
+    }
+    params += "driver=" + driver.name + "&";
+    params += "type=" + type;
+    fetch(`${ResApiUrl}?${encodeURI(params)}`, { mode: "no-cors" })
+      .then(() => console.log("sent ", type))
+      .catch((e) => console.log("error in ", type, e));
+  }
+  if (type == "payments") {
+    const castumer = await mission["מפתח"];
+    console.log("in updateResponseDB=> payments ", payType);
+    const d = await data;
+
+    const UUID = Math.floor(Math.random() * 100000);
+
+    for (let i = 0; i <= d.length - 1; i++) {
+      let params = "";
+      if (d[i].amount > 0) {
+        params += "uuid=" + UUID + "&";
+        params += "castumer=" + castumer + "&";
+        params += "driver=" + driver.name + "&";
+        params += "paymentMethod=" + payType + "&";
+        params += `coinName=${payType == "שיק" ? null : d[i].name}&amount=${payType == "שיק" ? null : d[i].amount}&`;
+        params += "type=" + type;
+        fetch(`${ResApiUrl}?${encodeURI(params)}`, { mode: "no-cors" })
+          .then(() => console.log("sent ", type))
+          .catch((e) => console.log("error in ", type, e));
+      }
+    }
+  }
+
+  if (type == "returns") {
+    console.log("in func", { data });
+    const castumer = await mission["מפתח"];
+    const UUID = Math.floor(Math.random() * 100000);
+    for (let i = 0; i <= data.list.length - 1; i++) {
+      let params = "";
+      params += "uuid=" + UUID + "&";
+      params += "castumer=" + castumer + "&";
+      params += "driver=" + driver.name + "&";
+      params += "item=" + data.list[i].item + "&" + "amount=" + data.list[i].amount + "&";
+      params += "type=" + type;
+      console.log({ params });
+      fetch(`${ResApiUrl}?${encodeURI(params)}`, { mode: "no-cors" })
+        .then(() => console.log("sent ", type))
+        .catch((e) => console.log("error in ", type, e));
+    }
+  }
+};
+
 export const missionsReducer = (state: any, action: any) => {
   switch (action.type) {
+    case "init":
+      return { endIndex: 0, startIndex: 0, data: action.payload.data };
     case "dnd":
       console.log("dispatch is dnd");
-      const oldIndex: number = state.data.findIndex(
-        (row: any) => row.id === action.payload.startIndex
-      );
-      const newIndex: number = state.data.findIndex(
-        (row: any) => row.id === action.payload.endIndex
-      );
+      const oldIndex: number = state.data.findIndex((row: any) => row.id === action.payload.startIndex);
+      const newIndex: number = state.data.findIndex((row: any) => row.id === action.payload.endIndex);
       return { ...state, data: arrayMove(state.data, oldIndex, newIndex) };
 
     case "isDone":
       console.log("dispatch is IsDone");
-      return {
+
+      const updatedData = {
         ...state,
         data: [
           ...state.data.map((row: any) => {
-            if (row.id == action.payload.startIndex)
-              return { ...row, isDone: !row.isDone };
+            if (row.id == action.payload.startIndex) return { ...row, isDone: !row.isDone };
             else return row;
           }),
         ],
       };
-
+      console.log({ updatedData }, action.payload.startIndex);
+      const task = updatedData.data.filter((row: any) => row.id == action.payload.startIndex)[0];
+      updateResponseDB(task, "mission");
+      return updatedData;
+    case "cash":
+      return { ...state, data: action.payload.data };
     case "details":
       console.log("dispatch is details");
       return state;
@@ -106,3 +175,62 @@ export const missionsReducer = (state: any, action: any) => {
       console.log("Unsupported action in missions reduser");
   }
 };
+const checkLocalStorage = async (page: string) => {
+  const storage = window.localStorage.getItem(page);
+  if (typeof storage === "string" && storage != "undefined" && storage != null) {
+    return await JSON.parse(storage);
+    console.log("passded test ", { storage });
+  }
+  return null;
+};
+
+export const useInitializedState = async (page: string, props?: any, dooerFunc?: any, dispatch?: any) => {
+  let data;
+  switch (page) {
+    case "missions":
+      data = await checkLocalStorage(page);
+      console.log("missions data ", { data });
+      const missions = data !== null ? data : await props.missions;
+      console.log("after selecting data sourch ", missions);
+
+      return {
+        data: missions,
+        startIndex: 0,
+        endIndex: 0,
+      };
+    case "login":
+      console.log("useInitializedState login");
+      data = await checkLocalStorage(page);
+      console.log("data in login dispath ", data);
+      return data === false ? false : true;
+    case "storage":
+      console.log("useInitializedState storage");
+      data = await checkLocalStorage(page);
+      return data === false ? false : true;
+
+    case "reset":
+      return window.localStorage.clear();
+
+    case "driver":
+      data = await checkLocalStorage(page);
+      return data ? data : null;
+  }
+};
+
+export const backToLogin = (loginShow: any) => {
+  console.log(loginShow);
+  window.localStorage.clear();
+  window.localStorage.setItem("login", "true");
+  loginShow(true);
+};
+
+export const defualtCurrencys = [
+  { amount: 0, name: "שקל" },
+  { amount: 0, name: "שנקל" },
+  { amount: 0, name: "חמש" },
+  { amount: 0, name: "עשר" },
+  { amount: 0, name: "עשרים" },
+  { amount: 0, name: "חמישים" },
+  { amount: 0, name: "מאה" },
+  { amount: 0, name: "מאתיים" },
+];

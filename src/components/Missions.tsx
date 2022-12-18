@@ -3,21 +3,36 @@ import { useEffect, useReducer, useRef, useState } from "react";
 import { DndContext, closestCenter, useSensor, PointerSensor } from "@dnd-kit/core";
 import { SortableContext, verticalListSortingStrategy } from "@dnd-kit/sortable";
 import DataRow from "./DataRow";
-import { missionsReducer } from "../helper";
+import { missionsReducer, useInitializedState } from "../helper";
 
 export default function Missions(props: any) {
-  console.log("missions props ", { props });
+  // console.log("missions props ", { props });
+
   const [tableData, dispatch] = useReducer(missionsReducer, {
-    data: props.missions,
+    data: null,
     startIndex: 0,
     endIndex: 0,
   });
 
   const sensor = [useSensor(PointerSensor)];
   const [td, setTd] = useState<any[]>();
-
   useEffect(() => {
-    setTd([...tableData.data]);
+    async function fetchStorage() {
+      let res = await useInitializedState("missions", props);
+      //   console.log("res in missions ", { res });
+
+      dispatch({ type: "init", payload: { data: props?.missions ? props?.missions : res.data.data } });
+    }
+
+    fetchStorage();
+  }, []);
+  async () => await useInitializedState("", props);
+  useEffect(() => {
+    if (tableData?.data) {
+      //  console.log({ tableData }, typeof tableData);
+      window.localStorage.setItem("missions", JSON.stringify(tableData));
+      setTd([...tableData.data]);
+    }
   }, [tableData.data]);
 
   const handleDragEnd = (e: any) => {
@@ -39,7 +54,7 @@ export default function Missions(props: any) {
   const [listRef] = useAutoAnimate<HTMLDivElement>();
   return (
     <div>
-      {tableData.data ? (
+      {tableData?.data ? (
         td && (
           <DndContext sensors={sensor} collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
             <SortableContext items={td.map((row: any) => row.id)} strategy={verticalListSortingStrategy}>
