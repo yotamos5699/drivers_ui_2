@@ -19,7 +19,7 @@ function Specs(props: SpecsProps) {
     ret: false,
   });
   useEffect(() => {
-    const STORED = window.localStorage.getItem("specData");
+    const STORED = localStorage.getItem("specData");
     if (STORED != "undefined" && STORED != null) return setData([...JSON.parse(STORED)]);
     let castumerIndex = props.matrix.mainMatrix.AccountKey.indexOf(props.mission["מפתח"]);
     let cellsData = props.matrix.mainMatrix.cellsData;
@@ -41,7 +41,7 @@ function Specs(props: SpecsProps) {
   }, []);
 
   useEffect(() => {
-    if (data) window.localStorage.setItem("specData", JSON.stringify(data));
+    if (data) localStorage.setItem("specData", JSON.stringify(data));
   }, [data]);
 
   const handleChange = (e: any, p?: any) => {
@@ -87,7 +87,19 @@ function Specs(props: SpecsProps) {
       );
     }
     console.log({ e, data });
-    setReder({ ...renderScreen(e.target.id, render) });
+    setReder((prev: any) => {
+      let data = prev;
+
+      Object.keys(prev).forEach((Key: string) => {
+        if (Key === e.target.id) {
+          data[Key] = true;
+        } else {
+          data[Key] = false;
+        }
+      });
+      console.log("render in specs ", { data });
+      return { ...data };
+    });
   };
   return (
     <div>

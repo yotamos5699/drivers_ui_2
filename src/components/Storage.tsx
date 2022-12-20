@@ -1,4 +1,5 @@
 import React, { useEffect, useState, useContext } from "react";
+import useLocalStorage from "../Hooks/useLocalStorage";
 
 //import DataRow fro
 type StorageProps = {
@@ -11,28 +12,21 @@ type StorageProps = {
 
 function Storage(props: StorageProps) {
   //console.log({ props });
-  const [data, setData] = useState<any>();
-  const [styleMatrix, setStyleMatrix] = useState<any>();
-  const [render, setReder] = useState({
-    main: true,
-    cont: false,
-  });
-
+  //const [storageData,setStorageData] = useLocalStorage('storageData',null)
+  const [storageData, setStorageData] = useLocalStorage("storageData", { data: null, subKey: "storageData" });
+  const [storageStyles, setStorageStyles] = useLocalStorage("storageStyles", { data: null, subKey: "storageStyles" });
+  // const [render, setReder] = useState({
+  //   main: true,
+  //   cont: false,
+  // });
+  console.log("in storage ", { props });
   useEffect(() => {
-    if (data) window.localStorage.setItem("storageData", JSON.stringify({ data: data, styles: styleMatrix }));
-    checkIfReady();
-  }, [data, styleMatrix]);
-  useEffect(() => {
-    let m = window.localStorage.getItem("storageData");
-    if (m != null && m != "undefined") {
-      let M = JSON.parse(m);
-      setData(M.data);
-      setStyleMatrix(M.styles);
+    if (storageData.data && storageStyles.data) {
+      console.log("using local data ", { storageData, storageStyles });
       return;
     }
 
     let AccountKeys = props.filterdKeys;
-    // props.matrix.mainMatrix.AccountKey;
     let AccountNames = AccountKeys.map((Account: any) => {
       let card: any[] = props.castumers.filter((cas: any) => cas["מפתח"] == Account);
 
@@ -73,16 +67,17 @@ function Storage(props: StorageProps) {
       console.log(err);
     }
     if (stMtx) {
-      setStyleMatrix(stMtx);
+      setStorageStyles({ data: stMtx });
     }
-    record && setData(details);
+    record && setStorageData({ data: details });
+    console.log("after set up in storage ", { storageData, storageStyles });
   }, []);
 
   const handleChange = (e: any, p: any) => {
     //  console.log({ e, p });
     if (e.target.id == "isDone") {
       let rowIndex = 0;
-      let newData = data.map((row: any, idx: number) => {
+      let newData = storageData.data.map((row: any, idx: number) => {
         if (idx == p) {
           rowIndex = idx;
           return { ...row, isDone: !row["isDone"] };
@@ -94,7 +89,7 @@ function Storage(props: StorageProps) {
 
       newData.forEach((row: object, i: number) => {
         if (i != rowIndex) {
-          mtx.push(styleMatrix[i]);
+          mtx.push(storageStyles.data[i]);
           sortedData.push(row);
           //    console.log({ sortedData });
         }
@@ -102,33 +97,23 @@ function Storage(props: StorageProps) {
 
       if (newData[rowIndex]["isDone"] == true) {
         sortedData.push(newData[rowIndex]);
-        mtx.push(styleMatrix[rowIndex]);
+        mtx.push(storageStyles.data[rowIndex]);
       } else {
         sortedData.unshift(newData[rowIndex]);
-        mtx.unshift(styleMatrix[rowIndex]);
+        mtx.unshift(storageStyles.data[rowIndex]);
       }
-      setData([...sortedData]);
-      setStyleMatrix([...mtx]);
+      setStorageData({ data: [...sortedData] });
+      setStorageStyles({ data: [...mtx] });
     }
   };
-  const checkIfReady = () => {
-    let ready: boolean;
-    let filter = data?.filter((row: any) => row.isDone === false);
 
-    if (data && filter.length === 0) ready = true;
-    else ready = false;
-
-    setReder((prev) => {
-      return { ...prev, cont: ready };
-    });
-  };
   return (
     <div>
-      {data && (
+      {storageData?.data && (
         <table>
           <thead className="bg-white border-b">
             <tr key={"asd"} className="text-sm font-medium text-gray-900 px-6 py-4 text-center">
-              {Object.keys(data[0]).map(
+              {Object.keys(storageData.data[0]).map(
                 (header, idx) =>
                   header != "isDone" && (
                     <td className="td" key={idx + 1111}>
@@ -140,7 +125,7 @@ function Storage(props: StorageProps) {
             </tr>
           </thead>
           <tbody>
-            {data.map((row: any, idx: number) => (
+            {storageData.data.map((row: any, idx: number) => (
               <tr
                 key={idx + 3434}
                 className={row["isDone"] == false ? "tr" : "tr bg-gray-200"}
@@ -152,16 +137,18 @@ function Storage(props: StorageProps) {
                       <td
                         key={ci + idx}
                         onClick={() => {
-                          if (styleMatrix != undefined) {
-                            let nm = styleMatrix;
+                          if (storageStyles.data != undefined) {
+                            let nm = storageStyles.data;
                             // console.log(nm[idx][ci]);
                             //  console.log({ idx, ci });
                             nm[idx][ci] = !nm[idx][ci];
-                            setStyleMatrix([...nm]);
+                            setStorageStyles({ data: [...nm] });
                           }
                         }}
                         /*@ts-ignore */
-                        className={styleMatrix[idx][ci] == false ? "td" : ci != 0 && "td bg-green-600 text-white"}
+                        className={
+                          storageStyles.data[idx][ci] == false ? "td" : ci != 0 && "td bg-green-600 text-white"
+                        }
                       >
                         {cell}
                       </td>
@@ -181,7 +168,7 @@ function Storage(props: StorageProps) {
           </tbody>
         </table>
       )}
-      {render.cont && (
+      {!storageData?.data?.filter((row: any) => row.isDone === false)[0] && (
         <button className={"btn1"} id="stockReady" onClick={props.handleGlobalRender}>
           המשך
         </button>

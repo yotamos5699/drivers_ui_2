@@ -13,7 +13,7 @@ export const renderScreen = (cellId: string, render: any) => {
   let r: any = {};
   Object.keys(render).forEach((key) => (key == cellId ? (r[key] = true) : (r[key] = false)));
   console.log({ r });
-  return r;
+  return { data: { ...r }, subKey: cellId };
 };
 
 export const sortTableData = async (missions: any[], Midx: number) => {
@@ -33,14 +33,6 @@ export const sortTableData = async (missions: any[], Midx: number) => {
 };
 
 export const constractMissions = (matrixData: any, castumers: any, driver: any) => {
-  const m = window.localStorage.getItem("missions");
-  console.log({ m });
-  if (m != null && m != "undefined") {
-    let M = JSON.parse(m);
-    return M;
-  }
-  console.log({ matrixData });
-  console.log({ matrixData, castumers, driver });
   let currentCasumersKeys = matrixData.mainMatrix.AccountKey.filter((key: string, i: number) => {
     if (matrixData.mainMatrix.DriverID[i] == driver) return key;
   });
@@ -73,7 +65,7 @@ export const constractMissions = (matrixData: any, castumers: any, driver: any) 
 export const updateResponseDB = async (data: any, type: string, payType?: string, mission?: any) => {
   console.log("in updateResponseDB", { type, data, payType });
   // console.log({ mission });
-  const LS = window.localStorage.getItem("driver");
+  const LS = localStorage.getItem("driver");
   if (LS === null || LS === "undefined") return;
   const driver = await JSON.parse(LS);
 
@@ -176,7 +168,7 @@ export const missionsReducer = (state: any, action: any) => {
   }
 };
 const checkLocalStorage = async (page: string) => {
-  const storage = window.localStorage.getItem(page);
+  const storage = localStorage.getItem(page);
   if (typeof storage === "string" && storage != "undefined" && storage != null) {
     return await JSON.parse(storage);
     console.log("passded test ", { storage });
@@ -209,7 +201,7 @@ export const useInitializedState = async (page: string, props?: any, dooerFunc?:
       return data === false ? false : true;
 
     case "reset":
-      return window.localStorage.clear();
+      return localStorage.clear();
 
     case "driver":
       data = await checkLocalStorage(page);
@@ -217,11 +209,9 @@ export const useInitializedState = async (page: string, props?: any, dooerFunc?:
   }
 };
 
-export const backToLogin = (loginShow: any) => {
-  console.log(loginShow);
-  window.localStorage.clear();
-  window.localStorage.setItem("login", "true");
-  loginShow(true);
+export const backToLogin = (setRender: any, render: any) => {
+  localStorage.clear();
+  setRender({ ...renderScreen("login", render) });
 };
 
 export const defualtCurrencys = [
@@ -234,3 +224,13 @@ export const defualtCurrencys = [
   { amount: 0, name: "מאה" },
   { amount: 0, name: "מאתיים" },
 ];
+
+export const defaultRender = {
+  login: true,
+  details: false,
+  table: false,
+  nav: false,
+  pay: false,
+  isDone: false,
+  storage: false,
+};

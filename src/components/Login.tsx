@@ -3,19 +3,25 @@ import { useState, useEffect } from "react";
 import { fetchCastumersData, fetchDriversData, fetchLastMatrix } from "../api";
 import Nav from "./Nav";
 import { driver } from "../typing";
-import { useInitializedState } from "../helper";
+import { defaultRender, renderScreen, useInitializedState } from "../helper";
+import useLocalStorage from "../Hooks/useLocalStorage";
 
 export default function Login() {
-  const [driver, setDriver] = useState<driver>();
+  // const [driver, setDriver] = useState<driver>();
+  // const [toShow, setToShow] = useState<any>();
+
+  const [render, setRender] = useLocalStorage("render", { data: defaultRender });
+  const [driver, setDriver] = useLocalStorage("driver", { data: null, subKey: null });
+  //const [toShow, setToShow] = useLocalStorage("login", true);
   const [input, setInput] = useState("");
-  const [toShow, setToShow] = useState<any>();
-
-  fetchToShowAndLogin(setDriver, setToShow);
+  //fetchToShowAndLogin(setDriver, setToShow);
   const { drivers, castumers, matrix } = setQueryData();
-
+  console.log({ render });
   const responseToSubmitRequest = (value: string, driversData: driver[]) => {
-    window.localStorage.setItem("login", "false");
-    setToShow(false);
+    // localStorage.setItem("login", "false");
+    // setToShow(false);
+    setRender({ ...renderScreen("storage", render.data) });
+    // localStorage.setItem("render", JSON.stringify(render));
     const currentDriver = driversData.filter((row) => {
       if (row.password.toString() == value) {
         console.log("data ok ", row);
@@ -23,9 +29,9 @@ export default function Login() {
       }
     });
     if (currentDriver?.length == 1) {
-      setDriver(currentDriver[0]);
+      setDriver({ data: currentDriver[0] });
       console.log("setting driver !!!!");
-      window.localStorage.setItem("driver", JSON.stringify(currentDriver[0]));
+      //   localStorage.setItem("driver", JSON.stringify(currentDriver[0]));
     }
     console.log({ currentDriver });
   };
@@ -39,7 +45,7 @@ export default function Login() {
 
   return (
     <>
-      {toShow ? (
+      {render?.data?.login ? (
         <div className="flex flex-col items-center justify-center h-screen  bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4">
           <input
             value={input}
@@ -64,32 +70,34 @@ export default function Login() {
         matrix.error || (castumers.error && <h1>error ....</h1>)
       )}
 
-      {!toShow && driver && (
+      {!render?.login && driver?.data && castumers.data && drivers.data && matrix.data && (
         <Nav
-          user={driver}
+          render={render}
+          setRender={setRender}
+          user={driver.data}
           matrix={matrix.data}
           castumers={castumers.data}
-          driver={driver.pivotKey}
-          loginShow={setToShow}
+          driver={driver.data.pivotKey}
+          //  loginShow={setToShow}
         />
       )}
     </>
   );
 }
 
-const fetchToShowAndLogin = async (setDriver: any, setToShow: any) => {
-  useEffect(() => {
-    async function fetchStorage() {
-      let res1 = await useInitializedState("driver");
-      console.log({ res1 });
-      setDriver(res1);
-      let res2 = await useInitializedState("login");
-      console.log({ res2 });
-      setToShow(res2);
-    }
-    fetchStorage();
-  }, []);
-};
+// const fetchToShowAndLogin = async (setDriver: any, setToShow: any) => {
+//   useEffect(() => {
+//     async function fetchStorage() {
+//       let res1 = await useInitializedState("driver");
+//       console.log({ res1 });
+//       setDriver(res1);
+//       let res2 = await useInitializedState("login");
+//       console.log({ res2 });
+//       setToShow(res2);
+//     }
+//     fetchStorage();
+//   }, []);
+// };
 
 const setQueryData = () => {
   console.log("in set query !!!!!");

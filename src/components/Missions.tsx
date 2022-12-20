@@ -4,10 +4,12 @@ import { DndContext, closestCenter, useSensor, PointerSensor } from "@dnd-kit/co
 import { SortableContext, verticalListSortingStrategy } from "@dnd-kit/sortable";
 import DataRow from "./DataRow";
 import { missionsReducer, useInitializedState } from "../helper";
+import useLocalStorage from "../Hooks/useLocalStorage";
 
 export default function Missions(props: any) {
   // console.log("missions props ", { props });
-
+  console.log("render in misssions ", props.render);
+  // const [missions,setMissions] = useLocalStorage('missions',null)
   const [tableData, dispatch] = useReducer(missionsReducer, {
     data: null,
     startIndex: 0,
@@ -30,7 +32,7 @@ export default function Missions(props: any) {
   useEffect(() => {
     if (tableData?.data) {
       //  console.log({ tableData }, typeof tableData);
-      window.localStorage.setItem("missions", JSON.stringify(tableData));
+      localStorage.setItem("missions", JSON.stringify(tableData));
       setTd([...tableData.data]);
     }
   }, [tableData.data]);

@@ -1,71 +1,31 @@
-import { useState, useContext, useEffect } from "react";
+import { useState } from "react";
 import { driver, Tasks } from "../typing";
 import Specs from "./Specs";
 import Storage from "./Storage";
 import Header from "./Header";
-import { backToLogin, constractMissions, renderScreen, useInitializedState } from "../helper";
+import { backToLogin, constractMissions, renderScreen } from "../helper";
 import Missions from "./Missions";
+import useLocalStorage from "../Hooks/useLocalStorage";
 
 type DashBoardProps = {
   driver: string | number;
   user: driver | undefined;
   matrix?: any;
   castumers?: object[];
-  loginShow: any;
-};
-
-const defaultRender = {
-  details: false,
-  table: false,
-  nav: false,
-  pay: false,
-  isDone: false,
-  storage: true,
+  // loginShow: any;
+  render: any;
+  setRender: any;
 };
 
 function Nav(props: DashBoardProps) {
-  const [missions, setMissions] = useState<Tasks>(constractMissions(props.matrix, props.castumers, props.driver));
+  const [missions, setMissions] = useLocalStorage("missions", {
+    data: constractMissions(props.matrix, props.castumers, props.driver),
+  });
   const [currentMission, setCurrentMission] = useState<any>();
-  const [toShow, setToShow] = useState<any>();
-  const [render, setRender] = useState<any>();
+
   const [currentScreen, setCurrentScreen] = useState(null);
   console.log("nav props", { props });
-  useEffect(() => {
-    let ls = window.localStorage.getItem("render");
 
-    if (ls != "undefined" && ls != null) {
-      let D = JSON.parse(ls);
-      //   console.log("in nav render check", { D });
-      setRender({ ...D });
-      setToShow(D.storage);
-      return;
-    }
-    //   console.log("after nav render");
-    return setRender({ ...defaultRender });
-  }, []);
-
-  useEffect(() => {
-    if (toShow) window.localStorage.setItem("storage", JSON.stringify(toShow));
-  }, [toShow]);
-
-  useEffect(() => {
-    //  console.log(render);
-    if (missions) window.localStorage.setItem("missions", JSON.stringify(missions));
-    if ((render && currentScreen == "stockReady") || currentScreen == "table" || currentScreen == "storage")
-      window.localStorage.setItem("render", JSON.stringify(render));
-  }, [render, missions]);
-
-  useEffect(() => {
-    async function fetchStorage() {
-      let res = await useInitializedState("storage");
-      if (res != "undefined" && res != null) {
-        setToShow(res);
-      }
-    }
-    fetchStorage();
-  }, []);
-
-  useEffect(() => {}, []);
   const handleRowClick = async (e: any) => {
     const MissionID = e?.active?.id ? e.active.id : null;
     const cellId = e.activatorEvent?.target?.id;
@@ -75,7 +35,7 @@ function Nav(props: DashBoardProps) {
 
   const handleGlobalRender = async (e: any) => {
     setCurrentScreen(e.target.id);
-    useRendererActions({ type: e.target.id }, render, renderScreen, setRender, setToShow);
+    useRendererActions({ type: e.target.id }, props.render, renderScreen, props.setRender);
     if (!missions) {
       let tasks: Tasks = constractMissions(props.matrix, props.castumers, props.driver);
       setMissions(tasks);
@@ -83,31 +43,35 @@ function Nav(props: DashBoardProps) {
   };
 
   const handleClick = () => {
-    backToLogin(props.loginShow);
+    backToLogin(props.setRender, props.render);
   };
   return (
     <div className="flex flex-col border-4 border-red-500">
-      <Header render={render} user={props.user} loginShow={props.loginShow} />
-      {render?.table ? (
-        <Missions missions={missions.missions} handleClick={handleRowClick} handleGlobalRender={handleGlobalRender} />
+      <Header render={props.render.data} user={props.user} setRender={props.setRender} />
+      {props.render?.data?.table ? (
+        <Missions
+          missions={missions?.data?.missions}
+          handleClick={handleRowClick}
+          handleGlobalRender={handleGlobalRender}
+          render={props.render}
+        />
       ) : (
         <h1>loading...</h1>
       )}
 
-      {render?.details && currentMission && (
+      {props.render?.data?.details && currentMission && (
         <Specs matrix={props.matrix} mission={currentMission} handleGlobalRender={handleGlobalRender} />
       )}
-      {render?.storage && missions?.missions?.length > 0 && toShow ? (
+      {props.render?.data?.storage && missions?.data?.missions?.length > 0 ? (
         <Storage
           matrix={props.matrix}
           mission={currentMission}
           castumers={props.castumers}
           handleGlobalRender={handleGlobalRender}
-          filterdKeys={missions.filterdKeys}
+          filterdKeys={missions.data.filterdKeys}
         />
       ) : (
-        render?.storage &&
-        toShow && (
+        props.render?.data?.storage && (
           <div>
             <h1 className={"text-center text-9xl justify-center border-4 border-red-500"}>אין משימות לנהג</h1>
             <button id={"backToLogin"} className="btn1" onClick={handleClick}>
@@ -129,20 +93,19 @@ type UseRender = {
 export const useRendererActions = (action: UseRender, render: any, renderScreen: any, setRender: any, func?: any) => {
   switch (action.type) {
     case "stockReady":
-      window.localStorage.setItem("storage", "false");
-      func(false);
-      window.localStorage.setItem("render", JSON.stringify(render));
-      setRender({ ...renderScreen("table", render) });
+      // localStorage.setItem("render", JSON.stringify(render));
+      setRender({ ...renderScreen("table", render.data) });
+      console.log("useRendererActions ", { render, action });
       return console.log("rendered ", { action });
     case "table":
-      window.localStorage.setItem("render", JSON.stringify(render));
-      setRender({ ...renderScreen("table", render) });
+      //  localStorage.setItem("render", JSON.stringify(render));
+      setRender({ ...renderScreen("table", render.data) });
       return console.log("rendered ", { action });
     case "log":
-      setRender({ ...renderScreen("log", render) });
+      setRender({ ...renderScreen("log", render.data) });
       return console.log("rendered ", { action });
     case "details":
-      setRender({ ...renderScreen("details", render) });
+      setRender({ ...renderScreen("details", render.data) });
       return console.log("rendered ", { action });
 
     default:
@@ -167,3 +130,43 @@ export const useNavActions = (action: any, props: any, seter: any) => {
       return console.log("current doesnt exist");
   }
 };
+
+// const useRenderState = (toShow: any, missions: any, render: any, currentScreen: any) => {
+//   useEffect(() => {
+//     if (toShow) localStorage.setItem("storage", JSON.stringify(toShow));
+//   }, [toShow]);
+
+//   useEffect(() => {
+//     //  console.log(render);
+//     if (missions) localStorage.setItem("missions", JSON.stringify(missions));
+//     if ((render && currentScreen == "stockReady") || currentScreen == "table" || currentScreen == "storage")
+//       localStorage.setItem("render", JSON.stringify(render));
+//   }, [render, missions]);
+// };
+
+// const useCheckInitialData = (setToShow: any) => {
+//   useEffect(() => {
+//     async function fetchStorage() {
+//       let res = await useInitializedState("storage");
+//       if (res != "undefined" && res != null) {
+//         setToShow(res);
+//       }
+//     }
+//     fetchStorage();
+//   }, []);
+// };
+
+// const useCheckRenderStorageData = (setRender: any, setToShow: any) => {
+//   useEffect(() => {
+//     let localStorageRenderData = localStorage.getItem("render");
+//     if (localStorageRenderData != "undefined" && localStorageRenderData != null) {
+//       let Data = JSON.parse(localStorageRenderData);
+//       //   console.log("in nav render check", { D });
+//       setRender({ ...Data });
+//       setToShow(Data.storage);
+//       return;
+//     }
+//     //   console.log("after nav render");
+//     return setRender({ ...defaultRender });
+//   }, []);
+// };

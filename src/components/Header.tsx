@@ -3,7 +3,7 @@ import { backToLogin } from "../helper";
 type headerProps = {
   render: any;
   user: any;
-  loginShow: any;
+  setRender: any;
 };
 
 function Header(props: headerProps) {
@@ -19,7 +19,7 @@ function Header(props: headerProps) {
           ? "תשלום"
           : "כלום"}
       </div>
-      <button className={"border-pink-400"} onClick={() => backToLogin(props.loginShow)}>
+      <button className={"border-pink-400"} onClick={() => backToLogin(props.setRender, props.render)}>
         התנתק
       </button>
     </div>

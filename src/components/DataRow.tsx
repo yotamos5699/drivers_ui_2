@@ -28,9 +28,7 @@ export default function DataRow(props: any) {
   // }
   return (
     <div
-      className={
-        "flex flex-col items-center px-2 py-4 w-4/5 bg-gray-100 shadow-md rounded-md gap-1 touch-none"
-      }
+      className={"flex flex-col items-center px-2 py-4 w-4/5 bg-gray-100 shadow-md rounded-md gap-1 touch-none"}
       ref={setNodeRef}
       id={props.id}
       {...attributes}
@@ -54,11 +52,7 @@ export default function DataRow(props: any) {
         </a>
       </div>
       <div className="flex gap-2">
-        <a
-          href={`https://www.waze.com/ul?q=${new URLSearchParams(
-            props.row["כתובת"]
-          )}&navigate=yes`}
-        >
+        <a href={`https://www.waze.com/ul?q=${new URLSearchParams(props.row["כתובת"])}&navigate=yes`}>
           <span className="font-bold"> כתובת </span>
 
           <span> {props.row["כתובת"]} </span>
