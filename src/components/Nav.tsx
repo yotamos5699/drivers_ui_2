@@ -45,7 +45,7 @@ function Nav(props: DashBoardProps) {
   };
 
   return (
-    <div className="flex flex-col border-4 border-red-500">
+    <div className="flex flex-col w-full border-4 border-red-500">
       <Header render={props.render} user={props.user} setRender={props.setRender} />
       {props.render?.data?.table && (
         <Missions
