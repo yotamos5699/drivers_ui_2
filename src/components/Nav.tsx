@@ -42,9 +42,6 @@ function Nav(props: DashBoardProps) {
     }
   };
 
-  const handleClick = () => {
-    backToLogin(props.setRender, props.render);
-  };
   return (
     <div className="flex flex-col border-4 border-red-500">
       <Header render={props.render.data} user={props.user} setRender={props.setRender} />
@@ -74,7 +71,7 @@ function Nav(props: DashBoardProps) {
         props.render?.data?.storage && (
           <div>
             <h1 className={"text-center text-9xl justify-center border-4 border-red-500"}>אין משימות לנהג</h1>
-            <button id={"backToLogin"} className="btn1" onClick={handleClick}>
+            <button id={"backToLogin"} className="btn1" onClick={() => backToLogin(props.setRender, props.render.data)}>
               חזור
             </button>
           </div>
