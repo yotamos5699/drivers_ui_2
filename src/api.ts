@@ -1,16 +1,23 @@
 import axios from "axios";
 //import { createTRPCClient } from "@trpc/client";
-
+const ResApiUrl =
+  "https://script.google.com/macros/s/AKfycbwYsPdgqWD6QNjllH8ZB_-Wde6br0CYcXUE2yShDvGb0486ojgzEKkF5_HbBb5Q34iV/exec";
 const mockMatrix = {
   matrixID: "66afcadc5a695e869b1b99a400787206debe958825867edb08c883bf343afa05",
   matrixName: "מטריצה עם שם חדש",
   matrixesData: {
     mainMatrix: {
-      matrixID: "66afcadc5a695e869b1b99a400787206debe958825867edb08c883bf343afa05",
+      matrixID:
+        "66afcadc5a695e869b1b99a400787206debe958825867edb08c883bf343afa05",
       ActionID: [2, 1, 1, 1],
       AccountKey: ["6027", "6028", "6036", "6043"],
       DocumentID: [1, 1, 1, 1],
-      DriverID: ["qewr135256edrfh", "qewr135256edrfh", "qewr135256edrfh", "qewr135256edrfh"],
+      DriverID: [
+        "qewr135256edrfh",
+        "qewr135256edrfh",
+        "qewr135256edrfh",
+        "qewr135256edrfh",
+      ],
       ActionAutho: ["Default", "Default", "Default", "Default"],
       itemsHeaders: ["HI250SA", "SX250SA", "AB500SA", "XR100SA"],
       itemsNames: ["הרנה 250 גרם", "גת SPXP", "אבו מיסמר גדול", "גת XR"],
@@ -74,7 +81,9 @@ export const fetchLastMatrix = async () => {
 //return mockMatrix;
 // .catch((err) => console.log);
 //};
-
+export const fetchDriverSummary = async () => {
+  return fetch(ResApiUrl + "?type=routData").then((res) => res.json());
+};
 export const fetchDriversData = async () => {
   return await axios(driversUrl, { withCredentials: false })
     .then((res) => {
@@ -104,7 +113,7 @@ export const fetchCastumersData = async () => {
       console.log("castumers data ", res.data.data);
       return res.data.data;
     })
-    .catch((err) => console.log);
+    .catch((err) => console.log({ err }));
 };
 
 export const fetchItemsData = async () => {

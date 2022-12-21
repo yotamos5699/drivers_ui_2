@@ -11,7 +11,9 @@ export const d = "s";
 export const renderScreen = (cellId: string, render: any) => {
   console.log("in render screen ", render);
   let r: any = {};
-  Object.keys(render).forEach((key) => (key == cellId ? (r[key] = true) : (r[key] = false)));
+  Object.keys(render).forEach((key) =>
+    key == cellId ? (r[key] = true) : (r[key] = false)
+  );
   console.log({ r });
   return { data: { ...r }, subKey: cellId };
 };
@@ -32,10 +34,16 @@ export const sortTableData = async (missions: any[], Midx: number) => {
   }
 };
 
-export const constractMissions = (matrixData: any, castumers: any, driver: any) => {
-  let currentCasumersKeys = matrixData.mainMatrix.AccountKey.filter((key: string, i: number) => {
-    if (matrixData.mainMatrix.DriverID[i] == driver) return key;
-  });
+export const constractMissions = (
+  matrixData: any,
+  castumers: any,
+  driver: any
+) => {
+  let currentCasumersKeys = matrixData.mainMatrix.AccountKey.filter(
+    (key: string, i: number) => {
+      if (matrixData.mainMatrix.DriverID[i] == driver) return key;
+    }
+  );
   console.log({ currentCasumersKeys });
   let thisCastumer: any[] = [];
   let missionsArray: object[] = [];
@@ -62,7 +70,12 @@ export const constractMissions = (matrixData: any, castumers: any, driver: any) 
   return { missions: missionsArray, filterdKeys: filterdKeys };
 };
 
-export const updateResponseDB = async (data: any, type: string, payType?: string, mission?: any) => {
+export const updateResponseDB = async (
+  data: any,
+  type: string,
+  payType?: string,
+  mission?: any
+) => {
   console.log("in updateResponseDB", { type, data, payType });
   // console.log({ mission });
   const LS = localStorage.getItem("driver");
@@ -83,7 +96,9 @@ export const updateResponseDB = async (data: any, type: string, payType?: string
       .catch((e) => console.log("error in ", type, e));
   }
   if (type == "payments") {
-    const castumer = await mission["מפתח"];
+    const Castumer = await mission;
+    const castumerNum = Castumer["מפתח"];
+    const castumerName = Castumer['שם חשבון"'];
     console.log("in updateResponseDB=> payments ", payType);
     const d = await data;
 
@@ -93,11 +108,17 @@ export const updateResponseDB = async (data: any, type: string, payType?: string
       let params = "";
       if (d[i].amount > 0) {
         params += "uuid=" + UUID + "&";
-        params += "castumer=" + castumer + "&";
+        params += "castumer=" + castumerNum + "&";
+        params += "castumerName=" + castumerName + "&";
+        params += "driverNum=" + driver.pivotKey + "&";
         params += "driver=" + driver.name + "&";
         params += "paymentMethod=" + payType + "&";
-        params += `coinName=${payType == "שיק" ? null : d[i].name}&amount=${payType == "שיק" ? null : d[i].amount}&`;
+        params += `coinName=${payType == "שיק" ? null : d[i].name}&amount=${
+          payType == "שיק" ? null : d[i].amount
+        }&`;
+        params += `coinValue=${payType == "שיק" ? null : d[i].billValue}&`;
         params += "type=" + type;
+
         fetch(`${ResApiUrl}?${encodeURI(params)}`, { mode: "no-cors" })
           .then(() => console.log("sent ", type))
           .catch((e) => console.log("error in ", type, e));
@@ -114,7 +135,13 @@ export const updateResponseDB = async (data: any, type: string, payType?: string
       params += "uuid=" + UUID + "&";
       params += "castumer=" + castumer + "&";
       params += "driver=" + driver.name + "&";
-      params += "item=" + data.list[i].item + "&" + "amount=" + data.list[i].amount + "&";
+      params +=
+        "item=" +
+        data.list[i].item +
+        "&" +
+        "amount=" +
+        data.list[i].amount +
+        "&";
       params += "type=" + type;
       console.log({ params });
       fetch(`${ResApiUrl}?${encodeURI(params)}`, { mode: "no-cors" })
@@ -130,8 +157,12 @@ export const missionsReducer = (state: any, action: any) => {
       return { endIndex: 0, startIndex: 0, data: action.payload.data };
     case "dnd":
       console.log("dispatch is dnd");
-      const oldIndex: number = state.data.findIndex((row: any) => row.id === action.payload.startIndex);
-      const newIndex: number = state.data.findIndex((row: any) => row.id === action.payload.endIndex);
+      const oldIndex: number = state.data.findIndex(
+        (row: any) => row.id === action.payload.startIndex
+      );
+      const newIndex: number = state.data.findIndex(
+        (row: any) => row.id === action.payload.endIndex
+      );
       return { ...state, data: arrayMove(state.data, oldIndex, newIndex) };
 
     case "isDone":
@@ -141,13 +172,16 @@ export const missionsReducer = (state: any, action: any) => {
         ...state,
         data: [
           ...state.data.map((row: any) => {
-            if (row.id == action.payload.startIndex) return { ...row, isDone: !row.isDone };
+            if (row.id == action.payload.startIndex)
+              return { ...row, isDone: !row.isDone };
             else return row;
           }),
         ],
       };
       console.log({ updatedData }, action.payload.startIndex);
-      const task = updatedData.data.filter((row: any) => row.id == action.payload.startIndex)[0];
+      const task = updatedData.data.filter(
+        (row: any) => row.id == action.payload.startIndex
+      )[0];
       updateResponseDB(task, "mission");
       return updatedData;
     case "cash":
@@ -169,14 +203,23 @@ export const missionsReducer = (state: any, action: any) => {
 };
 const checkLocalStorage = async (page: string) => {
   const storage = localStorage.getItem(page);
-  if (typeof storage === "string" && storage != "undefined" && storage != null) {
+  if (
+    typeof storage === "string" &&
+    storage != "undefined" &&
+    storage != null
+  ) {
     return await JSON.parse(storage);
     console.log("passded test ", { storage });
   }
   return null;
 };
 
-export const useInitializedState = async (page: string, props?: any, dooerFunc?: any, dispatch?: any) => {
+export const useInitializedState = async (
+  page: string,
+  props?: any,
+  dooerFunc?: any,
+  dispatch?: any
+) => {
   let data;
   switch (page) {
     case "missions":
