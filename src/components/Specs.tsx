@@ -13,6 +13,7 @@ type SpecsProps = {
 function Specs(props: SpecsProps) {
   console.log({ props });
   const [data, setData] = useState<any>();
+  const [msg, setMessage] = useState(null);
   const [render, setReder] = useState({
     main: true,
     pay: false,
@@ -21,16 +22,19 @@ function Specs(props: SpecsProps) {
   useEffect(() => {
     const STORED = localStorage.getItem("specData");
     if (STORED != "undefined" && STORED != null) return setData([...JSON.parse(STORED)]);
+
     let castumerIndex = props.matrix.mainMatrix.AccountKey.indexOf(props.mission["מפתח"]);
     let cellsData = props.matrix.mainMatrix.cellsData;
     let itemsNames: any = props.matrix.mainMatrix.itemsNames;
     //  console.log({ itemsNames });
+    let msg = props.matrix?.changesMatrix?.metaData[castumerIndex].Details;
+    msg && setMessage(msg);
     let record: any = {};
     let details = [];
     for (let i = 0; i <= cellsData[castumerIndex].length - 1; i++) {
       record = {};
       if (cellsData[castumerIndex][i] != 0) {
-        record["פריט"] = itemsNames[i];
+        record["פריט"] = itemsNames[i + 1];
         record["כמות"] = cellsData[castumerIndex][i];
         record["isDone"] = false;
         // console.log({ record });
@@ -103,6 +107,12 @@ function Specs(props: SpecsProps) {
   };
   return (
     <div>
+      {msg && (
+        <div className="flex w-screen h-1/6 text-white bg-red-600">
+          <p className="w-2/12 text-xl"> הודעה </p>
+          <p className="w-10/12">{msg}</p>
+        </div>
+      )}
       {data && render.main && (
         <div>
           <table>

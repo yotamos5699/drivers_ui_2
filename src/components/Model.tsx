@@ -2,9 +2,7 @@ import { Query, useQuery } from "@tanstack/react-query";
 import React from "react";
 import { fetchDriverSummary } from "../api";
 
-function Model(props: {
-  handleClick: React.MouseEventHandler<HTMLDivElement> | undefined;
-}) {
+function Model(props: { handleClick: React.MouseEventHandler<HTMLDivElement> | undefined }) {
   const driverSummary = useQuery({
     queryKey: ["driversummary"],
     queryFn: fetchDriverSummary,

@@ -45,15 +45,13 @@ function Nav(props: DashBoardProps) {
   return (
     <div className="flex flex-col border-4 border-red-500">
       <Header render={props.render.data} user={props.user} setRender={props.setRender} />
-      {props.render?.data?.table ? (
+      {props.render?.data?.table && (
         <Missions
           missions={missions?.data?.missions}
           handleClick={handleRowClick}
           handleGlobalRender={handleGlobalRender}
           render={props.render}
         />
-      ) : (
-        <h1>loading...</h1>
       )}
 
       {props.render?.data?.details && currentMission && (
