@@ -1,4 +1,4 @@
-import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { QueryCache, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useState, useEffect } from "react";
 import { fetchCastumersData, fetchDriversData, fetchLastMatrix } from "../api";
 import Nav from "./Nav";
@@ -17,9 +17,17 @@ export default function Login() {
   //fetchToShowAndLogin(setDriver, setToShow);
   const { drivers, castumers, matrix } = setQueryData();
   console.log({ render });
+  useEffect(() => {
+    console.log("in login3333333333333333333333333333");
+    localStorage.clear();
+
+    const t = new QueryCache();
+    t.clear();
+  }, []);
   const responseToSubmitRequest = (value: string, driversData: driver[]) => {
     // localStorage.setItem("login", "false");
     // setToShow(false);
+
     setRender({ ...renderScreen("storage", render.data) });
     // localStorage.setItem("render", JSON.stringify(render));
     const currentDriver = driversData.filter((row) => {

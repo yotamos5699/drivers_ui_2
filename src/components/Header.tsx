@@ -9,11 +9,11 @@ type headerProps = {
 };
 
 function Header(props: headerProps) {
-  const [visible, setVisible] = useState(false);
+  //const [visible, setVisible] = useState(false);
 
-  const handleClick = () => {
-    setVisible(!visible);
-  };
+  // const handleClick = () => {
+  //   setVisible(!visible);
+  // };
   return (
     <div className="hdr1">
       <h2>שלום {props?.user?.name}</h2>
@@ -26,13 +26,18 @@ function Header(props: headerProps) {
           ? "תשלום"
           : "כלום"}
       </div>
-      <button className={"border-pink-400"} onClick={() => backToLogin(props.setRender, props.render)}>
+      <button
+        className={"border-pink-400"}
+        onClick={() => {
+          backToLogin(props.setRender, props.render.data);
+        }}
+      >
         התנתק
       </button>
-      <button className={"border-pink-400"} onClick={() => backToLogin(props.setRender, props.render)}>
+      {/* <button className={"border-pink-400"} onClick={() => backToLogin(props.setRender, props.render)}>
         סיכום
-      </button>
-      {visible && <Model handleClick={handleClick} />}
+      </button> */}
+      {/* {visible && <Model handleClick={handleClick} />} */}
     </div>
   );
 }

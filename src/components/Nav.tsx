@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { driver, Tasks } from "../typing";
 import Specs from "./Specs";
 import Storage from "./Storage";
@@ -22,7 +22,9 @@ function Nav(props: DashBoardProps) {
     data: constractMissions(props.matrix, props.castumers, props.driver),
   });
   const [currentMission, setCurrentMission] = useState<any>();
-
+  useEffect(() => {
+    console.log("in use efect bnav", { missions });
+  }, [missions.data]);
   const [currentScreen, setCurrentScreen] = useState(null);
   console.log("nav props", { props });
 
@@ -44,7 +46,7 @@ function Nav(props: DashBoardProps) {
 
   return (
     <div className="flex flex-col border-4 border-red-500">
-      <Header render={props.render.data} user={props.user} setRender={props.setRender} />
+      <Header render={props.render} user={props.user} setRender={props.setRender} />
       {props.render?.data?.table && (
         <Missions
           missions={missions?.data?.missions}
@@ -66,7 +68,8 @@ function Nav(props: DashBoardProps) {
           filterdKeys={missions.data.filterdKeys}
         />
       ) : (
-        props.render?.data?.storage && (
+        props.render?.data?.storage &&
+        missions?.data && (
           <div>
             <h1 className={"text-center text-9xl justify-center border-4 border-red-500"}>אין משימות לנהג</h1>
             <button id={"backToLogin"} className="btn1" onClick={() => backToLogin(props.setRender, props.render.data)}>

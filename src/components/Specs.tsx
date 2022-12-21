@@ -27,7 +27,7 @@ function Specs(props: SpecsProps) {
     let cellsData = props.matrix.mainMatrix.cellsData;
     let itemsNames: any = props.matrix.mainMatrix.itemsNames;
     //  console.log({ itemsNames });
-    let msg = props.matrix?.changesMatrix?.metaData[castumerIndex].Details;
+    let msg = props?.matrix?.changesMatrix?.metaData[castumerIndex]?.Details;
     msg && setMessage(msg);
     let record: any = {};
     let details = [];

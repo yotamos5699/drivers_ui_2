@@ -1,19 +1,18 @@
 import { Action } from "@dnd-kit/core/dist/store";
 import { arrayMove } from "@dnd-kit/sortable";
 import { GrCurrency } from "react-icons/gr";
+import { QueryCache } from "@tanstack/react-query";
 import Returns from "./components/Returns";
 import { Tasks } from "./typing";
 //const ResApiUrl = "https://script.google.com/macros/s/AKfycbyTQJsXqMszO_cxlQCgRYiamH6cTW5Eoj-4-Fers5I/dev";
 const ResApiUrl =
   "https://script.google.com/macros/s/AKfycbwYsPdgqWD6QNjllH8ZB_-Wde6br0CYcXUE2yShDvGb0486ojgzEKkF5_HbBb5Q34iV/exec";
 export const d = "s";
-
+const queryCash = new QueryCache();
 export const renderScreen = (cellId: string, render: any) => {
-  console.log("in render screen ", render);
+  console.log("in render screen ", { render, cellId });
   let r: any = {};
-  Object.keys(render).forEach((key) =>
-    key == cellId ? (r[key] = true) : (r[key] = false)
-  );
+  Object.keys(render).forEach((key) => (key == cellId ? (r[key] = true) : (r[key] = false)));
   console.log({ r });
   return { data: { ...r }, subKey: cellId };
 };
@@ -34,16 +33,14 @@ export const sortTableData = async (missions: any[], Midx: number) => {
   }
 };
 
-export const constractMissions = (
-  matrixData: any,
-  castumers: any,
-  driver: any
-) => {
-  let currentCasumersKeys = matrixData.mainMatrix.AccountKey.filter(
-    (key: string, i: number) => {
-      if (matrixData.mainMatrix.DriverID[i] == driver) return key;
+export const constractMissions = (matrixData: any, castumers: any, driver: any) => {
+  let currentCasumersKeys = matrixData.mainMatrix.AccountKey.filter((key: string, i: number) => {
+    console.log({ driver }, "matrix did:", matrixData.mainMatrix.DriverID[i]);
+    if (matrixData.mainMatrix.DriverID[i] == driver) {
+      console.log("driver thet returns !!!!!", { key });
+      return key;
     }
-  );
+  });
   console.log({ currentCasumersKeys });
   let thisCastumer: any[] = [];
   let missionsArray: object[] = [];
@@ -67,15 +64,10 @@ export const constractMissions = (
   }
   const filterdKeys = currentCasumersKeys;
   console.log({ missionsArray });
-  return { missions: missionsArray, filterdKeys: filterdKeys };
+  return { missions: [...missionsArray], filterdKeys: [...filterdKeys] };
 };
 
-export const updateResponseDB = async (
-  data: any,
-  type: string,
-  payType?: string,
-  mission?: any
-) => {
+export const updateResponseDB = async (data: any, type: string, payType?: string, mission?: any) => {
   console.log("in updateResponseDB", { type, data, payType });
   // console.log({ mission });
   const LS = localStorage.getItem("driver");
@@ -113,9 +105,7 @@ export const updateResponseDB = async (
         params += "driverNum=" + driver.pivotKey + "&";
         params += "driver=" + driver.name + "&";
         params += "paymentMethod=" + payType + "&";
-        params += `coinName=${payType == "שיק" ? null : d[i].name}&amount=${
-          payType == "שיק" ? null : d[i].amount
-        }&`;
+        params += `coinName=${payType == "שיק" ? null : d[i].name}&amount=${payType == "שיק" ? null : d[i].amount}&`;
         params += `coinValue=${payType == "שיק" ? null : d[i].billValue}&`;
         params += "type=" + type;
 
@@ -135,13 +125,7 @@ export const updateResponseDB = async (
       params += "uuid=" + UUID + "&";
       params += "castumer=" + castumer + "&";
       params += "driver=" + driver.name + "&";
-      params +=
-        "item=" +
-        data.list[i].item +
-        "&" +
-        "amount=" +
-        data.list[i].amount +
-        "&";
+      params += "item=" + data.list[i].item + "&" + "amount=" + data.list[i].amount + "&";
       params += "type=" + type;
       console.log({ params });
       fetch(`${ResApiUrl}?${encodeURI(params)}`, { mode: "no-cors" })
@@ -157,12 +141,8 @@ export const missionsReducer = (state: any, action: any) => {
       return { endIndex: 0, startIndex: 0, data: action.payload.data };
     case "dnd":
       console.log("dispatch is dnd");
-      const oldIndex: number = state.data.findIndex(
-        (row: any) => row.id === action.payload.startIndex
-      );
-      const newIndex: number = state.data.findIndex(
-        (row: any) => row.id === action.payload.endIndex
-      );
+      const oldIndex: number = state.data.findIndex((row: any) => row.id === action.payload.startIndex);
+      const newIndex: number = state.data.findIndex((row: any) => row.id === action.payload.endIndex);
       return { ...state, data: arrayMove(state.data, oldIndex, newIndex) };
 
     case "isDone":
@@ -172,16 +152,13 @@ export const missionsReducer = (state: any, action: any) => {
         ...state,
         data: [
           ...state.data.map((row: any) => {
-            if (row.id == action.payload.startIndex)
-              return { ...row, isDone: !row.isDone };
+            if (row.id == action.payload.startIndex) return { ...row, isDone: !row.isDone };
             else return row;
           }),
         ],
       };
       console.log({ updatedData }, action.payload.startIndex);
-      const task = updatedData.data.filter(
-        (row: any) => row.id == action.payload.startIndex
-      )[0];
+      const task = updatedData.data.filter((row: any) => row.id == action.payload.startIndex)[0];
       updateResponseDB(task, "mission");
       return updatedData;
     case "cash":
@@ -203,23 +180,14 @@ export const missionsReducer = (state: any, action: any) => {
 };
 const checkLocalStorage = async (page: string) => {
   const storage = localStorage.getItem(page);
-  if (
-    typeof storage === "string" &&
-    storage != "undefined" &&
-    storage != null
-  ) {
+  if (typeof storage === "string" && storage != "undefined" && storage != null) {
     return await JSON.parse(storage);
     console.log("passded test ", { storage });
   }
   return null;
 };
 
-export const useInitializedState = async (
-  page: string,
-  props?: any,
-  dooerFunc?: any,
-  dispatch?: any
-) => {
+export const useInitializedState = async (page: string, props?: any, dooerFunc?: any, dispatch?: any) => {
   let data;
   switch (page) {
     case "missions":
@@ -254,7 +222,8 @@ export const useInitializedState = async (
 
 export const backToLogin = (setRender: any, render: any) => {
   localStorage.clear();
-  setRender({ ...renderScreen("login", render) });
+  queryCash.clear();
+  setRender({ ...render, data: defaultRender });
 };
 
 export const defualtCurrencys = [

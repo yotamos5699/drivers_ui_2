@@ -11,7 +11,7 @@ type StorageProps = {
 };
 
 function Storage(props: StorageProps) {
-  //console.log({ props });
+  console.log("storage", { props });
   //const [storageData,setStorageData] = useLocalStorage('storageData',null)
   const [storageData, setStorageData] = useLocalStorage("storageData", { data: null, subKey: "storageData" });
   const [storageStyles, setStorageStyles] = useLocalStorage("storageStyles", { data: null, subKey: "storageStyles" });
@@ -67,9 +67,9 @@ function Storage(props: StorageProps) {
       console.log(err);
     }
     if (stMtx) {
-      setStorageStyles({ data: stMtx });
+      setStorageStyles({ ...storageStyles, data: stMtx });
     }
-    record && setStorageData({ data: details });
+    record && setStorageData({ ...storageData, data: details });
     console.log("after set up in storage ", { storageData, storageStyles });
   }, []);
 
