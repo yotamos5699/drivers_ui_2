@@ -20,8 +20,8 @@ function Specs(props: SpecsProps) {
     ret: false,
   });
   useEffect(() => {
-    const STORED = localStorage.getItem("specData");
-    if (STORED != "undefined" && STORED != null) return setData([...JSON.parse(STORED)]);
+    // const STORED = localStorage.getItem("specData");
+    // if (STORED != "undefined" && STORED != null) return setData([...JSON.parse(STORED)]);
 
     let castumerIndex = props.matrix.mainMatrix.AccountKey.indexOf(props.mission["מפתח"]);
     let cellsData = props.matrix.mainMatrix.cellsData;
@@ -34,7 +34,7 @@ function Specs(props: SpecsProps) {
     for (let i = 0; i <= cellsData[castumerIndex].length - 1; i++) {
       record = {};
       if (cellsData[castumerIndex][i] != 0) {
-        record["פריט"] = itemsNames[i + 1];
+        record["פריט"] = itemsNames[i];
         record["כמות"] = cellsData[castumerIndex][i];
         record["isDone"] = false;
         // console.log({ record });
@@ -188,8 +188,12 @@ function Specs(props: SpecsProps) {
               <tr></tr>
             </tbody>
           </table>
-          <button id="table" onClick={props.handleGlobalRender} className="btn1">
-            חזור
+          <button
+            id="table"
+            onClick={props.handleGlobalRender}
+            className={data?.filter((row: any) => row.isDone === false).length === 0 ? "btn1 bg-green-600" : "btn1"}
+          >
+            {data?.filter((row: any) => row.isDone === false).length === 0 ? "סיום" : "חזור"}
           </button>
           <button id="ret" onClick={handleClick} className="btn1">
             החזרת סחורה
