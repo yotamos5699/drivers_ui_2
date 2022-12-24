@@ -69,7 +69,7 @@ export default function Login() {
         matrixes.error || (castumers.error && <h1>error ....</h1>)
       )}
 
-      {!render?.data?.login && driver?.data && castumers.data && drivers.data && matrixes?.data[0]?.matrixesData ? (
+      {!render?.data?.login && driver?.data && castumers.data && drivers.data && matrixes?.data[0]?.matrixesData && (
         <Nav
           render={render}
           setRender={setRender}
@@ -79,8 +79,6 @@ export default function Login() {
           driver={driver.data.pivotKey}
           //  loginShow={setToShow}
         />
-      ) : (
-        <h1>loading matrixes data {JSON.stringify(matrixes?.data)}</h1>
       )}
       {render?.data?.admin && castumers?.data && drivers?.data && matrixes?.data ? (
         <AdminScreen matrixes={matrixes.data} castumers={castumers.data} render={render} setReder={setRender} />
