@@ -36,6 +36,7 @@ function Header(props: headerProps) {
             <p> אפשר תנועה</p>
             <input
               value={props.movment.data}
+              checked={props.movment.data}
               onChange={() => {
                 props.setMovment({ data: !props.movment.data });
               }}
