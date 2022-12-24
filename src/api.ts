@@ -41,7 +41,7 @@ const mockMatrix = {
 };
 
 const ofekBarier =
-  "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJmZXRjaGVkRGF0YSI6eyJzdGF0dXMiOiJ5ZXMiLCJjb25maWdPYmoiOiJOTyBDT05GSUcgT0JKRUNUIiwidXNlcklEIjoiNjM1OGY4NzE3ZGQ5NWVjZWVlNTNlYWMzIn0sImlhdCI6MTY2OTEwMzEzOH0.caIeyjcTcK0BIe_opei_VbifBWEwQAZkjeR6VIYv0kE";
+  "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJmZXRjaGVkRGF0YSI6eyJzdGF0dXMiOiJ5ZXMiLCJjb25maWdPYmoiOiJOTyBDT05GSUcgT0JKRUNUIiwidXNlcklEIjoiNjM1OGY4NzE3ZGQ5NWVjZWVlNTNlYWMzIn0sImlhdCI6MTY3MTg5NjY0Nn0.3mmq_cIKdYZSdywQeRXzpdv6CowPJuEEI9Q57yHNKFo";
 
 const BaseHaURL = "https://bizmod-ha-api-001.onrender.com/api";
 //const lastMatrixUrl = "http://localhost:3000/api/loadmatrixes";
@@ -74,8 +74,8 @@ export const fetchLastMatrix = async () => {
 // .catch((err) => console.log);
 //};
 export const fetchCurrentDayMarixes = async () => {
-  const startDate = new Date(new Date().setUTCHours(0, 0, 0, 0));
-  const endDate = new Date(new Date().setHours(23, 59, 59));
+  const startDate = new Date(new Date("12-18-2022").setUTCHours(0, 0, 0, 0));
+  const endDate = new Date(new Date("12-19-2022").setHours(23, 59, 59));
 
   const params = {
     collection: "MtxLog",
@@ -149,11 +149,23 @@ export const fetchItemsData = async () => {
   };
 
   return await axios
-    .post(BaseHaURL + "/getrecords", {
+    .post("https://bizmod-ha-api-001.onrender.com/api/getrecords", data, {
       headers: headers,
     })
     .then((res) => {
-      console.log("castumers data ", res.data.data);
+      console.log("items data  ", res.data);
+      console.log("items data.data returned ", res.data.data);
+      return res.data.data;
+    })
+    .catch((err) => console.log);
+};
+
+export const fetchMessagesContent = async (data: any) => {
+  return await axios
+    .post(ResApiUrl + data)
+    .then((res) => {
+      console.log("items data  ", res.data);
+      console.log("items data.data returned ", res.data.data);
       return res.data.data;
     })
     .catch((err) => console.log);

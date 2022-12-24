@@ -26,10 +26,11 @@ export default function DataRow(props: any) {
   //   Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse("market://details?id=com.waze"));
   //   startActivity(intent);
   // }
+
   return (
     <div
       className={"flex flex-col items-center px-2 py-4 w-4/5 bg-gray-100 shadow-md rounded-md gap-1 touch-none"}
-      ref={setNodeRef}
+      ref={props.movment.data ? setNodeRef : null}
       id={props.id}
       {...attributes}
       {...listeners}

@@ -106,7 +106,7 @@ function Specs(props: SpecsProps) {
     });
   };
   return (
-    <div>
+    <div className="mt-20">
       {msg && (
         <div className="flex w-screen h-1/6 text-white bg-red-600">
           <p className="w-2/12 text-xl"> הודעה </p>
@@ -124,14 +124,14 @@ function Specs(props: SpecsProps) {
                 {Object.keys(data[0]).map(
                   (header, idx) =>
                     header != "isDone" && (
-                      <td className="td" key={idx + 1111}>
+                      <td className="td2" key={idx + 1111}>
                         {header}
                       </td>
                     )
                 )}
-                <td className="td">הוסף</td>
-                <td className="td">החסר</td>
-                <td className="td">סופק</td>
+                <td className="td2">הוסף</td>
+                <td className="td2">החסר</td>
+                <td className="td2">סופק</td>
               </tr>
             </thead>
             <tbody>
@@ -141,21 +141,21 @@ function Specs(props: SpecsProps) {
                   className={
                     row["isDone"] == false
                       ? "text-sm font-medium text-gray-900 px-6 py-4 text-center  items-center w-4/5 bg-gray- shadow-md rounded-md gap-1 touch-none"
-                      : "tr bg-gray-200  text-gray-900 px-6 py-4 text-center  items-center w-4/5  shadow-md rounded-md gap-1 touch-none"
+                      : "text-sm bg-gray-200  text-gray-900 px-6 py-4 text-center  items-center w-4/5  shadow-md rounded-md gap-1 touch-none"
                   }
                   onClick={(e) => handleChange(e, row)}
                 >
                   {Object.values(row).map(
                     (cell: any, ci) =>
                       Object.keys(row)[ci] != "isDone" && (
-                        <td key={ci + idx} className="td">
+                        <td key={ci + idx} className="td2">
                           {cell}
                         </td>
                       )
                   )}
                   <td
                     id="add"
-                    className="text-xl text-center bg-green-100 hover:bg-green-500"
+                    className="td2 text-xl text-center bg-green-100 hover:bg-green-500"
                     onClick={() => {
                       setData([
                         ...data.map((row: any, i: number) => (i == idx ? { ...row, כמות: row["כמות"] + 1 } : row)),
@@ -166,7 +166,7 @@ function Specs(props: SpecsProps) {
                   </td>
                   <td
                     id="sub"
-                    className="text-xl text-center bg-red-100 hover:bg-red-500"
+                    className="td2 text-xl text-center bg-red-100 hover:bg-red-500"
                     onClick={() => {
                       setData([
                         ...data.map((row: any, i: number) => (i == idx ? { ...row, כמות: row["כמות"] - 1 } : row)),

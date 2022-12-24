@@ -1,4 +1,5 @@
 import React, { useEffect, useState, useContext } from "react";
+import { Logger } from "../helper";
 import useLocalStorage from "../Hooks/useLocalStorage";
 
 //import DataRow fro
@@ -8,6 +9,7 @@ type StorageProps = {
   mission: any;
   castumers: any;
   handleGlobalRender: any;
+  setStorageHeaders: any;
 };
 
 function Storage(props: StorageProps) {
@@ -19,10 +21,20 @@ function Storage(props: StorageProps) {
   //   main: true,
   //   cont: false,
   // });
+
+  useEffect(() => {
+    if (storageData.data !== null)
+      props.setStorageHeaders({
+        data: { headers: Object.keys(storageData.data[0]), amount: storageData?.data?.length },
+      });
+  }, [storageData.data]);
   console.log("in storage ", { props });
   useEffect(() => {
     if (storageData.data && storageStyles.data) {
       console.log("using local data ", { storageData, storageStyles });
+      props.setStorageHeaders({
+        data: { headers: Object.keys(storageData.data[0]), amount: storageData?.data?.length },
+      });
       return;
     }
 
@@ -108,22 +120,12 @@ function Storage(props: StorageProps) {
   };
 
   return (
-    <div>
+    <div className="mt-28">
       {storageData?.data && (
         <table>
-          <thead className="bg-white border-b">
-            <tr key={"asd"} className="text-sm font-medium text-gray-900 px-6 py-4 text-center">
-              {Object.keys(storageData.data[0]).map(
-                (header, idx) =>
-                  header != "isDone" && (
-                    <td className="td" key={idx + 1111}>
-                      {header}
-                    </td>
-                  )
-              )}
-              <td className="td">מוכן</td>
-            </tr>
-          </thead>
+          {/* <thead className="bg-white border-b">
+           
+          </thead> */}
           <tbody>
             {storageData.data.map((row: any, idx: number) => (
               <tr
@@ -154,7 +156,7 @@ function Storage(props: StorageProps) {
                       </td>
                     )
                 )}
-                <td className={""}>
+                <td className={"td"}>
                   <input
                     className="w-6 h-6 justify-center text-blue-600 bg-gray-100 rounded border-gray-300 focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
                     id="isDone"

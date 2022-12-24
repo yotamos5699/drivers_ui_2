@@ -7,17 +7,20 @@
     @apply bg-blue-500 hover:bg-blue-400 text-white font-bold border rounded w-full py-2 px-3 border-blue-700 hover:border-blue-500;
   }
   .td {
-    @apply w-1/6 px-2 py-2  whitespace-nowrap text-sm font-medium text-gray-900 text-center;
+    @apply flex-1/16 h-10 px-2 py-2 border-blue-500 border-2 text-gray-900 text-center;
   }
 
+  .td2 {
+    @apply w-1/4 h-10 px-2 py-2 border-blue-500 border-2 text-gray-900 text-center;
+  }
   .tr {
-    @apply w-1/6 h-10 px-2 py-2 border-x-pink-200 border-x-4  whitespace-nowrap text-sm font-medium text-gray-900 text-center hover:bg-blue-400;
+    @apply flex w-screen   h-10 px-2 py-2 border-x-pink-200 border-4  text-gray-900 text-center hover:bg-blue-400;
   }
   .th {
     @apply sticky top-0 px-6 py-3;
   }
   .hdr1 {
-    @apply flex sticky top-0 z-30 w-full px-2 py-4 bg-white sm:px-4 shadow-xl bg-white shadow-md rounded px-4;
+    @apply flex flex-col sticky top-0 z-30 w-full px-2 py-4 bg-white sm:px-4 shadow-xl bg-white shadow-md rounded px-4;
   }
 }
 

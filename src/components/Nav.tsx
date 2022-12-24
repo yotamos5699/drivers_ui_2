@@ -3,7 +3,7 @@ import { driver, Tasks } from "../typing";
 import Specs from "./Specs";
 import Storage from "./Storage";
 import Header from "./Header";
-import { backToLogin, constractMissions, renderScreen } from "../helper";
+import { backToLogin, constractMissions, Logger, renderScreen } from "../helper";
 import Missions from "./Missions";
 import useLocalStorage from "../Hooks/useLocalStorage";
 
@@ -21,12 +21,11 @@ function Nav(props: DashBoardProps) {
   const [missions, setMissions] = useLocalStorage("missions", {
     data: constractMissions(props.matrix, props.castumers, props.driver),
   });
+  const [storageHeaders, setStorageHeaders] = useLocalStorage("storageHeaders", { data: { headers: null, amount: 0 } });
   const [currentMission, setCurrentMission] = useState<any>();
-  useEffect(() => {
-    console.log("in use efect bnav", { missions });
-  }, [missions.data]);
+  const [movment, setMovment] = useLocalStorage("movment", { data: false });
+  useEffect(() => {}, [missions.data]);
   const [currentScreen, setCurrentScreen] = useState(null);
-  console.log("nav props", { props });
 
   const handleRowClick = async (e: any) => {
     const MissionID = e?.active?.id ? e.active.id : null;
@@ -44,15 +43,28 @@ function Nav(props: DashBoardProps) {
     }
   };
 
+  Logger(storageHeaders, "  Logger(storageHeaders");
+
   return (
     <div className="flex flex-col w-full border-4 border-red-500">
-      <Header render={props.render} user={props.user} setRender={props.setRender} />
+      {!props.render.data.admin && (
+        <Header
+          setMovment={setMovment}
+          movment={movment}
+          render={props.render}
+          user={props.user}
+          setRender={props.setRender}
+          storageHeaders={storageHeaders}
+        />
+      )}
       {props.render?.data?.table && (
         <Missions
+          movment={movment}
           missions={missions?.data?.missions}
           handleClick={handleRowClick}
           handleGlobalRender={handleGlobalRender}
           render={props.render}
+          mission={currentMission}
         />
       )}
 
@@ -61,6 +73,7 @@ function Nav(props: DashBoardProps) {
       )}
       {props.render?.data?.storage && missions?.data?.missions?.length > 0 ? (
         <Storage
+          setStorageHeaders={setStorageHeaders}
           matrix={props.matrix}
           mission={currentMission}
           castumers={props.castumers}
@@ -71,7 +84,7 @@ function Nav(props: DashBoardProps) {
         props.render?.data?.storage &&
         missions?.data && (
           <div>
-            <h1 className={"text-center text-9xl justify-center border-4 border-red-500"}>אין משימות לנהג</h1>
+            <h1 className={"mt-24 text-center text-9xl justify-center border-4 border-red-500"}>אין משימות לנהג</h1>
             <button id={"backToLogin"} className="btn1" onClick={() => backToLogin(props.setRender, props.render.data)}>
               חזור
             </button>
@@ -93,21 +106,21 @@ export const useRendererActions = (action: UseRender, render: any, renderScreen:
     case "stockReady":
       // localStorage.setItem("render", JSON.stringify(render));
       setRender({ ...renderScreen("table", render.data) });
-      console.log("useRendererActions ", { render, action });
-      return console.log("rendered ", { action });
+
+      return;
     case "table":
       //  localStorage.setItem("render", JSON.stringify(render));
       setRender({ ...renderScreen("table", render.data) });
-      return console.log("rendered ", { action });
+      return;
     case "log":
       setRender({ ...renderScreen("log", render.data) });
-      return console.log("rendered ", { action });
+      return;
     case "details":
       setRender({ ...renderScreen("details", render.data) });
-      return console.log("rendered ", { action });
+      return;
 
     default:
-      return console.log("no screen to render", { action });
+      return;
   }
 };
 

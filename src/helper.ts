@@ -4,6 +4,7 @@ import { GrCurrency } from "react-icons/gr";
 import { QueryCache } from "@tanstack/react-query";
 import Returns from "./components/Returns";
 import { Tasks } from "./typing";
+import { useEffect } from "react";
 //const ResApiUrl = "https://script.google.com/macros/s/AKfycbyTQJsXqMszO_cxlQCgRYiamH6cTW5Eoj-4-Fers5I/dev";
 const ResApiUrl =
   "https://script.google.com/macros/s/AKfycbwYsPdgqWD6QNjllH8ZB_-Wde6br0CYcXUE2yShDvGb0486ojgzEKkF5_HbBb5Q34iV/exec";
@@ -33,14 +34,19 @@ export const sortTableData = async (missions: any[], Midx: number) => {
   }
 };
 
-export const constractMissions = (matrixData: any, castumers: any, driver: any) => {
-  let currentCasumersKeys = matrixData.mainMatrix.AccountKey.filter((key: string, i: number) => {
-    console.log({ driver }, "matrix did:", matrixData.mainMatrix.DriverID[i]);
-    if (matrixData.mainMatrix.DriverID[i] == driver) {
-      console.log("driver thet returns !!!!!", { key });
-      return key;
-    }
-  });
+export const constractMissions = (matrixData: any, castumers: any, driver: any, from: null | string = null) => {
+  if (from) console.log({ from });
+  console.log({ castumers, matrixData });
+  const accountKeys = matrixData.mainMatrix.AccountKey;
+  let currentCasumersKeys =
+    driver === "admin"
+      ? accountKeys
+      : accountKeys.filter((key: string, i: number) => {
+          if (matrixData.mainMatrix.DriverID[i] == driver) {
+            console.log("driver thet returns !!!!!", { key });
+            return key;
+          }
+        });
   console.log({ currentCasumersKeys });
   let thisCastumer: any[] = [];
   let missionsArray: object[] = [];
@@ -68,6 +74,7 @@ export const constractMissions = (matrixData: any, castumers: any, driver: any) 
 };
 
 export const updateResponseDB = async (data: any, type: string, payType?: string, mission?: any) => {
+  console.log({ mission });
   console.log("in updateResponseDB", { type, data, payType });
   // console.log({ mission });
   const LS = localStorage.getItem("driver");
@@ -75,13 +82,17 @@ export const updateResponseDB = async (data: any, type: string, payType?: string
   const driver = await JSON.parse(LS);
 
   if (type == "mission") {
+    const Castumer = await mission;
+    const castumerNum = Castumer["id"];
     console.log("in updateResponseDB=> missions");
     let params = "";
     params += "uuid=" + Math.floor(Math.random() * 100000) + "&";
     for (const [key, value] of Object.entries(data)) {
       params += `${key}=${value}&`;
     }
-    params += "driver=" + driver.name + "&";
+    params += "castumerNum=" + castumerNum + "&";
+    params += "driverNum=" + driver.data.pivotKey + "&";
+    params += "driver=" + driver.data.name + "&";
     params += "type=" + type;
     fetch(`${ResApiUrl}?${encodeURI(params)}`, { mode: "no-cors" })
       .then(() => console.log("sent ", type))
@@ -90,10 +101,11 @@ export const updateResponseDB = async (data: any, type: string, payType?: string
   if (type == "payments") {
     const Castumer = await mission;
     const castumerNum = Castumer["מפתח"];
-    const castumerName = Castumer['שם חשבון"'];
+    console.log({ Castumer });
+    const castumerName = Castumer["שם חשבון"];
     console.log("in updateResponseDB=> payments ", payType);
     const d = await data;
-
+    console.log({ driver });
     const UUID = Math.floor(Math.random() * 100000);
 
     for (let i = 0; i <= d.length - 1; i++) {
@@ -102,8 +114,8 @@ export const updateResponseDB = async (data: any, type: string, payType?: string
         params += "uuid=" + UUID + "&";
         params += "castumer=" + castumerNum + "&";
         params += "castumerName=" + castumerName + "&";
-        params += "driverNum=" + driver.pivotKey + "&";
-        params += "driver=" + driver.name + "&";
+        params += "driverNum=" + driver.data.pivotKey + "&";
+        params += "driver=" + driver.data.name + "&";
         params += "paymentMethod=" + payType + "&";
         params += `coinName=${payType == "שיק" ? null : d[i].name}&amount=${payType == "שיק" ? null : d[i].amount}&`;
         params += `coinValue=${payType == "שיק" ? null : d[i].billValue}&`;
@@ -118,13 +130,19 @@ export const updateResponseDB = async (data: any, type: string, payType?: string
 
   if (type == "returns") {
     console.log("in func", { data });
-    const castumer = await mission["מפתח"];
+    const Castumer = await mission;
+
+    console.log({ Castumer });
+    const castumerName = Castumer["שם חשבון"];
+    const castumerNum = await mission["מפתח"];
     const UUID = Math.floor(Math.random() * 100000);
     for (let i = 0; i <= data.list.length - 1; i++) {
       let params = "";
       params += "uuid=" + UUID + "&";
-      params += "castumer=" + castumer + "&";
-      params += "driver=" + driver.name + "&";
+      params += "castumerNum=" + castumerNum + "&";
+      params += "castumer=" + castumerName + "&";
+      params += "driverNum" + driver.data.pivotKey + "&";
+      params += "driver=" + driver.data.name + "&";
       params += "item=" + data.list[i].item + "&" + "amount=" + data.list[i].amount + "&";
       params += "type=" + type;
       console.log({ params });
@@ -147,6 +165,7 @@ export const missionsReducer = (state: any, action: any) => {
 
     case "isDone":
       console.log("dispatch is IsDone");
+      console.log({ state, action });
 
       const updatedData = {
         ...state,
@@ -159,7 +178,8 @@ export const missionsReducer = (state: any, action: any) => {
       };
       console.log({ updatedData }, action.payload.startIndex);
       const task = updatedData.data.filter((row: any) => row.id == action.payload.startIndex)[0];
-      updateResponseDB(task, "mission");
+      console.log({ task });
+      updateResponseDB(task, "mission", "", task);
       return updatedData;
     case "cash":
       return { ...state, data: action.payload.data };
@@ -245,4 +265,17 @@ export const defaultRender = {
   pay: false,
   isDone: false,
   storage: false,
+  admin: false,
+};
+
+const loggerPass = {
+  var: true,
+  general: true,
+  current: true,
+};
+
+export const Logger = (value: any, msg: string = "", pass?: string) => {
+  useEffect(() => {
+    console.log(msg + " --Logger :", { value });
+  }, [value]);
 };

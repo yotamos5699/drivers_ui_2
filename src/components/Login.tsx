@@ -1,10 +1,11 @@
 import { QueryCache, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useState, useEffect } from "react";
-import { fetchCastumersData, fetchDriversData, fetchLastMatrix } from "../api";
+import { fetchCastumersData, fetchCurrentDayMarixes, fetchDriversData, fetchLastMatrix } from "../api";
 import Nav from "./Nav";
 import { driver } from "../typing";
-import { defaultRender, renderScreen, useInitializedState } from "../helper";
+import { defaultRender, Logger, renderScreen, useInitializedState } from "../helper";
 import useLocalStorage from "../Hooks/useLocalStorage";
+import AdminScreen from "./AdminScreen";
 
 export default function Login() {
   // const [driver, setDriver] = useState<driver>();
@@ -12,42 +13,32 @@ export default function Login() {
 
   const [render, setRender] = useLocalStorage("render", { data: defaultRender });
   const [driver, setDriver] = useLocalStorage("driver", { data: null, subKey: null });
-  //const [toShow, setToShow] = useLocalStorage("login", true);
   const [input, setInput] = useState("");
-  //fetchToShowAndLogin(setDriver, setToShow);
-  const { drivers, castumers, matrix } = setQueryData();
-  console.log({ render });
-  useEffect(() => {
-    console.log("in login3333333333333333333333333333");
-    localStorage.clear();
+  const { drivers, castumers, matrixes } = setQueryData();
 
-    const t = new QueryCache();
-    t.clear();
-  }, []);
+  Logger(matrixes.data, "matrixes sssss");
+
   const responseToSubmitRequest = (value: string, driversData: driver[]) => {
-    // localStorage.setItem("login", "false");
-    // setToShow(false);
-
+    if (input === "1234") {
+      return setRender({ ...renderScreen("admin", render.data) });
+    }
     setRender({ ...renderScreen("storage", render.data) });
-    // localStorage.setItem("render", JSON.stringify(render));
+
     const currentDriver = driversData.filter((row) => {
       if (row.password.toString() == value) {
-        console.log("data ok ", row);
         return row;
       }
     });
     if (currentDriver?.length == 1) {
       setDriver({ data: currentDriver[0] });
-      console.log("setting driver !!!!");
+
       //   localStorage.setItem("driver", JSON.stringify(currentDriver[0]));
     }
-    console.log({ currentDriver });
   };
 
   const handleClick = (e: any) => {
     let name = e.target.name;
     let value = input;
-    console.log({ name, value, input });
     name == "password_btn" && drivers?.data && responseToSubmitRequest(value, drivers.data);
   };
 
@@ -72,43 +63,35 @@ export default function Login() {
             כנס
           </button>
         </div>
-      ) : matrix.isLoading || castumers.isLoading ? (
+      ) : matrixes.isLoading || castumers.isLoading ? (
         <h1>laoding ....</h1>
       ) : (
-        matrix.error || (castumers.error && <h1>error ....</h1>)
+        matrixes.error || (castumers.error && <h1>error ....</h1>)
       )}
 
-      {!render?.data?.login && driver?.data && castumers.data && drivers.data && matrix.data && (
+      {!render?.data?.login && driver?.data && castumers.data && drivers.data && matrixes?.data[0]?.matrixesData ? (
         <Nav
           render={render}
           setRender={setRender}
           user={driver.data}
-          matrix={matrix.data}
+          matrix={matrixes.data[0].matrixesData}
           castumers={castumers.data}
           driver={driver.data.pivotKey}
           //  loginShow={setToShow}
         />
+      ) : (
+        <h1>loading matrixes data {JSON.stringify(matrixes?.data)}</h1>
+      )}
+      {render?.data?.admin && castumers?.data && drivers?.data && matrixes?.data ? (
+        <AdminScreen matrixes={matrixes.data} castumers={castumers.data} render={render} setReder={setRender} />
+      ) : (
+        render?.data?.admin && <h1>loadind admin....</h1>
       )}
     </>
   );
 }
 
-// const fetchToShowAndLogin = async (setDriver: any, setToShow: any) => {
-//   useEffect(() => {
-//     async function fetchStorage() {
-//       let res1 = await useInitializedState("driver");
-//       console.log({ res1 });
-//       setDriver(res1);
-//       let res2 = await useInitializedState("login");
-//       console.log({ res2 });
-//       setToShow(res2);
-//     }
-//     fetchStorage();
-//   }, []);
-// };
-
 const setQueryData = () => {
-  console.log("in set query !!!!!");
   const drivers = useQuery({
     queryKey: ["drivers"],
     queryFn: fetchDriversData,
@@ -117,6 +100,6 @@ const setQueryData = () => {
     queryKey: ["castumers"],
     queryFn: fetchCastumersData,
   });
-  const matrix = useQuery({ queryKey: ["matrix"], queryFn: fetchLastMatrix });
-  return { drivers, castumers, matrix };
+  const matrixes = useQuery({ queryKey: ["matrixes"], queryFn: fetchCurrentDayMarixes });
+  return { drivers, castumers, matrixes };
 };

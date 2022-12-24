@@ -47,10 +47,10 @@ function Pay(props: any) {
     setShowPay(!showPay);
   };
   return (
-    <div className="flex flex-col">
+    <div className="flex flex-col h-full w-full">
       {!showPay && (
         <div>
-          <div className={"flex flex-col w-screen h-screen"}>
+          <div className={"flex flex-col "}>
             <button className="btn1 h-1/3" onClick={props.handleClick} id={"main"} name="check">
               תשלום בשיק
             </button>
@@ -64,8 +64,8 @@ function Pay(props: any) {
         </div>
       )}
       {showPay && (
-        <div>
-          <div className="hdr1 ">
+        <div className="flex-col w-full h-full border-blue-400 border-4">
+          <div className="flex">
             <button id="main" name="back" className="btn1 w-1/4" onClick={props.handleClick}>
               חזור
             </button>
@@ -88,92 +88,93 @@ function Pay(props: any) {
               הפק
             </button>
           </div>
-          {render?.bi &&
-            bills.map((bill, idx) => (
-              <div key={idx} className="flex">
-                <div className="flex flex-col text-[60px] text-center w-1/4">
-                  <button
-                    onClick={() =>
-                      setBills((prev) =>
-                        prev.map((bill: any, i: number) => {
-                          if (i === idx) return { ...bill, amount: bill.amount + 1 };
-                          else return bill;
-                        })
-                      )
-                    }
-                    className="bg-green-400 hover:bg-green-600 h-1/2"
-                  >
-                    +
-                  </button>
-                  <button
-                    onClick={() =>
-                      setBills((prev) =>
-                        prev.map((bill: any, i: number) => {
-                          console.log({ prev, bill });
-                          if (i === idx) return { ...bill, amount: bill.amount - 1 };
-                          else return bill;
-                        })
-                      )
-                    }
-                    className="bg-red-300 hover:bg-red-600 h-1/2"
-                  >
-                    -
-                  </button>
-                </div>
+          <div className="grid grid-cols-2 h-full w-full">
+            {render?.bi &&
+              bills.map((bill, idx) => (
+                <div className="flex border-red-500 border-4 w-full h-full">
+                  <div className="flex flex-col  text-center w-1/2 border-4">
+                    <button
+                      onClick={() =>
+                        setBills((prev) =>
+                          prev.map((bill: any, i: number) => {
+                            if (i === idx) return { ...bill, amount: bill.amount + 1 };
+                            else return bill;
+                          })
+                        )
+                      }
+                      className="bg-green-400 hover:bg-green-600 h-1/2"
+                    >
+                      +
+                    </button>
+                    <button
+                      onClick={() =>
+                        setBills((prev) =>
+                          prev.map((bill: any, i: number) => {
+                            console.log({ prev, bill });
+                            if (i === idx) return { ...bill, amount: bill.amount - 1 };
+                            else return bill;
+                          })
+                        )
+                      }
+                      className="bg-red-300 hover:bg-red-600 h-1/2"
+                    >
+                      -
+                    </button>
+                  </div>
 
-                <div className="relative">
-                  <div className="absolute top-1/2 left-1/2 text-white text-9xl ">{bill.amount}</div>
-                  <LazyLoadImage
-                    src={bill.img}
-                    className="h-full w-screen bg-gradient-to-tr from-black to-gra"
-                    alt="Image Alt"
-                  />
+                  <div className="relative">
+                    <div className="absolute top-1/2 left-1/2 text-white text-9xl ">{bill.amount}</div>
+                    <LazyLoadImage
+                      src={bill.img}
+                      className="h-full w-full bg-gradient-to-tr from-black to-gra"
+                      alt="Image Alt"
+                    />
+                  </div>
                 </div>
-              </div>
-            ))}
-          {render?.co &&
-            coins.map((coin, idx) => (
-              <div key={idx} className="flex h-56">
-                <div className="flex flex-col text-[60px] text-center w-1/4">
-                  <button
-                    onClick={() =>
-                      setCoins((prev) =>
-                        prev.map((coin: any, i: number) => {
-                          if (i === idx) return { ...coin, amount: coin.amount + 1 };
-                          else return coin;
-                        })
-                      )
-                    }
-                    className="bg-green-400 hover:bg-green-600 h-1/2"
-                  >
-                    +
-                  </button>
-                  <button
-                    onClick={() =>
-                      setCoins((prev) =>
-                        prev.map((coin: any, i: number) => {
-                          console.log({ prev, coin });
-                          if (i === idx) return { ...coin, amount: coin.amount - 1 };
-                          else return coin;
-                        })
-                      )
-                    }
-                    className="bg-red-300 hover:bg-red-600 h-1/2"
-                  >
-                    -
-                  </button>
-                </div>
+              ))}
+          </div>
+          <div className="grid grid-cols-2 w-full">
+            {render?.co &&
+              coins.map((coin, idx) => (
+                <div key={idx} className="flex w-full h-full border-gray-500 border-4">
+                  <div className="flex flex-col text-center w-1/2 h-full">
+                    <button
+                      onClick={() =>
+                        setCoins((prev) =>
+                          prev.map((coin: any, i: number) => {
+                            if (i === idx) return { ...coin, amount: coin.amount + 1 };
+                            else return coin;
+                          })
+                        )
+                      }
+                      className="bg-green-400 hover:bg-green-600 h-1/2"
+                    >
+                      +
+                    </button>
+                    <button
+                      onClick={() =>
+                        setCoins((prev) =>
+                          prev.map((coin: any, i: number) => {
+                            console.log({ prev, coin });
+                            if (i === idx) return { ...coin, amount: coin.amount - 1 };
+                            else return coin;
+                          })
+                        )
+                      }
+                      className="bg-red-300 hover:bg-red-600 h-1/2"
+                    >
+                      -
+                    </button>
+                  </div>
 
-                <div className="relative">
-                  <div className="absolute top-1/2 left-1/2 text-white text-9xl ">{coin.amount}</div>
-                  <LazyLoadImage
-                    src={coin.img}
-                    className="h-full w-screen bg-gradient-to-tr from-black to-gra"
-                    alt="Image Alt"
-                  />
+                  <div className="w-1/2 ">
+                    {" "}
+                    <div className="absolute self-center text-white text-9xl ">{coin.amount}</div>
+                    <LazyLoadImage src={coin.img} className="h-full from-black to-gra" alt="Image Alt" />
+                  </div>
                 </div>
-              </div>
-            ))}
+              ))}
+          </div>
         </div>
       )}
     </div>

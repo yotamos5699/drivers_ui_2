@@ -7,21 +7,24 @@ import { missionsReducer, useInitializedState } from "../helper";
 import useLocalStorage from "../Hooks/useLocalStorage";
 
 export default function Missions(props: any) {
-  // console.log("missions props ", { props });
   console.log("render in misssions ", props.render);
-  // const [missions,setMissions] = useLocalStorage('missions',null)
-  const [tableData, dispatch] = useReducer(missionsReducer, {
-    data: null,
-    startIndex: 0,
-    endIndex: 0,
+
+  const [tableData, dispatch] = useReducer(missionsReducer, () => {
+    const res = localStorage.getItem("missions");
+    if (res !== null) return JSON.parse(res);
+    else return { data: null, startIndex: 0, endIndex: 0 };
   });
 
+  useEffect(() => {
+    console.log("mennage animate ");
+  }, [props.movment.data]);
+
   const sensor = [useSensor(PointerSensor)];
+
   const [td, setTd] = useState<any[]>();
   useEffect(() => {
     async function fetchStorage() {
       let res = await useInitializedState("missions", props);
-      //   console.log("res in missions ", { res });
 
       dispatch({ type: "init", payload: { data: props?.missions ? props?.missions : res.data.data } });
     }
@@ -31,7 +34,6 @@ export default function Missions(props: any) {
   async () => await useInitializedState("", props);
   useEffect(() => {
     if (tableData?.data) {
-      //  console.log({ tableData }, typeof tableData);
       localStorage.setItem("missions", JSON.stringify(tableData));
       setTd([...tableData.data]);
     }
@@ -53,9 +55,10 @@ export default function Missions(props: any) {
     }
   };
 
-  const [listRef] = useAutoAnimate<HTMLDivElement>();
+  const [listRef, enableAnimate] = useAutoAnimate<HTMLDivElement>();
+  enableAnimate(false);
   return (
-    <div>
+    <div className="mt-24">
       {tableData?.data ? (
         td && (
           <DndContext sensors={sensor} collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
@@ -64,6 +67,7 @@ export default function Missions(props: any) {
                 {td.map((row: any, idx: number) => {
                   return (
                     <DataRow
+                      movment={props.movment}
                       id={row.id}
                       key={idx}
                       index={idx}
