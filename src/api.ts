@@ -74,8 +74,8 @@ export const fetchLastMatrix = async () => {
 // .catch((err) => console.log);
 //};
 export const fetchCurrentDayMarixes = async () => {
-  const startDate = new Date(new Date("12-18-2022").setUTCHours(0, 0, 0, 0));
-  const endDate = new Date(new Date("12-19-2022").setHours(23, 59, 59));
+  const startDate = new Date(new Date(new Date()).setUTCHours(0, 0, 0, 0));
+  const endDate = new Date(new Date(new Date()).setHours(23, 59, 59));
 
   const params = {
     collection: "MtxLog",
