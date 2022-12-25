@@ -1,4 +1,5 @@
 import axios from "axios";
+import Missions from "./components/Missions";
 //import { createTRPCClient } from "@trpc/client";
 const ResApiUrl =
   "https://script.google.com/macros/s/AKfycbwYsPdgqWD6QNjllH8ZB_-Wde6br0CYcXUE2yShDvGb0486ojgzEKkF5_HbBb5Q34iV/exec";
@@ -105,6 +106,54 @@ export const fetchCurrentDayMarixes = async () => {
 export const fetchDriverSummary = async () => {
   return fetch(ResApiUrl + "?type=routData").then((res) => res.json());
 };
+
+// export const fetchMessageData = async (castumer: any) => {
+//   console.log({ castumer });
+//   //script.google.com/macros/s/AKfycbwYsPdgqWD6QNjllH8ZB_-Wde6br0CYcXUE2yShDvGb0486ojgzEKkF5_HbBb5Q34iV/exec?type=getmessage&id=6052
+//   const url =
+//     "https://script.google.com/macros/s/AKfycbwYsPdgqWD6QNjllH8ZB_-Wde6br0CYcXUE2yShDvGb0486ojgzEKkF5_HbBb5Q34iV/exec?type=getmessage&id=6052";
+
+//   //`${castumer["מפתח"]}`;
+
+//   console.log("sssssssssssssssssssssssssssssssssssssssssssss", { url });
+//   return await fetch(url, { mode: "no-cors" })
+//     .then((response) => response)
+//     .then((result) => {
+//       console.log("new fetch !!!!!", result);
+//       return result;
+//     })
+//     .catch((error) => console.log("error", error));
+// };
+
+export const fetchMessageData = async (castumer: any) => {
+  const ID = await castumer["מפתח"];
+  const url =
+    "https://script.google.com/macros/s/AKfycbwYsPdgqWD6QNjllH8ZB_-Wde6br0CYcXUE2yShDvGb0486ojgzEKkF5_HbBb5Q34iV/exec?type=getmessage&id=" +
+    ID;
+
+  return await axios(url, { withCredentials: false })
+    .then((res) => {
+      console.log("drivers data ", res.data);
+
+      return res.data;
+    })
+    .catch((err) => console.log("error in google drivers !!!", err));
+};
+
+export const fetchMessagesData = async () => {
+  const myHeaders = new Headers();
+  myHeaders.append("mode", "no-cors");
+
+  const requestOptions = {
+    method: "GET",
+    headers: myHeaders,
+  };
+  return await fetch(`ResApiUrl?${encodeURI("type=getmessages")}`, requestOptions)
+    .then((response) => response.text())
+    .then((result) => console.log(result))
+    .catch((error) => console.log("error", error));
+};
+
 export const fetchDriversData = async () => {
   return await axios(driversUrl, { withCredentials: false })
     .then((res) => {

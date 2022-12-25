@@ -3,6 +3,10 @@ import { renderScreen, updateResponseDB } from "../helper";
 import { GrAddCircle, GrSubtractCircle } from "react-icons/gr";
 import Pay from "./Pay";
 import Returns from "./Returns";
+import { useQuery } from "@tanstack/react-query";
+import { fetchMessageData, fetchMessagesData } from "../api";
+const ResApiUrl =
+  "https://script.google.com/macros/s/AKfycbwYsPdgqWD6QNjllH8ZB_-Wde6br0CYcXUE2yShDvGb0486ojgzEKkF5_HbBb5Q34iV/exec";
 //import DataRow fro
 type SpecsProps = {
   matrix: any;
@@ -43,6 +47,16 @@ function Specs(props: SpecsProps) {
     }
     record && setData(details);
   }, []);
+
+  const msg2 = useQuery({
+    queryKey: ["msg2"],
+    queryFn: () => fetchMessageData(props.mission),
+  });
+
+  // const msg2 = useQuery({
+  //   queryKey: ["msg2"],
+  //   queryFn: () => fetchMessagesData(),
+  // });
 
   useEffect(() => {
     if (data) localStorage.setItem("specData", JSON.stringify(data));
@@ -109,10 +123,22 @@ function Specs(props: SpecsProps) {
     <div className="mt-20">
       {msg && (
         <div className="flex w-screen h-1/6 text-white bg-red-600">
-          <p className="w-2/12 text-xl"> הודעה </p>
+          <p className="w-2/12 text-xl"> הודעה ממטריצה </p>
           <p className="w-10/12">{msg}</p>
         </div>
       )}
+
+      <div className="flex w-screen h-1/6 text-white bg-red-600">
+        <p className="w-2/12 text-xl"> הודעת מנהל </p>
+        {msg2.isLoading ? (
+          <p className="w-10/12">טוען ......</p>
+        ) : msg2.error ? (
+          <p>תקלה בטעינה....</p>
+        ) : (
+          msg2.data && <p>{JSON.stringify(msg2?.data?.data?.content ? msg2.data.data.content : msg2.data.data)}</p>
+        )}
+      </div>
+
       {data && render.main && (
         <div>
           <table>

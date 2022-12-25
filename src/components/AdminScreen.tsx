@@ -9,7 +9,48 @@ import { backToLogin, constractMissions, Logger } from "../helper";
 import Model from "./Model";
 const ResApiUrl =
   "https://script.google.com/macros/s/AKfycbwYsPdgqWD6QNjllH8ZB_-Wde6br0CYcXUE2yShDvGb0486ojgzEKkF5_HbBb5Q34iV/exec";
-const client = createTRPCProxyClient;
+const udateMessageContent = (idx: any, messages: any) => {
+  let data = messages.data.map((msg: any, index: number) => {
+    if (idx === index) return { ...msg, content: msg.content ? msg.content : "אין הודעה ללקוח" };
+    else return msg;
+  });
+  return { data: data };
+};
+
+const udateCurrentContent = (idx: any, messages: any, value: any) => {
+  let data = messages.data.map((msg: any, index: number) => {
+    if (idx === index) return { ...msg, content: value };
+    else return msg;
+  });
+  return { data: data };
+};
+const updateMessageIsExist = (messages: any) => {
+  console.log("in messsages is exist !!!!!!!");
+
+  return {
+    data: messages.data.map((msg: any, i: number) => {
+      console.log("msg in ssssssssssss", msg.content);
+      return { ...msg, isExist: msg.content && msg.content != "אין הודעה ללקוח" ? true : false };
+    }),
+  };
+};
+const initializeMessages = async (messages: any, setIsInitiated: Function) => {
+  console.log("in is initiated function");
+  if (messages?.data !== null) {
+    setIsInitiated({ data: true });
+    for (let i = 0; i <= messages.data.length - 1; i++) {
+      console.log("task to update ", messages.data[i]);
+      await fetch(
+        ResApiUrl +
+          "?" +
+          encodeURI(`type=updatemessages&id=${messages.data[i].id}&content=${messages.data[i].content}`),
+        {
+          mode: "no-cors",
+        }
+      ).then((res) => console.log(res));
+    }
+  }
+};
 
 function AdminScreen(props: any) {
   const [matrixesNames] = useLocalStorage(
@@ -21,6 +62,9 @@ function AdminScreen(props: any) {
   const [messages, setMessages] = useLocalStorage("messages", { data: null });
   const [selectedName, setSelectedName] = useState();
   const [toggle, toggleModule] = useState(false);
+  const [isInitiated, setIsInitiated] = useLocalStorage("isinitiated", { data: false });
+  const [currentIndex, setCurrentIndex] = useState(0);
+  //const [msgContent, setMsgContent] = useState(null);
   // const messagesContent = useQuery({
   //   queryKey: ["messages_content"],
   //   queryFn: () => fetchMessaedContent("?type=messages"),
@@ -29,6 +73,9 @@ function AdminScreen(props: any) {
   Logger(tasks, " tasks in admin screen");
 
   useEffect(() => {
+    setMessages({ ...updateMessageIsExist(messages) });
+  }, [toggle]);
+  useEffect(() => {
     if (tasks?.data?.length > 0 && messages?.data === null) {
       console.log("in use EFFECT TASKS !!!!!!!!!!!!!!");
       setMessages({
@@ -36,31 +83,28 @@ function AdminScreen(props: any) {
           return { isExist: false, content: null, id: task["id"] };
         }),
       });
-      for (let i = 0; i <= tasks.data.length - 1; i++) {
-        fetch(ResApiUrl + `?type=updatemessages&id=${tasks.data.id}&content=${tasks.data.content}`).then((res) =>
-          console.log(res.json())
-        );
-      }
     }
-  }, [tasks.data]);
+    if (!isInitiated.data) {
+      console.log("in is initiated use effect");
+      initializeMessages(messages, setIsInitiated);
+    }
+    console.log({ messages });
+  }, [tasks.data, messages.data]);
   Logger(messages, "messages");
 
   const handleSelect = (e: any) => {
     setSelectedName(e.target.value);
   };
-  Logger(messages);
+
   const handleClick = (e: any, idx?: number) => {
-    if (idx)
-      setMessages({
-        data: messages.data.map((msg: any, i: number) => {
-          if (i === idx) {
-            toggleModule(!toggle);
-            console.log("pressed ", { i, idx });
-            return { ...msg, isExist: !msg.isExist };
-          } else return msg;
-        }),
-      });
-    console.log("clicked");
+    console.log({ e });
+    if (idx || idx === 0) {
+      setCurrentIndex(idx);
+      toggleModule(!toggle);
+
+      setMessages(udateMessageContent(idx, messages));
+      console.log("before messages is exist !!!!!!!!", {});
+    }
     if (tasks.data === null) {
       const Rows = constractMissions(
         props.matrixes.filter((matrix: any) => matrix.matrixName === selectedName)[0]["matrixesData"],
@@ -69,6 +113,13 @@ function AdminScreen(props: any) {
       );
       setTasks({ data: [...Rows.missions] });
     }
+  };
+
+  const handleChange = (e: any) => {
+    // update msegggahsdjalskdas
+    const value =
+      e.target.value == "אין הודעה ללקוח" || e.target.value == null || e.target.value == "" ? null : e.target.value;
+    if (e.target.id == "msgContent") setMessages(udateCurrentContent(currentIndex, messages, value));
   };
 
   return (
@@ -102,17 +153,19 @@ function AdminScreen(props: any) {
 
       {tasks?.data && messages?.data && (
         <div className="flex flex-col items-center justify-center h-full  bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4">
-          <div className="hdr1">
-            <h1>משימות יומיות לכלל הנהגים</h1>
-            <button
-              onClick={() => {
-                backToLogin(props.setReder, props.render.data);
-              }}
-            >
-              התנתק
-            </button>
-            <input type="tel" />
-          </div>
+          {!toggle && (
+            <div className="hdr1">
+              <h1>משימות יומיות לכלל הנהגים</h1>
+              <button
+                onClick={() => {
+                  backToLogin(props.setReder, props.render.data);
+                }}
+              >
+                התנתק
+              </button>
+              <input type="tel" />
+            </div>
+          )}
 
           <div className="flex flex-col">
             {tasks?.data.map((task: any, index: number) => (
@@ -138,7 +191,14 @@ function AdminScreen(props: any) {
               </div>
             ))}
           </div>
-          {toggle && <Model toggleModule={toggleModule} />}
+          {toggle && (
+            <Model
+              toggleModule={toggleModule}
+              handleChange={handleChange}
+              msgContent={messages.data[currentIndex]}
+              taskData={tasks.data[currentIndex]}
+            />
+          )}
         </div>
       )}
     </div>
