@@ -1,9 +1,19 @@
 import { QueryCache, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useState, useEffect } from "react";
-import { fetchCastumersData, fetchCurrentDayMarixes, fetchDriversData, fetchLastMatrix } from "../api";
+import {
+  fetchCastumersData,
+  fetchCurrentDayMarixes,
+  fetchDriversData,
+  fetchLastMatrix,
+} from "../api";
 import Nav from "./Nav";
 import { driver } from "../typing";
-import { defaultRender, Logger, renderScreen, useInitializedState } from "../helper";
+import {
+  defaultRender,
+  Logger,
+  renderScreen,
+  useInitializedState,
+} from "../helper";
 import useLocalStorage from "../Hooks/useLocalStorage";
 import AdminScreen from "./AdminScreen";
 
@@ -11,8 +21,13 @@ export default function Login() {
   // const [driver, setDriver] = useState<driver>();
   // const [toShow, setToShow] = useState<any>();
 
-  const [render, setRender] = useLocalStorage("render", { data: defaultRender });
-  const [driver, setDriver] = useLocalStorage("driver", { data: null, subKey: null });
+  const [render, setRender] = useLocalStorage("render", {
+    data: defaultRender,
+  });
+  const [driver, setDriver] = useLocalStorage("driver", {
+    data: null,
+    subKey: null,
+  });
   const [input, setInput] = useState("");
   const { drivers, castumers, matrixes } = setQueryData();
 
@@ -39,12 +54,14 @@ export default function Login() {
   const handleClick = (e: any) => {
     let name = e.target.name;
     let value = input;
-    name == "password_btn" && drivers?.data && responseToSubmitRequest(value, drivers.data);
+    name == "password_btn" &&
+      drivers?.data &&
+      responseToSubmitRequest(value, drivers.data);
   };
 
   return (
     <>
-      {render?.data?.login ? (
+      {render?.data?.login && !render?.data?.admin ? (
         <div className="flex flex-col items-center justify-center h-screen  bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4">
           <input
             value={input}
@@ -69,19 +86,32 @@ export default function Login() {
         matrixes.error || (castumers.error && <h1>error ....</h1>)
       )}
 
-      {!render?.data?.login && driver?.data && castumers.data && drivers.data && matrixes?.data[0]?.matrixesData && (
-        <Nav
-          render={render}
-          setRender={setRender}
-          user={driver.data}
-          matrix={matrixes.data[matrixes.data.length - 1].matrixesData}
+      {!render?.data?.login &&
+        !render?.data?.admin &&
+        driver?.data &&
+        castumers.data &&
+        drivers.data &&
+        matrixes?.data[0]?.matrixesData && (
+          <Nav
+            render={render}
+            setRender={setRender}
+            user={driver.data}
+            matrix={matrixes.data[matrixes.data.length - 1].matrixesData}
+            castumers={castumers.data}
+            driver={driver.data.pivotKey}
+            //  loginShow={setToShow}
+          />
+        )}
+      {render?.data?.admin &&
+      castumers?.data &&
+      drivers?.data &&
+      matrixes?.data ? (
+        <AdminScreen
+          matrixes={matrixes.data}
           castumers={castumers.data}
-          driver={driver.data.pivotKey}
-          //  loginShow={setToShow}
+          render={render}
+          setReder={setRender}
         />
-      )}
-      {render?.data?.admin && castumers?.data && drivers?.data && matrixes?.data ? (
-        <AdminScreen matrixes={matrixes.data} castumers={castumers.data} render={render} setReder={setRender} />
       ) : (
         render?.data?.admin && <h1>loadind admin....</h1>
       )}
@@ -98,6 +128,9 @@ const setQueryData = () => {
     queryKey: ["castumers"],
     queryFn: fetchCastumersData,
   });
-  const matrixes = useQuery({ queryKey: ["matrixes"], queryFn: fetchCurrentDayMarixes });
+  const matrixes = useQuery({
+    queryKey: ["matrixes"],
+    queryFn: fetchCurrentDayMarixes,
+  });
   return { drivers, castumers, matrixes };
 };

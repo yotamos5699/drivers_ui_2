@@ -22,6 +22,9 @@
   .hdr1 {
     @apply flex flex-col sticky top-0 z-30 w-full px-2 py-4 bg-white sm:px-4 shadow-xl bg-white shadow-md rounded px-4;
   }
+  .hdr2 {
+    @apply flex  sticky top-0 z-30 w-full px-2 py-4 bg-white sm:px-4 shadow-xl bg-white shadow-md rounded px-4;
+  }
 }
 
 .icn1 {
