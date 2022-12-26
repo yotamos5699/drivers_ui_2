@@ -70,7 +70,7 @@ const constructSmses = async (sms: boolean[], tasks: any[], matrix: any) => {
       if (tasks[i]["id"] == matrix.AccountKey[j]) {
         matrix.cellsData[j].forEach((cell: any, idx: number) => {
           if (matrix.cellsData[j][idx])
-            message += "- " + matrix.cellsData[j][idx] + " יח של " + matrix.itemsHeaders[j] + "\n";
+            message += "- " + matrix.cellsData[j][idx] + " יח של " + matrix.itemsHeaders[idx] + "\n";
         });
       }
     }
