@@ -5,6 +5,7 @@ import { SortableContext, verticalListSortingStrategy } from "@dnd-kit/sortable"
 import DataRow from "./DataRow";
 import { missionsReducer, useInitializedState } from "../helper";
 import useLocalStorage from "../Hooks/useLocalStorage";
+import Model from "./Model";
 
 export default function Missions(props: any) {
   console.log("render in misssions ", props.render);
@@ -84,6 +85,10 @@ export default function Missions(props: any) {
       ) : (
         <h1>loading.....</h1>
       )}
+      {/* <Model
+      header={'פירוט לנהג'}
+      
+      /> */}
     </div>
   );
 }

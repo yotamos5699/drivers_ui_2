@@ -120,7 +120,7 @@ function Storage(props: StorageProps) {
   };
 
   return (
-    <div className="mt-28">
+    <div className="mt-56">
       {storageData?.data && (
         <table>
           {/* <thead className="bg-white border-b">
@@ -149,7 +149,7 @@ function Storage(props: StorageProps) {
                         }}
                         /*@ts-ignore */
                         className={
-                          storageStyles.data[idx][ci] == false ? "td" : ci != 0 && "td bg-green-600 text-white"
+                          storageStyles.data[idx][ci] == false ? "td " : ci != 0 && "td bg-green-600 text-white"
                         }
                       >
                         {cell}

@@ -73,7 +73,7 @@ function AdminScreen(props: any) {
   Logger(tasks, " tasks in admin screen");
 
   useEffect(() => {
-    setMessages({ ...updateMessageIsExist(messages) });
+    if (messages.data != null) setMessages({ ...updateMessageIsExist(messages) });
   }, [toggle]);
   useEffect(() => {
     if (tasks?.data?.length > 0 && messages?.data === null) {
@@ -193,6 +193,7 @@ function AdminScreen(props: any) {
           </div>
           {toggle && (
             <Model
+              header={"הודעה ללקוח"}
               toggleModule={toggleModule}
               handleChange={handleChange}
               msgContent={messages.data[currentIndex]}

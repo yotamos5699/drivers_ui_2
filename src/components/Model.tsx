@@ -19,7 +19,7 @@ function Model(props: any) {
     >
       <div id="pop_up_text" className={"w-4/5 h-30 bg-white p-2 rounded"}>
         <div className="flex text-xl  bg-gray-300">
-          <p className="text-xl">הודעה ללקוח: </p>
+          <p className="text-xl">{props.header} </p>
           <p>{props.taskData["שם"]}</p>
         </div>
         <textarea

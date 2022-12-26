@@ -29,7 +29,9 @@ export default function DataRow(props: any) {
 
   return (
     <div
-      className={"flex flex-col items-center px-2 py-4 w-4/5 bg-gray-100 shadow-md rounded-md gap-1 touch-none"}
+      className={`flex flex-col items-center px-2 py-4 w-4/5 ${
+        props.row.isDone ? "bg-gray-400" : "bg-gray-100"
+      } shadow-md rounded-md gap-1 touch-none`}
       ref={props.movment.data ? setNodeRef : null}
       id={props.id}
       {...attributes}

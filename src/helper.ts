@@ -166,15 +166,16 @@ export const missionsReducer = (state: any, action: any) => {
     case "isDone":
       console.log("dispatch is IsDone");
       console.log({ state, action });
-
+      let newArray = [];
+      let lastRecord;
+      state.data.forEach((row: any) => {
+        if (row.id == action.payload.startIndex) lastRecord = { ...row, isDone: !row.isDone };
+        else newArray.push(row);
+      });
+      newArray.push(lastRecord);
       const updatedData = {
         ...state,
-        data: [
-          ...state.data.map((row: any) => {
-            if (row.id == action.payload.startIndex) return { ...row, isDone: !row.isDone };
-            else return row;
-          }),
-        ],
+        data: [...newArray],
       };
       console.log({ updatedData }, action.payload.startIndex);
       const task = updatedData.data.filter((row: any) => row.id == action.payload.startIndex)[0];
