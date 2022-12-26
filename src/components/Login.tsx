@@ -1,19 +1,9 @@
 import { QueryCache, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useState, useEffect } from "react";
-import {
-  fetchCastumersData,
-  fetchCurrentDayMarixes,
-  fetchDriversData,
-  fetchLastMatrix,
-} from "../api";
+import { fetchCastumersData, fetchCurrentDayMarixes, fetchDriversData, fetchLastMatrix } from "../api";
 import Nav from "./Nav";
 import { driver } from "../typing";
-import {
-  defaultRender,
-  Logger,
-  renderScreen,
-  useInitializedState,
-} from "../helper";
+import { defaultRender, Logger, renderScreen, useInitializedState } from "../helper";
 import useLocalStorage from "../Hooks/useLocalStorage";
 import AdminScreen from "./AdminScreen";
 
@@ -54,9 +44,7 @@ export default function Login() {
   const handleClick = (e: any) => {
     let name = e.target.name;
     let value = input;
-    name == "password_btn" &&
-      drivers?.data &&
-      responseToSubmitRequest(value, drivers.data);
+    name == "password_btn" && drivers?.data && responseToSubmitRequest(value, drivers.data);
   };
 
   return (
@@ -102,16 +90,8 @@ export default function Login() {
             //  loginShow={setToShow}
           />
         )}
-      {render?.data?.admin &&
-      castumers?.data &&
-      drivers?.data &&
-      matrixes?.data ? (
-        <AdminScreen
-          matrixes={matrixes.data}
-          castumers={castumers.data}
-          render={render}
-          setReder={setRender}
-        />
+      {render?.data?.admin && castumers?.data && drivers?.data && matrixes?.data ? (
+        <AdminScreen matrixes={matrixes.data} castumers={castumers.data} render={render} setReder={setRender} />
       ) : (
         render?.data?.admin && <h1>loadind admin....</h1>
       )}
