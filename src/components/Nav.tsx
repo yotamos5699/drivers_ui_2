@@ -59,6 +59,7 @@ function Nav(props: DashBoardProps) {
       )}
       {props.render?.data?.table && (
         <Missions
+          driver={props.driver}
           movment={movment}
           missions={missions?.data?.missions}
           handleClick={handleRowClick}
