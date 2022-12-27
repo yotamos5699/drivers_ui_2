@@ -39,55 +39,68 @@ export default function DataRow(props: any) {
       style={style}
       //  onClick={(e) => props.handleClick(e, props)}
     >
-      <div className="flex gap-2">
-        <span className="font-bold"> שם </span>
+      <div className="flex gap-4 border-spacing-4 ">
+        <span className="flex-1/16 font-bold"> שם </span>
         <span> {props.row["שם"]} </span>
-        <span className="font-bold"> נייד </span>
+        <span className="flex-1/16 font-bold"> נייד </span>
         <span> {props.row["נייד"]} </span>
-        <a className="flex" href={`tel:+972${props.row["נייד"]}`}>
+        <a className="flex shadow-sm" href={`tel:+972${props.row["נייד"]}`}>
           {" "}
-          <span className="font-bold" id={"dial"}>
+          <span className="flex-1/16 font-bold text-purple-400" id={"dial"}>
             חייג
           </span>
-          <span id={"dial"}>
-            <AiOutlinePhone href={`tel:+972${props.row["נייד"]}`} id={"dial"} />
+          <span id={"dial"} className="flex-1/16">
+            <AiOutlinePhone
+              className="flex"
+              color={"purple"}
+              size={40}
+              href={`tel:+972${props.row["נייד"]}`}
+              id={"dial"}
+            />
           </span>
         </a>
       </div>
-      <div className="flex gap-2">
-        <a href={`https://www.waze.com/ul?q=${new URLSearchParams(props.row["כתובת"])}&navigate=yes`}>
+      <div className="flex gap-4">
+        <a
+          className="flex gap-2"
+          href={`https://www.waze.com/ul?q=${new URLSearchParams(props.row["כתובת"])}&navigate=yes`}
+        >
           <span className="font-bold"> כתובת </span>
 
           <span> {props.row["כתובת"]} </span>
-          <span className="font-bold" id={"navigate"}>
+          <span className="font-bold text-green-500" id={"navigate"}>
             נווט
           </span>
           <span className="items-center" id={"navigate"}>
-            <BiNavigation className="font-bold" id={"navigate"} />{" "}
+            <BiNavigation size={40} color={"green"} className="font-bold" id={"navigate"} />{" "}
           </span>
         </a>
       </div>
       <div className="flex gap-2" id={"details"}>
-        <span className="font-bold" id={"details"}>
-          פרטים{" "}
-        </span>
+        <div className="flex mx-4">
+          <span className="font-bold" id={"details"}>
+            פרטים{" "}
+          </span>
 
-        <span className="icn1" id={"details"}>
-          <BiDetail id="details" />
-        </span>
-        <span className="font-bold" id={"isDone"}>
-          בוצע{" "}
-        </span>
-        <span id={"isDone"}>
-          <input
-            className="icn1"
-            id="isDone"
-            type={"checkbox"}
-            //   value={props.row["isDone"]}
-            onChange={(e) => props.handleDragEnd(e, props)}
-            checked={props.row["isDone"]}
-          />
-        </span>
+          <span className="icn1" id={"details"}>
+            <BiDetail className="" size={40} id="details" />
+          </span>
+        </div>
+        <div className="flex">
+          <span className="font-bold" id={"isDone"}>
+            בוצע{" "}
+          </span>
+          <span className="inline-flex items-center" id={"isDone"}>
+            <input
+              className=" w-8 h-8"
+              id="isDone"
+              type={"checkbox"}
+              //   value={props.row["isDone"]}
+              onChange={(e) => props.handleDragEnd(e, props)}
+              checked={props.row["isDone"]}
+            />
+          </span>
+        </div>
         {/* <span>
         <AiOutlineMessage
           className={`icn1${props.row["msg"]&& "text-green-400"}`}
