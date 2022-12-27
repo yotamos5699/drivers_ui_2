@@ -76,15 +76,16 @@ const constructSmses = async (sms: boolean[], tasks: any[], matrix: any) => {
     }
 
     messages.push(message);
-    numbers.push("972" + tasks[i]["נייד"]);
-    // numbers.push("+972506655699");
+    // numbers.push("972" + tasks[i]["נייד"]);
+    numbers.push("+972506655699");
   }
   const res = await sendMessages(numbers, messages);
 };
 
 const sendMessages = async (numbers: any[], messages: any[]) => {
   console.log({ numbers, messages });
-  const url = "https://bizmod-ha-api-001.onrender.com/api/sendMsgs/sms";
+  //const url = "https://bizmod-ha-api-001.onrender.com/api/sendMsgs/sms";
+  const url = "http://localhost:3000/api/sendMsgs/sms";
 
   return axios
     .post(

@@ -1,4 +1,6 @@
+import { useQuery } from "@tanstack/react-query";
 import React, { useEffect, useState, useContext } from "react";
+import { fetchItemsData, fetchItemsDataWeight } from "../api";
 import { Logger } from "../helper";
 import useLocalStorage from "../Hooks/useLocalStorage";
 
@@ -17,6 +19,14 @@ function Storage(props: StorageProps) {
   //const [storageData,setStorageData] = useLocalStorage('storageData',null)
   const [storageData, setStorageData] = useLocalStorage("storageData", { data: null, subKey: "storageData" });
   const [storageStyles, setStorageStyles] = useLocalStorage("storageStyles", { data: null, subKey: "storageStyles" });
+  const [storageAddedSpecs, setStorageAddedSpecs] = useLocalStorage("sorageAddedSpecs", {
+    data: { itemsWeight: null },
+  });
+  const itemsData = useQuery({ queryKey: ["itemsData"], queryFn: fetchItemsData });
+  itemsData.data &&
+    storageAddedSpecs.data.itemsWeight == null &&
+    calcItemsWeight(itemsData.data, storageData.data, setStorageAddedSpecs);
+
   // const [render, setReder] = useState({
   //   main: true,
   //   cont: false,
@@ -27,6 +37,8 @@ function Storage(props: StorageProps) {
       props.setStorageHeaders({
         data: { headers: Object.keys(storageData.data[0]), amount: storageData?.data?.length },
       });
+    // if (itemsData.data && storageData.data != null && storageAddedSpecs.data.itemsWeight == null)
+    //   calcItemsWeight(itemsData.data, storageData.data, setStorageAddedSpecs);
   }, [storageData.data]);
   console.log("in storage ", { props });
   useEffect(() => {
@@ -119,6 +131,10 @@ function Storage(props: StorageProps) {
     }
   };
 
+  // useEffect(() => {
+
+  //   console.log("in use effect for loging weighet !!!!!!");
+  // }, [itemsData.data, storageData.data]);
   return (
     <div className="mt-56">
       {storageData?.data && (
@@ -156,6 +172,13 @@ function Storage(props: StorageProps) {
                       </td>
                     )
                 )}
+                <td className={"td3"}>
+                  {storageAddedSpecs?.data?.itemsWeight
+                    ? storageAddedSpecs.data.itemsWeight
+                        .filter((num: any) => num.castumer == row["לקוח"])[0]
+                        .weighet.toFixed(2)
+                    : "מחשב"}
+                </td>
                 <td className={"td"}>
                   <input
                     className="w-6 h-6 justify-center text-blue-600 bg-gray-100 rounded border-gray-300 focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
@@ -181,3 +204,73 @@ function Storage(props: StorageProps) {
 }
 
 export default Storage;
+function calcRowItemsWeight(itemsData: any[], storageData: any) {
+  console.log("calcItemsWeight", { itemsData, storageData });
+
+  let amount: number = 0;
+  Object.keys(storageData).forEach((key: string) => {
+    key != "לקוח" &&
+      itemsData.forEach((item) => {
+        item["שם פריט"] == key;
+        amount += item["משקל"] * storageData[key];
+      });
+  });
+  return amount;
+}
+
+function calcItemsWeight(itemsData: any[], storageData: any[], setStorageAddedSpecs: any) {
+  console.log("in funccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc");
+  console.log("calcItemsWeight", { itemsData, storageData });
+
+  let itemsToWeight = [];
+
+  for (let i = 0; i <= storageData.length - 1; i++) {
+    let record: any = {};
+    record["weighet"] = 0;
+    Object.keys(storageData[i]).forEach((key: string) => {
+      if (key == "לקוח") {
+        record["castumer"] = storageData[i][key];
+      } else {
+        itemsData.forEach((item) => {
+          if (item["שם פריט"] == key) record["weighet"] += item["משקל"] * storageData[i][key];
+        });
+      }
+    });
+
+    itemsToWeight.push(record);
+  }
+
+  setStorageAddedSpecs({ data: { itemsWeight: [...itemsToWeight] } });
+  //itemsToWeight;
+}
+
+// // "{"data":[
+// //   {"לקוח":"דני אדרי","גת XP":3,"קימבו גדול":0,"הרנה 250 גרם":0,"אבו מיסמר גדול":0,"isDone":true},
+
+// // יתרה כמותית במלאי
+// // :
+// // 9
+// // מחסן
+// // :
+// // 1
+// מפתח פריט
+// :
+// "XP100SA"
+// מפתח פריט אב
+// :
+// "XP100BG"
+// משקל
+// :
+// 0.1
+// קוד מיון
+// :
+// 53000
+// שם פריט
+// :
+// "גת XP"
+// שם פריט אב
+// :
+// "שקית לגת XP100"
+// תרה כמותית אב
+// :
+// -21855.5

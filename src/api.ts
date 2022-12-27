@@ -49,6 +49,8 @@ const BaseHaURL = "https://bizmod-ha-api-001.onrender.com/api";
 const driversUrl =
   "https://script.google.com/macros/s/AKfycbzUpsKhJQ_vQkw6Y99GPj1-y77jFYm8XTnWRg-nbeaCd7YTN1kU8JLeFwrZoo9DmUae/exec";
 
+const fetchItemsWeighet = async () => {};
+
 export const fetchLastMatrix = async () => {
   const headers = {
     "Content-Type": "application/json",
@@ -104,7 +106,7 @@ export const fetchCurrentDayMarixes = async () => {
 };
 
 export const fetchDriverSummary = async () => {
-  return fetch(ResApiUrl + "?type=routData").then((res) => res.json());
+  return fetchItemsData().then();
 };
 
 // export const fetchMessageData = async (castumer: any) => {
@@ -209,6 +211,28 @@ export const fetchItemsData = async () => {
     .catch((err) => console.log);
 };
 
+export const fetchItemsDataWeight = async () => {
+  let data = {
+    TID: "1",
+    sortKey: { מחסן: 1 },
+  };
+
+  const headers = {
+    "Content-Type": "application/json",
+    Authorization: ofekBarier,
+  };
+
+  return await axios
+    .post("https://bizmod-ha-api-001.onrender.com/api/getrecords", data, {
+      headers: headers,
+    })
+    .then((res) => {
+      console.log("items data  ", res.data);
+      console.log("items data.data returned ", res.data.data);
+      return res.data.data;
+    })
+    .catch((err) => console.log);
+};
 export const fetchMessagesContent = async (data: any) => {
   return await axios
     .post(ResApiUrl + data)

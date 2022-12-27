@@ -6,10 +6,11 @@ import Header from "./Header";
 import { backToLogin, constractMissions, Logger, renderScreen } from "../helper";
 import Missions from "./Missions";
 import useLocalStorage from "../Hooks/useLocalStorage";
+import CarPairing from "./CarPairing";
 
 type DashBoardProps = {
   driver: string | number;
-  user: driver | undefined;
+  user: driver;
   matrix?: any;
   castumers?: object[];
   // loginShow: any;
@@ -23,6 +24,7 @@ function Nav(props: DashBoardProps) {
   });
   const [storageHeaders, setStorageHeaders] = useLocalStorage("storageHeaders", { data: { headers: null, amount: 0 } });
   const [currentMission, setCurrentMission] = useState<any>();
+  const [isPaired, setIsPaired] = useLocalStorage("isPaired", { data: false });
   const [movment, setMovment] = useLocalStorage("movment", { data: false });
   useEffect(() => {}, [missions.data]);
   const [currentScreen, setCurrentScreen] = useState(null);
@@ -47,7 +49,8 @@ function Nav(props: DashBoardProps) {
 
   return (
     <div className="flex flex-col w-full border-4 border-red-500">
-      {!props.render.data.admin && (
+      {!isPaired.data && <CarPairing setIsPaired={setIsPaired} driver={props.user} />}
+      {!props.render.data.admin && isPaired.data && (
         <Header
           setMovment={setMovment}
           movment={movment}
@@ -72,7 +75,7 @@ function Nav(props: DashBoardProps) {
       {props.render?.data?.details && currentMission && (
         <Specs matrix={props.matrix} mission={currentMission} handleGlobalRender={handleGlobalRender} />
       )}
-      {props.render?.data?.storage && missions?.data?.missions?.length > 0 ? (
+      {props.render?.data?.storage && isPaired.data && missions?.data?.missions?.length > 0 ? (
         <Storage
           setStorageHeaders={setStorageHeaders}
           matrix={props.matrix}
@@ -83,6 +86,7 @@ function Nav(props: DashBoardProps) {
         />
       ) : (
         props.render?.data?.storage &&
+        isPaired.data &&
         missions?.data && (
           <div>
             <h1 className={"mt-24 text-center text-9xl justify-center border-4 border-red-500"}>אין משימות לנהג</h1>
