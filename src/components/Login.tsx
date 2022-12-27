@@ -3,7 +3,7 @@ import { useState, useEffect } from "react";
 import { fetchCastumersData, fetchCurrentDayMarixes, fetchDriversData, fetchLastMatrix } from "../api";
 import Nav from "./Nav";
 import { driver } from "../typing";
-import { defaultRender, Logger, renderScreen, useInitializedState } from "../helper";
+import { backToLogin, defaultRender, Logger, renderScreen, useInitializedState } from "../helper";
 import useLocalStorage from "../Hooks/useLocalStorage";
 import AdminScreen from "./AdminScreen";
 
@@ -73,7 +73,14 @@ export default function Login() {
       ) : (
         matrixes.error || (castumers.error && <h1>error ....</h1>)
       )}
-
+      {!render.data.login && !driver.data && (
+        <div className="flex flex-col items-center justify-center h-screen">
+          <p className="bg-red-600 text-white">נהג לא מזוהה</p>
+          <button onClick={() => backToLogin(setRender, render)} className="btn1">
+            חזור
+          </button>
+        </div>
+      )}
       {!render?.data?.login &&
         !render?.data?.admin &&
         driver?.data &&
