@@ -13,9 +13,7 @@ const queryCash = new QueryCache();
 export const renderScreen = (cellId: string, render: any) => {
   console.log("in render screen ", { render, cellId });
   let r: any = {};
-  Object.keys(render).forEach((key) =>
-    key == cellId ? (r[key] = true) : (r[key] = false)
-  );
+  Object.keys(render).forEach((key) => (key == cellId ? (r[key] = true) : (r[key] = false)));
   console.log({ r });
   return { data: { ...r }, subKey: cellId };
 };
@@ -36,12 +34,7 @@ export const sortTableData = async (missions: any[], Midx: number) => {
   }
 };
 
-export const constractMissions = (
-  matrixData: any,
-  castumers: any,
-  driver: any,
-  from: null | string = null
-) => {
+export const constractMissions = (matrixData: any, castumers: any, driver: any, from: null | string = null) => {
   if (from) console.log({ from });
   console.log({ castumers, matrixData });
   const accountKeys = matrixData.mainMatrix.AccountKey;
@@ -80,12 +73,7 @@ export const constractMissions = (
   return { missions: [...missionsArray], filterdKeys: [...filterdKeys] };
 };
 
-export const updateResponseDB = async (
-  data: any,
-  type: string,
-  payType?: string,
-  mission?: any
-) => {
+export const updateResponseDB = async (data: any, type: string, payType?: string, mission?: any) => {
   console.log({ mission });
   console.log("in updateResponseDB", { type, data, payType });
   // console.log({ mission });
@@ -120,7 +108,7 @@ export const updateResponseDB = async (
     console.log({ driver });
     const UUID = Math.floor(Math.random() * 100000);
 
-    if (payType == "שיק") {
+    if (payType == "שיק" || payType == "מזומן") {
       let params = "";
       params += "uuid=" + UUID + "&";
       params += "castumer=" + castumerNum + "&";
@@ -135,28 +123,27 @@ export const updateResponseDB = async (
         .then(() => console.log("sent ", type))
         .catch((e) => console.log("error in ", type, e));
     }
-    for (let i = 0; i <= d.length - 1; i++) {
-      let params = "";
-      if (d[i].amount > 0) {
-        params += "uuid=" + UUID + "&";
-        params += "castumer=" + castumerNum + "&";
-        params += "castumerName=" + castumerName + "&";
-        params += "driverNum=" + driver.data.pivotKey + "&";
-        params += "driver=" + driver.data.name + "&";
-        params += "paymentMethod=" + payType + "&";
-        params += `coinName=${payType == "שיק" ? null : d[i].name}&amount=${
-          payType == "שיק" ? null : d[i].amount
-        }&`;
-        params += `coinValue=${payType == "שיק" ? null : d[i].billValue}&`;
-        params += "type=" + type;
+    if (payType == "סיכום") {
+      for (let i = 0; i <= d.length - 1; i++) {
+        let params = "";
+        if (d[i].amount > 0) {
+          params += "uuid=" + UUID + "&";
+          params += "castumer=" + castumerNum + "&";
+          params += "castumerName=" + castumerName + "&";
+          params += "driverNum=" + driver.data.pivotKey + "&";
+          params += "driver=" + driver.data.name + "&";
+          params += "paymentMethod=" + payType + "&";
+          params += `coinName=${d[i].name}&amount=${payType == "סיכום"}&`;
+          params += `coinValue=${d[i].billValue}&`;
+          params += "type=" + type;
 
-        fetch(`${ResApiUrl}?${encodeURI(params)}`, { mode: "no-cors" })
-          .then(() => console.log("sent ", type))
-          .catch((e) => console.log("error in ", type, e));
+          fetch(`${ResApiUrl}?${encodeURI(params)}`, { mode: "no-cors" })
+            .then(() => console.log("sent ", type))
+            .catch((e) => console.log("error in ", type, e));
+        }
       }
     }
   }
-
   if (type == "returns") {
     console.log("in func", { data });
     const Castumer = await mission;
@@ -172,13 +159,7 @@ export const updateResponseDB = async (
       params += "castumer=" + castumerName + "&";
       params += "driverNum" + driver.data.pivotKey + "&";
       params += "driver=" + driver.data.name + "&";
-      params +=
-        "item=" +
-        data.list[i].item +
-        "&" +
-        "amount=" +
-        data.list[i].amount +
-        "&";
+      params += "item=" + data.list[i].item + "&" + "amount=" + data.list[i].amount + "&";
       params += "type=" + type;
       console.log({ params });
       fetch(`${ResApiUrl}?${encodeURI(params)}`, { mode: "no-cors" })
@@ -194,12 +175,8 @@ export const missionsReducer = (state: any, action: any) => {
       return { endIndex: 0, startIndex: 0, data: action.payload.data };
     case "dnd":
       console.log("dispatch is dnd");
-      const oldIndex: number = state.data.findIndex(
-        (row: any) => row.id === action.payload.startIndex
-      );
-      const newIndex: number = state.data.findIndex(
-        (row: any) => row.id === action.payload.endIndex
-      );
+      const oldIndex: number = state.data.findIndex((row: any) => row.id === action.payload.startIndex);
+      const newIndex: number = state.data.findIndex((row: any) => row.id === action.payload.endIndex);
       return { ...state, data: arrayMove(state.data, oldIndex, newIndex) };
 
     case "isDone":
@@ -208,8 +185,7 @@ export const missionsReducer = (state: any, action: any) => {
       let newArray = [];
       let lastRecord;
       state.data.forEach((row: any) => {
-        if (row.id == action.payload.startIndex)
-          lastRecord = { ...row, isDone: !row.isDone };
+        if (row.id == action.payload.startIndex) lastRecord = { ...row, isDone: !row.isDone };
         else newArray.push(row);
       });
       newArray.push(lastRecord);
@@ -218,9 +194,7 @@ export const missionsReducer = (state: any, action: any) => {
         data: [...newArray],
       };
       console.log({ updatedData }, action.payload.startIndex);
-      const task = updatedData.data.filter(
-        (row: any) => row.id == action.payload.startIndex
-      )[0];
+      const task = updatedData.data.filter((row: any) => row.id == action.payload.startIndex)[0];
       console.log({ task });
       updateResponseDB(task, "mission", "", task);
       return updatedData;
@@ -243,23 +217,14 @@ export const missionsReducer = (state: any, action: any) => {
 };
 const checkLocalStorage = async (page: string) => {
   const storage = localStorage.getItem(page);
-  if (
-    typeof storage === "string" &&
-    storage != "undefined" &&
-    storage != null
-  ) {
+  if (typeof storage === "string" && storage != "undefined" && storage != null) {
     return await JSON.parse(storage);
     console.log("passded test ", { storage });
   }
   return null;
 };
 
-export const useInitializedState = async (
-  page: string,
-  props?: any,
-  dooerFunc?: any,
-  dispatch?: any
-) => {
+export const useInitializedState = async (page: string, props?: any, dooerFunc?: any, dispatch?: any) => {
   let data;
   switch (page) {
     case "missions":

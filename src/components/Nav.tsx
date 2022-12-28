@@ -67,6 +67,7 @@ function Nav(props: DashBoardProps) {
           missions={missions?.data?.missions}
           handleClick={handleRowClick}
           handleGlobalRender={handleGlobalRender}
+          setReder={props.setRender}
           render={props.render}
           mission={currentMission}
         />

@@ -6,10 +6,12 @@ import DataRow from "./DataRow";
 import { missionsReducer, useInitializedState } from "../helper";
 import useLocalStorage from "../Hooks/useLocalStorage";
 import Model from "./Model";
+import Summery from "./Summery";
 
 export default function Missions(props: any) {
   console.log("render in misssions ", props.render);
-
+  const [allFinished, setAllFinished] = useState(false);
+  const [sumRout, setSumRout] = useState(false);
   const [tableData, dispatch] = useReducer(missionsReducer, () => {
     const res = localStorage.getItem("missions");
     if (res !== null) return JSON.parse(res);
@@ -37,6 +39,11 @@ export default function Missions(props: any) {
     if (tableData?.data) {
       localStorage.setItem("missions", JSON.stringify(tableData));
       setTd([...tableData.data]);
+      setAllFinished(() => {
+        if (tableData.data.filter((row: any) => row.isDone === false)[0]) {
+          return false;
+        } else return true;
+      });
     }
   }, [tableData.data]);
 
@@ -57,13 +64,25 @@ export default function Missions(props: any) {
   };
 
   const [listRef, enableAnimate] = useAutoAnimate<HTMLDivElement>();
-  enableAnimate(false);
+
   return (
     <div className="mt-24">
-      {tableData?.data ? (
+      {tableData?.data && !sumRout ? (
         td && (
           <DndContext sensors={sensor} collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
             <SortableContext items={td.map((row: any) => row.id)} strategy={verticalListSortingStrategy}>
+              {allFinished && (
+                <button
+                  onClick={() => {
+                    console.log({ sumRout });
+                    setSumRout(!sumRout);
+                  }}
+                  className="btn1"
+                >
+                  {" "}
+                  סכם מסלול{" "}
+                </button>
+              )}
               <div ref={listRef} className="flex flex-col w-full items-center justify-center gap-2">
                 {td.map((row: any, idx: number) => {
                   return (
@@ -89,6 +108,14 @@ export default function Missions(props: any) {
       header={'פירוט לנהג'}
       
       /> */}
+      {sumRout && (
+        <Summery
+          render={props.render}
+          setReder={props.setReder}
+          handleClick={props.handleClick}
+          setSumRout={setSumRout}
+        />
+      )}
     </div>
   );
 }
