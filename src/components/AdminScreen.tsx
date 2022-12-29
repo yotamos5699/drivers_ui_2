@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-
+import ClipLoader from "react-spinners/ClipLoader";
 import { useQuery } from "@tanstack/react-query";
 import { BiMessageAltAdd } from "react-icons/bi";
 import { FaSms } from "react-icons/fa";
@@ -42,7 +42,6 @@ const updateMessageIsExist = (messages: any) => {
 const initializeMessages = async (messages: any, setIsInitiated: Function) => {
   console.log("in is initiated function");
   if (messages?.data !== null) {
-    setIsInitiated({ data: true });
     for (let i = 0; i <= messages.data.length - 1; i++) {
       console.log("task to update ", messages.data[i]);
       await fetch(
@@ -52,7 +51,10 @@ const initializeMessages = async (messages: any, setIsInitiated: Function) => {
         {
           mode: "no-cors",
         }
-      ).then((res) => console.log(res));
+      ).then((res) => {
+        if (i == messages.data.length - 1) setIsInitiated({ data: true });
+        console.log(res);
+      });
     }
   }
 };
@@ -109,6 +111,7 @@ function AdminScreen(props: any) {
   const [tasks, setTasks] = useLocalStorage("tasks", { data: null });
   const [messages, setMessages] = useLocalStorage("messages", { data: null });
   const [selectedName, setSelectedName] = useState();
+
   const [toggle, toggleModule] = useState(false);
   const [sms, setSms] = useState<any[]>();
   const [isInitiated, setIsInitiated] = useLocalStorage("isinitiated", {
@@ -210,6 +213,15 @@ function AdminScreen(props: any) {
           {!toggle && (
             <div className="hdr2 justify-between">
               <h1>משימות יומיות לכלל הנהגים</h1>
+              <ClipLoader
+                color={"blue"}
+                loading={!isInitiated.data}
+                //cssOverride={override}
+                size={150}
+                aria-label="Loading Spinner"
+                data-testid="loader"
+              />
+
               <button
                 className={sms?.filter((s: any) => s === true)[0] ? "btn1 w-32 bg-green-600" : "btn1 w-32 bg-gray-600 "}
                 onClick={() => {
