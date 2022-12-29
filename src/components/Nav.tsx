@@ -19,6 +19,7 @@ type DashBoardProps = {
 };
 
 function Nav(props: DashBoardProps) {
+  console.log("nav props HHHH", { props });
   const [missions, setMissions] = useLocalStorage("missions", {
     data: constractMissions(props.matrix, props.castumers, props.driver),
   });
@@ -60,7 +61,7 @@ function Nav(props: DashBoardProps) {
           storageHeaders={storageHeaders}
         />
       )}
-      {props.render?.data?.table && (
+      {props.render?.data?.table && missions?.data?.missions && (
         <Missions
           driver={props.driver}
           movment={movment}
@@ -140,11 +141,10 @@ export const useNavActions = (action: any, props: any, seter: any) => {
       });
 
       if (spec?.length) {
-        console.log("before set current mission ", spec);
         seter(spec[0]);
-        return console.log("current mission ok");
+        return;
       }
-      return console.log("current doesnt exist");
+      return;
   }
 };
 

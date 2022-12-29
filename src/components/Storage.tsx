@@ -8,15 +8,13 @@ import useLocalStorage from "../Hooks/useLocalStorage";
 type StorageProps = {
   matrix: any;
   filterdKeys: string[];
-  mission: any;
+  missions: any;
   castumers: any;
   handleGlobalRender: any;
   setStorageHeaders: any;
 };
 
 function Storage(props: StorageProps) {
-  console.log("storage", { props });
-  //const [storageData,setStorageData] = useLocalStorage('storageData',null)
   const [storageData, setStorageData] = useLocalStorage("storageData", { data: null, subKey: "storageData" });
   const [storageStyles, setStorageStyles] = useLocalStorage("storageStyles", { data: null, subKey: "storageStyles" });
   const [storageAddedSpecs, setStorageAddedSpecs] = useLocalStorage("sorageAddedSpecs", {
@@ -31,7 +29,7 @@ function Storage(props: StorageProps) {
   //   main: true,
   //   cont: false,
   // });
-
+  console.log("sorage props :", { props });
   useEffect(() => {
     if (storageData.data !== null)
       props.setStorageHeaders({
@@ -40,10 +38,9 @@ function Storage(props: StorageProps) {
     // if (itemsData.data && storageData.data != null && storageAddedSpecs.data.itemsWeight == null)
     //   calcItemsWeight(itemsData.data, storageData.data, setStorageAddedSpecs);
   }, [storageData.data]);
-  console.log("in storage ", { props });
+
   useEffect(() => {
     if (storageData.data && storageStyles.data) {
-      console.log("using local data ", { storageData, storageStyles });
       props.setStorageHeaders({
         data: { headers: Object.keys(storageData.data[0]), amount: storageData?.data?.length },
       });
@@ -94,11 +91,9 @@ function Storage(props: StorageProps) {
       setStorageStyles({ ...storageStyles, data: stMtx });
     }
     record && setStorageData({ ...storageData, data: details });
-    console.log("after set up in storage ", { storageData, storageStyles });
   }, []);
 
   const handleChange = (e: any, p: any) => {
-    //  console.log({ e, p });
     if (e.target.id == "isDone") {
       let rowIndex = 0;
       let newData = storageData.data.map((row: any, idx: number) => {
@@ -115,7 +110,6 @@ function Storage(props: StorageProps) {
         if (i != rowIndex) {
           mtx.push(storageStyles.data[i]);
           sortedData.push(row);
-          //    console.log({ sortedData });
         }
       });
 
@@ -205,8 +199,6 @@ function Storage(props: StorageProps) {
 
 export default Storage;
 function calcRowItemsWeight(itemsData: any[], storageData: any) {
-  console.log("calcItemsWeight", { itemsData, storageData });
-
   let amount: number = 0;
   Object.keys(storageData).forEach((key: string) => {
     key != "לקוח" &&
@@ -219,9 +211,6 @@ function calcRowItemsWeight(itemsData: any[], storageData: any) {
 }
 
 function calcItemsWeight(itemsData: any[], storageData: any[], setStorageAddedSpecs: any) {
-  console.log("in funccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc");
-  console.log("calcItemsWeight", { itemsData, storageData });
-
   let itemsToWeight = [];
 
   for (let i = 0; i <= storageData.length - 1; i++) {
