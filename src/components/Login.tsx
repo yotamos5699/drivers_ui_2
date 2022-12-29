@@ -73,7 +73,7 @@ export default function Login() {
       ) : (
         matrixes.error || (castumers.error && <h1>error ....</h1>)
       )}
-      {!render.data.login && !driver.data && (
+      {!render.data.login && !driver.data && input !== "1234" && (
         <div className="flex flex-col items-center justify-center h-screen">
           <p className="bg-red-600 text-white">נהג לא מזוהה</p>
           <button onClick={() => backToLogin(setRender, render)} className="btn1">

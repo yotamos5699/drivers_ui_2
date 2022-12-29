@@ -116,8 +116,8 @@ export const updateResponseDB = async (data: any, type: string, payType?: string
       params += "driverNum=" + driver.data.pivotKey + "&";
       params += "driver=" + driver.data.name + "&";
       params += "paymentMethod=" + payType + "&";
-      params += `coinName=null&amount=null&`;
-      params += `coinValue=null&`;
+      params += `coinName=null&amount=1&`;
+      params += `coinValue=${data}&`;
       params += "type=" + type;
       return fetch(`${ResApiUrl}?${encodeURI(params)}`, { mode: "no-cors" })
         .then(() => console.log("sent ", type))
