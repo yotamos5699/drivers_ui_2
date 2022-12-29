@@ -33,15 +33,18 @@ function Header(props: headerProps) {
         </div>
         {props?.render?.data?.table && (
           <div className="flex gap-2 border-blue-500 border-2">
-            <p> אפשר תנועה</p>
-            <input
-              value={props.movment.data}
-              checked={props.movment.data}
-              onChange={() => {
+            {/* <p> אפשר תנועה</p> */}
+            <button
+              className={!props.movment.data ? "btn1 h-full w-60 bg-green-600" : "btn1 h-full w-60 bg-red-400"}
+              //   value={props.movment.data}
+              // checked={props.movment.data}
+              onClick={() => {
                 props.setMovment({ data: !props.movment.data });
               }}
-              type="checkbox"
-            />
+              // type="checkbox"
+            >
+              {!props.movment.data ? "אפשר תנועה" : "חסום תנועה"}
+            </button>
           </div>
         )}
         {props?.render?.data.storage && props?.storageHeaders?.data?.amount != 0 && (
@@ -60,7 +63,7 @@ function Header(props: headerProps) {
               className={"border-pink-400 border-2 px-2 "}
             >
               {" "}
-              לחמסן{" "}
+              למחסן{" "}
             </button>
           </>
         )}
@@ -84,6 +87,7 @@ function Header(props: headerProps) {
                   </td>
                 )
             )}
+            <p className="td3">משקל</p>
             <p className="td">מוכן</p>
           </tr>
         )}

@@ -86,6 +86,10 @@ function Specs(props: SpecsProps) {
   };
 
   const handleClick = (e: any, data?: any) => {
+    if (e.target.id == "main" && e.target?.name == "summery") {
+      updateResponseDB(data, "payments", "סיכום", props.mission);
+      console.log('updateResponseDB(data,payment,"מזומן",props.mission)', { data, e });
+    }
     if (e.target.id == "main" && e.target?.name == "cash") {
       updateResponseDB(data, "payments", "מזומן", props.mission);
       console.log('updateResponseDB(data,payment,"מזומן",props.mission)', { data, e });
@@ -120,7 +124,7 @@ function Specs(props: SpecsProps) {
     });
   };
   return (
-    <div className="mt-20">
+    <div className="mt-20 w-full">
       {msg && (
         <div className="flex w-screen h-1/6 text-white bg-red-600">
           <p className="w-2/12 text-xl"> הודעה ממטריצה </p>
@@ -140,12 +144,12 @@ function Specs(props: SpecsProps) {
       </div>
 
       {data && render.main && (
-        <div>
+        <div className="">
           <table>
-            <thead className="bg-white border-b">
+            <thead className=" bg-white border-b">
               <tr
                 key={"asd"}
-                className="text-sm font-medium text-gray-900 px-6 py-4 text-center  items-center w-4/5 bg-gray- shadow-md rounded-md gap-1 touch-none"
+                className=" text-sm font-medium text-gray-900 px-6 py-4 text-center  items-center w-full bg-gray- shadow-md rounded-md gap-1 touch-none"
               >
                 {Object.keys(data[0]).map(
                   (header, idx) =>
