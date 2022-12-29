@@ -135,7 +135,7 @@ export const fetchMessageData = async (castumer: any) => {
 
   return await axios(url, { withCredentials: false })
     .then((res) => {
-      console.log("drivers data ", res.data);
+      console.log("fetch message data !!!!!! ", res.data);
 
       return res.data;
     })
