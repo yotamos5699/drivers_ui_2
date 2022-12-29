@@ -81,7 +81,7 @@ function Nav(props: DashBoardProps) {
         <Storage
           setStorageHeaders={setStorageHeaders}
           matrix={props.matrix}
-          missions={currentMission}
+          mission={currentMission}
           castumers={props.castumers}
           handleGlobalRender={handleGlobalRender}
           filterdKeys={missions.data.filterdKeys}
