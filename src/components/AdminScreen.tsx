@@ -9,8 +9,13 @@ import useLocalStorage from "../Hooks/useLocalStorage";
 import { backToLogin, constractMissions, Logger } from "../helper";
 import Model from "./Model";
 import axios from "axios";
+interface msg {
+  isExist: boolean;
+  content: string | null;
+  id: string;
+}
 const ResApiUrl =
-  "https://script.google.com/macros/s/AKfycbwYsPdgqWD6QNjllH8ZB_-Wde6br0CYcXUE2yShDvGb0486ojgzEKkF5_HbBb5Q34iV/exec";
+  "https://script.google.com/macros/s/AKfycbwYsPdgqWD6QNjllH8ZB_-Wde6br0CYcXUE2yShDvGb0486ojgzEKkF5_HbBb5Q34iV/exec?type=getmessages";
 const udateMessageContent = (idx: any, messages: any) => {
   let data = messages.data.map((msg: any, index: number) => {
     if (idx === index) return { ...msg, content: msg.content ? msg.content : "אין הודעה ללקוח" };
@@ -39,24 +44,32 @@ const updateMessageIsExist = (messages: any) => {
     }),
   };
 };
-const initializeMessages = async (messages: any, setIsInitiated: Function) => {
+const initializeMessages = async (messages: any, setIsInitiated: Function, setMessages: any) => {
   console.log("in is initiated function");
+
+  const result: msg[] = await axios
+    .get(ResApiUrl, {
+      withCredentials: false,
+    })
+    .then((res) => {
+      console.log({ res });
+      setIsInitiated({ data: true });
+      return res.data;
+    })
+    .catch((e) => {
+      console.log;
+      return e;
+    });
+  const newData: msg[] = messages.data;
+
   if (messages?.data !== null) {
     for (let i = 0; i <= messages.data.length - 1; i++) {
-      console.log("task to update ", messages.data[i]);
-      await fetch(
-        ResApiUrl +
-          "?" +
-          encodeURI(`type=updatemessages&id=${messages.data[i].id}&content=${messages.data[i].content}`),
-        {
-          mode: "no-cors",
-        }
-      ).then((res) => {
-        if (i == messages.data.length - 1) setIsInitiated({ data: true });
-        console.log(res);
+      result.forEach((msg: msg) => {
+        if (msg.id == messages.data[i].id) newData[i] = { ...msg };
       });
     }
   }
+  setMessages({ data: [...newData] });
 };
 
 const constructSmses = async (sms: boolean[], tasks: any[], matrix: any) => {
@@ -118,11 +131,6 @@ function AdminScreen(props: any) {
     data: false,
   });
   const [currentIndex, setCurrentIndex] = useState(0);
-  //const [msgContent, setMsgContent] = useState(null);
-  // const messagesContent = useQuery({
-  //   queryKey: ["messages_content"],
-  //   queryFn: () => fetchMessaedContent("?type=messages"),
-  // });
 
   Logger(tasks, " tasks in admin screen");
 
@@ -138,12 +146,12 @@ function AdminScreen(props: any) {
         }),
       });
     }
-    if (!isInitiated.data) {
+    if (!isInitiated.data && messages.data != null) {
       console.log("in is initiated use effect");
-      initializeMessages(messages, setIsInitiated);
+      initializeMessages(messages, setIsInitiated, setMessages);
     } else {
       console.log("smsss data 111");
-      setSms(messages?.data.map((msg: any) => false));
+      setSms(messages?.data?.map((msg: any) => false));
     }
     console.log({ messages });
   }, [tasks.data, messages.data]);

@@ -86,7 +86,7 @@ export default function Login() {
         driver?.data &&
         castumers.data &&
         drivers.data &&
-        matrixes?.data[0]?.matrixesData && (
+        matrixes?.data?.length && (
           <Nav
             render={render}
             setRender={setRender}
