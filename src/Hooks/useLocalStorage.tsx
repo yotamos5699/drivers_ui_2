@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-
+const log = false;
 const getSavedValue = (key: string, initialValue: any) => {
   const storageType = localStorage.getItem(key);
   console.log({ key });
@@ -21,16 +21,16 @@ const useLocalStorage = (key: string, initialValue: LsValue) => {
     return getSavedValue(key, initialValue);
   });
 
-  console.log("key in render ", { key });
+  log && console.log("key in render ", { key });
   //
   useEffect(() => {
     if (value?.subKey == "details" || value?.subKey == "log") {
-      console.log("foiden key ", { key });
+      log && console.log("foiden key ", { key });
       return;
     }
     localStorage.setItem(key, JSON.stringify(value));
   }, [value]);
-  console.log("before return ", { value });
+  log && console.log("before return ", { value });
   return [value, setValue];
 };
 

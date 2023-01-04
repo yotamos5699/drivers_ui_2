@@ -15,7 +15,7 @@ type SpecsProps = {
 };
 
 function Specs(props: SpecsProps) {
-  console.log({ props });
+  console.log("specs props ", { props });
   const [data, setData] = useState<any>();
   const [msg, setMessage] = useState(null);
   const [render, setReder] = useState({
@@ -35,10 +35,11 @@ function Specs(props: SpecsProps) {
     msg && setMessage(msg);
     let record: any = {};
     let details = [];
+    const addOne = itemsNames[0] == "לקוח" ? 1 : 0;
     for (let i = 0; i <= cellsData[castumerIndex].length - 1; i++) {
       record = {};
       if (cellsData[castumerIndex][i] != 0) {
-        record["פריט"] = itemsNames[i];
+        record["פריט"] = itemsNames[i + addOne];
         record["כמות"] = cellsData[castumerIndex][i];
         record["isDone"] = false;
         // console.log({ record });

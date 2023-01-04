@@ -1,5 +1,6 @@
 import axios from "axios";
 import Missions from "./components/Missions";
+const log = false;
 //import { createTRPCClient } from "@trpc/client";
 const ResApiUrl =
   "https://script.google.com/macros/s/AKfycbwYsPdgqWD6QNjllH8ZB_-Wde6br0CYcXUE2yShDvGb0486ojgzEKkF5_HbBb5Q34iV/exec";
@@ -67,7 +68,7 @@ export const fetchLastMatrix = async () => {
       }
     )
     .then((res) => {
-      console.log("inner matrix ", res.data.result.data);
+      log && console.log("inner matrix ", res.data.result.data);
       //console.log("last matrix ", res.data.result.data[0].matrixesData);
       return res.data.result.data[0].matrixesData;
     });
@@ -99,7 +100,7 @@ export const fetchCurrentDayMarixes = async () => {
       headers: headers,
     })
     .then((res) => {
-      console.log("current day matrixes ", res.data);
+      log && console.log("current day matrixes ", res.data);
       return res.data.result.data;
     })
     .catch((err) => console.log({ err }));
@@ -109,24 +110,6 @@ export const fetchDriverSummary = async () => {
   return fetchItemsData().then();
 };
 
-// export const fetchMessageData = async (castumer: any) => {
-//   console.log({ castumer });
-//   //script.google.com/macros/s/AKfycbwYsPdgqWD6QNjllH8ZB_-Wde6br0CYcXUE2yShDvGb0486ojgzEKkF5_HbBb5Q34iV/exec?type=getmessage&id=6052
-//   const url =
-//     "https://script.google.com/macros/s/AKfycbwYsPdgqWD6QNjllH8ZB_-Wde6br0CYcXUE2yShDvGb0486ojgzEKkF5_HbBb5Q34iV/exec?type=getmessage&id=6052";
-
-//   //`${castumer["מפתח"]}`;
-
-//   console.log("sssssssssssssssssssssssssssssssssssssssssssss", { url });
-//   return await fetch(url, { mode: "no-cors" })
-//     .then((response) => response)
-//     .then((result) => {
-//       console.log("new fetch !!!!!", result);
-//       return result;
-//     })
-//     .catch((error) => console.log("error", error));
-// };
-
 export const fetchMessageData = async (castumer: any) => {
   const ID = await castumer["מפתח"];
   const url =
@@ -135,7 +118,7 @@ export const fetchMessageData = async (castumer: any) => {
 
   return await axios(url, { withCredentials: false })
     .then((res) => {
-      console.log("fetch message data !!!!!! ", res.data);
+      log && console.log("fetch message data !!!!!! ", res.data);
 
       return res.data;
     })
@@ -152,14 +135,14 @@ export const fetchMessagesData = async () => {
   };
   return await fetch(`ResApiUrl?${encodeURI("type=getmessages")}`, requestOptions)
     .then((response) => response.text())
-    .then((result) => console.log(result))
+    .then((result) => log && console.log(result))
     .catch((error) => console.log("error", error));
 };
 
 export const fetchDriversData = async () => {
   return await axios(driversUrl, { withCredentials: false })
     .then((res) => {
-      console.log("drivers data ", res.data);
+      log && console.log("drivers data ", res.data);
 
       return res.data;
     })
@@ -182,7 +165,7 @@ export const fetchCastumersData = async () => {
       headers: headers,
     })
     .then((res) => {
-      console.log("castumers data ", res.data.data);
+      log && console.log("castumers data ", res.data.data);
       return res.data.data;
     })
     .catch((err) => console.log({ err }));
@@ -204,8 +187,8 @@ export const fetchItemsData = async () => {
       headers: headers,
     })
     .then((res) => {
-      console.log("items data  ", res.data);
-      console.log("items data.data returned ", res.data.data);
+      log && console.log("items data  ", res.data);
+      log && console.log("items data.data returned ", res.data.data);
       return res.data.data;
     })
     .catch((err) => console.log);
@@ -227,8 +210,8 @@ export const fetchItemsDataWeight = async () => {
       headers: headers,
     })
     .then((res) => {
-      console.log("items data  ", res.data);
-      console.log("items data.data returned ", res.data.data);
+      log && console.log("items data  ", res.data);
+      log && console.log("items data.data returned ", res.data.data);
       return res.data.data;
     })
     .catch((err) => console.log);
@@ -237,8 +220,8 @@ export const fetchMessagesContent = async (data: any) => {
   return await axios
     .post(ResApiUrl + data)
     .then((res) => {
-      console.log("items data  ", res.data);
-      console.log("items data.data returned ", res.data.data);
+      log && console.log("items data  ", res.data);
+      log && console.log("items data.data returned ", res.data.data);
       return res.data.data;
     })
     .catch((err) => console.log);
