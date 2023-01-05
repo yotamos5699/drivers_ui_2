@@ -53,6 +53,7 @@ function Nav(props: DashBoardProps) {
       {!isPaired.data && <CarPairing setIsPaired={setIsPaired} driver={props.user} />}
       {!props.render.data.admin && isPaired.data && (
         <Header
+          currentMission={currentMission}
           setMovment={setMovment}
           movment={movment}
           render={props.render}

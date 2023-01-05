@@ -11,6 +11,7 @@ type headerProps = {
   storageHeaders: any;
   movment: any;
   setMovment: any;
+  currentMission: any;
 };
 
 function Header(props: headerProps) {
@@ -27,11 +28,11 @@ function Header(props: headerProps) {
     <div className=" flex flex-col fixed top-0 z-30 w-full px-2 py-4 h bg-white sm:px-4 shadow-xl">
       <div className="flex justify-between h">
         <h2>שלום {props?.user?.name}</h2>
-        <div>
+        <div className="font-bold">
           {props.render?.data.table
             ? "המשימות של היום "
             : props.render?.data.details
-            ? "פירוט"
+            ? `פירוט ללקוח- ${props.currentMission["שם חשבון"]}`
             : props.render?.data.pay
             ? "תשלום"
             : "כלום"}
@@ -40,11 +41,7 @@ function Header(props: headerProps) {
           <div className="flex gap-2 border-blue-500 border-2">
             {/* <p> אפשר תנועה</p> */}
             <button
-              className={
-                !props.movment.data
-                  ? "btn1 h-full w-60 bg-green-600"
-                  : "btn1 h-full w-60 bg-red-400"
-              }
+              className={!props.movment.data ? "btn1 h-full w-60 bg-green-600" : "btn1 h-full w-60 bg-red-400"}
               //   value={props.movment.data}
               // checked={props.movment.data}
               onClick={() => {
@@ -56,13 +53,12 @@ function Header(props: headerProps) {
             </button>
           </div>
         )}
-        {props?.render?.data.storage &&
-          props?.storageHeaders?.data?.amount != 0 && (
-            <div className="flex gap-2">
-              <p> מס לקוחות </p>
-              <p>{props.storageHeaders.data.amount}</p>
-            </div>
-          )}
+        {props?.render?.data.storage && props?.storageHeaders?.data?.amount != 0 && (
+          <div className="flex gap-2">
+            <p> מס לקוחות </p>
+            <p>{props.storageHeaders.data.amount}</p>
+          </div>
+        )}
 
         {!props.render.data.storage && (
           <>
@@ -91,34 +87,28 @@ function Header(props: headerProps) {
         </button>
       </div>
       <div>
-        {props?.render?.data?.storage &&
-          props?.storageHeaders?.data?.headers && (
-            <div className="flex flex-col">
-              <tr
-                key={"asd"}
-                className="flex tr top-0 h-1/6 border-green-500 border-2 "
-              >
-                {props.storageHeaders.data.headers.map(
-                  (header: any, idx: number) =>
-                    header != "isDone" && (
-                      <td className="td" key={idx + 1111}>
-                        {header}
-                      </td>
-                    )
-                )}
-                <p className="td3 mb-0">משקל</p>
-                <p className="td mb-0">מוכן</p>
-              </tr>
-              <div className="h-10 flex w-full items-center border-green-500 border-2">
-                <p className="w-1/5">הודעה כללית</p>
-                <div className={" w-full text-center"}>
-                  {generalMessage.isLoading
-                    ? "טוען"
-                    : generalMessage.data.data.content}
-                </div>
+        {props?.render?.data?.storage && props?.storageHeaders?.data?.headers && (
+          <div className="flex flex-col">
+            <tr key={"asd"} className="flex tr top-0 h-1/6 border-green-500 border-2 ">
+              {props.storageHeaders.data.headers.map(
+                (header: any, idx: number) =>
+                  header != "isDone" && (
+                    <td className="td" key={idx + 1111}>
+                      {header}
+                    </td>
+                  )
+              )}
+              <p className="td3 mb-0">משקל</p>
+              <p className="td mb-0">מוכן</p>
+            </tr>
+            <div className="h-10 flex w-full items-center border-green-500 border-2">
+              <p className="w-1/5">הודעה כללית</p>
+              <div className={" w-full text-center"}>
+                {generalMessage.isLoading ? "טוען" : generalMessage.data.data.content}
               </div>
             </div>
-          )}
+          </div>
+        )}
       </div>
     </div>
   );

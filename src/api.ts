@@ -1,6 +1,6 @@
 import axios from "axios";
 import Missions from "./components/Missions";
-const log = false;
+const log = true;
 //import { createTRPCClient } from "@trpc/client";
 const ResApiUrl =
   "https://script.google.com/macros/s/AKfycbwYsPdgqWD6QNjllH8ZB_-Wde6br0CYcXUE2yShDvGb0486ojgzEKkF5_HbBb5Q34iV/exec";
