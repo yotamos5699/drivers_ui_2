@@ -1,7 +1,15 @@
 import { useAutoAnimate } from "@formkit/auto-animate/react";
 import { useEffect, useReducer, useRef, useState } from "react";
-import { DndContext, closestCenter, useSensor, PointerSensor } from "@dnd-kit/core";
-import { SortableContext, verticalListSortingStrategy } from "@dnd-kit/sortable";
+import {
+  DndContext,
+  closestCenter,
+  useSensor,
+  PointerSensor,
+} from "@dnd-kit/core";
+import {
+  SortableContext,
+  verticalListSortingStrategy,
+} from "@dnd-kit/sortable";
 import DataRow from "./DataRow";
 import { missionsReducer, useInitializedState } from "../helper";
 import useLocalStorage from "../Hooks/useLocalStorage";
@@ -9,6 +17,7 @@ import Model from "./Model";
 import Summery from "./Summery";
 
 export default function Missions(props: any) {
+  console.log({ props });
   console.log("render in misssions ", props.render);
   const [allFinished, setAllFinished] = useState(false);
   const [sumRout, setSumRout] = useState(false);
@@ -29,7 +38,10 @@ export default function Missions(props: any) {
     async function fetchStorage() {
       let res = await useInitializedState("missions", props);
 
-      dispatch({ type: "init", payload: { data: props?.missions ? props?.missions : res.data.data } });
+      dispatch({
+        type: "init",
+        payload: { data: props?.missions ? props?.missions : res.data.data },
+      });
     }
 
     fetchStorage();
@@ -48,10 +60,15 @@ export default function Missions(props: any) {
   }, [tableData.data]);
 
   const handleDragEnd = (e: any) => {
-    const nativeEvent = e.activatorEvent?.target?.id ? e.activatorEvent.target.id : null;
+    const nativeEvent = e.activatorEvent?.target?.id
+      ? e.activatorEvent.target.id
+      : null;
 
     if (!isNaN(nativeEvent) && e?.active?.id !== e?.over?.id) {
-      dispatch({ type: "dnd", payload: { startIndex: e.active.id, endIndex: e.over.id } });
+      dispatch({
+        type: "dnd",
+        payload: { startIndex: e.active.id, endIndex: e.over.id },
+      });
     } else if (nativeEvent && isNaN(nativeEvent) && nativeEvent != null) {
       if (nativeEvent == "isDone") {
         dispatch({ type: "isDone", payload: { startIndex: e.active.id } });
@@ -69,8 +86,15 @@ export default function Missions(props: any) {
     <div className="mt-24">
       {tableData?.data && !sumRout ? (
         td && (
-          <DndContext sensors={sensor} collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
-            <SortableContext items={td.map((row: any) => row.id)} strategy={verticalListSortingStrategy}>
+          <DndContext
+            sensors={sensor}
+            collisionDetection={closestCenter}
+            onDragEnd={handleDragEnd}
+          >
+            <SortableContext
+              items={td.map((row: any) => row.id)}
+              strategy={verticalListSortingStrategy}
+            >
               {allFinished && (
                 <button
                   onClick={() => {
@@ -83,7 +107,10 @@ export default function Missions(props: any) {
                   סכם מסלול{" "}
                 </button>
               )}
-              <div ref={listRef} className="flex flex-col w-full items-center justify-center gap-2">
+              <div
+                ref={listRef}
+                className="flex flex-col w-full items-center justify-center gap-2"
+              >
                 {td.map((row: any, idx: number) => {
                   return (
                     <DataRow
