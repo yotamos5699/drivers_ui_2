@@ -17,16 +17,19 @@ type DashBoardProps = {
   driver: string | number;
   user: driver;
   matrix?: any;
+  fullMatrix: any;
   castumers?: object[];
-  // loginShow: any;
   render: any;
   setRender: any;
 };
 
 function Nav(props: DashBoardProps) {
-  console.log("nav props HHHH", { props });
+  // console.log("nav props HHHH", { props });
   const [missions, setMissions] = useLocalStorage("missions", {
     data: constractMissions(props.matrix, props.castumers, props.driver),
+  });
+  const [storedCastumers] = useLocalStorage("castumers", {
+    data: props.castumers,
   });
   const [storageHeaders, setStorageHeaders] = useLocalStorage(
     "storageHeaders",
@@ -76,6 +79,7 @@ function Nav(props: DashBoardProps) {
       )}
       {!props.render.data.admin && isPaired.data && (
         <Header
+          fullMatrix={props.fullMatrix}
           currentMission={currentMission}
           setMovment={setMovment}
           movment={movment}
@@ -100,6 +104,7 @@ function Nav(props: DashBoardProps) {
 
       {props.render?.data?.details && currentMission && (
         <Specs
+          castumers={storedCastumers}
           matrix={props.matrix}
           mission={currentMission}
           handleGlobalRender={handleGlobalRender}

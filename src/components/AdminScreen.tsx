@@ -3,11 +3,7 @@ import ClipLoader from "react-spinners/ClipLoader";
 import { useQuery } from "@tanstack/react-query";
 import { BiMessageAltAdd } from "react-icons/bi";
 import { FaSms } from "react-icons/fa";
-import {
-  fetchCastumersData,
-  fetchCurrentDayMarixes,
-  fetchDriversData,
-} from "../api";
+import { fetchCastumersData, fetchDriversData } from "../api";
 
 import useLocalStorage from "../Hooks/useLocalStorage";
 import { backToLogin, constractMissions, Logger } from "../helper";

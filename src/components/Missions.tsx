@@ -12,8 +12,7 @@ import {
 } from "@dnd-kit/sortable";
 import DataRow from "./DataRow";
 import { missionsReducer, useInitializedState } from "../helper";
-import useLocalStorage from "../Hooks/useLocalStorage";
-import Model from "./Model";
+
 import Summery from "./Summery";
 
 export default function Missions(props: any) {
@@ -80,7 +79,7 @@ export default function Missions(props: any) {
     }
   };
 
-  const [listRef, enableAnimate] = useAutoAnimate<HTMLDivElement>();
+  const [listRef] = useAutoAnimate<HTMLDivElement>();
 
   return (
     <div className="mt-24">
@@ -131,10 +130,7 @@ export default function Missions(props: any) {
       ) : (
         <h1>loading.....</h1>
       )}
-      {/* <Model
-      header={'פירוט לנהג'}
-      
-      /> */}
+
       {sumRout && (
         <Summery
           render={props.render}

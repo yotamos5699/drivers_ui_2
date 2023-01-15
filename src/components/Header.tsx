@@ -12,6 +12,7 @@ type headerProps = {
   movment: any;
   setMovment: any;
   currentMission: any;
+  fullMatrix: any;
 };
 
 function Header(props: headerProps) {
@@ -60,6 +61,10 @@ function Header(props: headerProps) {
         {props?.render?.data.storage &&
           props?.storageHeaders?.data?.amount != 0 && (
             <div className="flex gap-2">
+              <p className="flex gap-2">
+                <span>שם מטריצה</span>
+                <span>{props.fullMatrix?.matrixName}</span>
+              </p>
               <p> מס לקוחות </p>
               <p>{props.storageHeaders.data.amount}</p>
             </div>

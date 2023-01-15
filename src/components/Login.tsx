@@ -1,9 +1,20 @@
 import { QueryCache, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useState, useEffect } from "react";
-import { fetchCastumersData, fetchCurrentDayMarixes, fetchDriversData, fetchLastMatrix } from "../api";
+import {
+  fetchCastumersData,
+  fetchCurrentDayMarixes,
+  fetchDriversData,
+  fetchLastMatrix,
+} from "../api";
 import Nav from "./Nav";
 import { driver } from "../typing";
-import { backToLogin, defaultRender, Logger, renderScreen, useInitializedState } from "../helper";
+import {
+  backToLogin,
+  defaultRender,
+  Logger,
+  renderScreen,
+  useInitializedState,
+} from "../helper";
 import useLocalStorage from "../Hooks/useLocalStorage";
 import AdminScreen from "./AdminScreen";
 
@@ -44,7 +55,9 @@ export default function Login() {
   const handleClick = (e: any) => {
     let name = e.target.name;
     let value = input;
-    name == "password_btn" && drivers?.data && responseToSubmitRequest(value, drivers.data);
+    name == "password_btn" &&
+      drivers?.data &&
+      responseToSubmitRequest(value, drivers.data);
   };
 
   return (
@@ -76,7 +89,10 @@ export default function Login() {
       {!render.data.login && !driver.data && input !== "1234" && (
         <div className="flex flex-col items-center justify-center h-screen">
           <p className="bg-red-600 text-white">נהג לא מזוהה</p>
-          <button onClick={() => backToLogin(setRender, render)} className="btn1">
+          <button
+            onClick={() => backToLogin(setRender, render)}
+            className="btn1"
+          >
             חזור
           </button>
         </div>
@@ -92,13 +108,22 @@ export default function Login() {
             setRender={setRender}
             user={driver.data}
             matrix={matrixes.data[matrixes.data.length - 1].matrixesData}
+            fullMatrix={matrixes.data[matrixes.data.length - 1]}
             castumers={castumers.data}
             driver={driver.data.pivotKey}
             //  loginShow={setToShow}
           />
         )}
-      {render?.data?.admin && castumers?.data && drivers?.data && matrixes?.data ? (
-        <AdminScreen matrixes={matrixes.data} castumers={castumers.data} render={render} setReder={setRender} />
+      {render?.data?.admin &&
+      castumers?.data &&
+      drivers?.data &&
+      matrixes?.data ? (
+        <AdminScreen
+          matrixes={matrixes.data}
+          castumers={castumers.data}
+          render={render}
+          setReder={setRender}
+        />
       ) : (
         render?.data?.admin && <h1>loadind admin....</h1>
       )}

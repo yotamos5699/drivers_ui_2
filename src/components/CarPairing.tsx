@@ -1,4 +1,6 @@
+import { useQuery } from "@tanstack/react-query";
 import React, { useState } from "react";
+import { fetchCarsData } from "../api";
 import { updateResponseDB } from "../helper";
 import { driver } from "../typing";
 interface carPairingProps {
@@ -13,7 +15,12 @@ interface carPairing {
 }
 
 function CarPairing(props: carPairingProps) {
-  const [carPairingState, setCarPairingState] = useState<carPairing>({ driverNum: null, driverName: null, car: null });
+  const carsData = useQuery({ queryKey: ["carsdata"], queryFn: fetchCarsData });
+  const [carPairingState, setCarPairingState] = useState<carPairing>({
+    driverNum: null,
+    driverName: null,
+    car: null,
+  });
   const cars = ["אופל", "סיטרואן", "קאיה"];
   const [ifError, setIfError] = useState(false);
   const handlePairing = (data: carPairing) => {
@@ -24,37 +31,52 @@ function CarPairing(props: carPairingProps) {
   };
   return (
     <div className="flex flex-col items-center justify-center h-screen">
-      <h1>שלום {props.driver.name}... התאם את הרכב</h1>
-      <select
-        className="flex shadow appearance-none text-center border-2 rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-        name="select"
-        //className={"flex bg-orange-100 align-middle text-5xl text-black"}
-        id="pivot"
-        onChange={(Event) => {
-          setCarPairingState({ ...carPairingState, car: Event.target.value });
-        }}
-      >
-        <option value={undefined} selected hidden>
-          בחר רכב
-        </option>
-        {cars.map((name: any, idx: number) => (
-          <option className="text-black text-xl w-1/3" key={idx}>
-            {name}
-          </option>
-        ))}
-      </select>
-      <div className="flex flex-col w-full h-14 items-center">
-        <p>המשתמש הוא מסוג אזור, הקלד\י את שמך</p>
-        <textarea className="flex flex-col w-20 border-blue-400 border-2"></textarea>
-      </div>
-      <button
-        className={ifError ? "btn1 bg-red-600" : "btn1"}
-        onClick={() => {
-          handlePairing({ ...carPairingState, driverNum: props.driver.pivotKey, driverName: props.driver.name });
-        }}
-      >
-        בחר
-      </button>
+      {carsData.data ? (
+        <>
+          <h1>שלום {props.driver.name}... התאם את הרכב</h1>
+          <select
+            className="flex shadow appearance-none text-center border-2 rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+            name="select"
+            //className={"flex bg-orange-100 align-middle text-5xl text-black"}
+            id="pivot"
+            onChange={(Event) => {
+              setCarPairingState({
+                ...carPairingState,
+                car: Event.target.value,
+              });
+            }}
+          >
+            <option value={undefined} selected hidden>
+              בחר רכב
+            </option>
+            {carsData.data.map((car: any, idx: number) => (
+              <option className="text-black text-xl w-1/3" key={idx}>
+                {car.name}
+              </option>
+            ))}
+          </select>
+          <div className="flex flex-col w-full h-14 items-center">
+            <p>המשתמש הוא מסוג אזור, הקלד\י את שמך</p>
+            <textarea className="flex flex-col w-20 border-blue-400 border-2"></textarea>
+          </div>
+          <button
+            className={ifError ? "btn1 bg-red-600" : "btn1"}
+            onClick={() => {
+              handlePairing({
+                ...carPairingState,
+                driverNum: props.driver.pivotKey,
+                driverName: props.driver.name,
+              });
+            }}
+          >
+            בחר
+          </button>
+        </>
+      ) : (
+        <h1 className="h-screen w-screen flex text-center justify-center align-middle ">
+          טוען רכבים....
+        </h1>
+      )}
     </div>
   );
 }
