@@ -12,6 +12,7 @@ type SpecsProps = {
   matrix: any;
   mission: any;
   handleGlobalRender: any;
+  castumers: any[];
 };
 
 function Specs(props: SpecsProps) {
@@ -27,7 +28,9 @@ function Specs(props: SpecsProps) {
     // const STORED = localStorage.getItem("specData");
     // if (STORED != "undefined" && STORED != null) return setData([...JSON.parse(STORED)]);
 
-    let castumerIndex = props.matrix.mainMatrix.AccountKey.indexOf(props.mission["מפתח"]);
+    let castumerIndex = props.matrix.mainMatrix.AccountKey.indexOf(
+      props.mission["מפתח"]
+    );
     let cellsData = props.matrix.mainMatrix.cellsData;
     let itemsNames: any = props.matrix.mainMatrix.itemsNames;
     //  console.log({ itemsNames });
@@ -81,7 +84,9 @@ function Specs(props: SpecsProps) {
           // console.log({ sortedData });
         }
       });
-      newData[rowIndex]["isDone"] == true ? sortedData.push(newData[rowIndex]) : sortedData.unshift(newData[rowIndex]);
+      newData[rowIndex]["isDone"] == true
+        ? sortedData.push(newData[rowIndex])
+        : sortedData.unshift(newData[rowIndex]);
       setData([...sortedData]);
     }
   };
@@ -89,15 +94,24 @@ function Specs(props: SpecsProps) {
   const handleClick = (e: any, data?: any) => {
     if (e.target.id == "main" && e.target?.name == "summery") {
       updateResponseDB(data, "payments", "סיכום", props.mission);
-      console.log('updateResponseDB(data,payment,"מזומן",props.mission)', { data, e });
+      console.log('updateResponseDB(data,payment,"מזומן",props.mission)', {
+        data,
+        e,
+      });
     }
     if (e.target.id == "main" && e.target?.name == "cash") {
       updateResponseDB(data, "payments", "מזומן", props.mission);
-      console.log('updateResponseDB(data,payment,"מזומן",props.mission)', { data, e });
+      console.log('updateResponseDB(data,payment,"מזומן",props.mission)', {
+        data,
+        e,
+      });
     }
     if (e.target.id == "main" && e.target?.name == "check") {
       updateResponseDB(data, "payments", "שיק", props.mission);
-      console.log('updateResponseDB(data,payment,"שיק",props.mission)', { data, e });
+      console.log('updateResponseDB(data,payment,"שיק",props.mission)', {
+        data,
+        e,
+      });
     }
     if (e.target.id == "main" && e.target.name == "sub") {
       updateResponseDB(
@@ -140,7 +154,15 @@ function Specs(props: SpecsProps) {
         ) : msg2.error ? (
           <p>תקלה בטעינה....</p>
         ) : (
-          msg2.data && <p>{JSON.stringify(msg2?.data?.data?.content ? msg2.data.data.content : msg2.data.data)}</p>
+          msg2.data && (
+            <p>
+              {JSON.stringify(
+                msg2?.data?.data?.content
+                  ? msg2.data.data.content
+                  : msg2.data.data
+              )}
+            </p>
+          )
         )}
       </div>
 
@@ -189,7 +211,9 @@ function Specs(props: SpecsProps) {
                     className="td2 text-xl text-center bg-green-100 hover:bg-green-500"
                     onClick={() => {
                       setData([
-                        ...data.map((row: any, i: number) => (i == idx ? { ...row, כמות: row["כמות"] + 1 } : row)),
+                        ...data.map((row: any, i: number) =>
+                          i == idx ? { ...row, כמות: row["כמות"] + 1 } : row
+                        ),
                       ]);
                     }}
                   >
@@ -200,7 +224,9 @@ function Specs(props: SpecsProps) {
                     className="td2 text-xl text-center bg-red-100 hover:bg-red-500"
                     onClick={() => {
                       setData([
-                        ...data.map((row: any, i: number) => (i == idx ? { ...row, כמות: row["כמות"] - 1 } : row)),
+                        ...data.map((row: any, i: number) =>
+                          i == idx ? { ...row, כמות: row["כמות"] - 1 } : row
+                        ),
                       ]);
                     }}
                   >
@@ -222,9 +248,15 @@ function Specs(props: SpecsProps) {
           <button
             id="table"
             onClick={props.handleGlobalRender}
-            className={data?.filter((row: any) => row.isDone === false).length === 0 ? "btn1 bg-green-600" : "btn1"}
+            className={
+              data?.filter((row: any) => row.isDone === false).length === 0
+                ? "btn1 bg-green-600"
+                : "btn1"
+            }
           >
-            {data?.filter((row: any) => row.isDone === false).length === 0 ? "סיום" : "חזור"}
+            {data?.filter((row: any) => row.isDone === false).length === 0
+              ? "סיום"
+              : "חזור"}
           </button>
           <button id="ret" onClick={handleClick} className="btn1">
             החזרת סחורה

@@ -15,12 +15,24 @@ type StorageProps = {
 };
 
 function Storage(props: StorageProps) {
-  const [storageData, setStorageData] = useLocalStorage("storageData", { data: null, subKey: "storageData" });
-  const [storageStyles, setStorageStyles] = useLocalStorage("storageStyles", { data: null, subKey: "storageStyles" });
-  const [storageAddedSpecs, setStorageAddedSpecs] = useLocalStorage("sorageAddedSpecs", {
-    data: { itemsWeight: null },
+  const [storageData, setStorageData] = useLocalStorage("storageData", {
+    data: null,
+    subKey: "storageData",
   });
-  const itemsData = useQuery({ queryKey: ["itemsData"], queryFn: fetchItemsData });
+  const [storageStyles, setStorageStyles] = useLocalStorage("storageStyles", {
+    data: null,
+    subKey: "storageStyles",
+  });
+  const [storageAddedSpecs, setStorageAddedSpecs] = useLocalStorage(
+    "sorageAddedSpecs",
+    {
+      data: { itemsWeight: null },
+    }
+  );
+  const itemsData = useQuery({
+    queryKey: ["itemsData"],
+    queryFn: fetchItemsData,
+  });
   itemsData.data &&
     storageAddedSpecs.data.itemsWeight == null &&
     storageData?.data?.length &&
@@ -34,7 +46,10 @@ function Storage(props: StorageProps) {
   useEffect(() => {
     if (storageData.data !== null)
       props.setStorageHeaders({
-        data: { headers: Object.keys(storageData.data[0]), amount: storageData?.data?.length },
+        data: {
+          headers: Object.keys(storageData.data[0]),
+          amount: storageData?.data?.length,
+        },
       });
     // if (itemsData.data && storageData.data != null && storageAddedSpecs.data.itemsWeight == null)
     //   calcItemsWeight(itemsData.data, storageData.data, setStorageAddedSpecs);
@@ -43,14 +58,19 @@ function Storage(props: StorageProps) {
   useEffect(() => {
     if (storageData.data && storageStyles.data) {
       props.setStorageHeaders({
-        data: { headers: Object.keys(storageData.data[0]), amount: storageData?.data?.length },
+        data: {
+          headers: Object.keys(storageData.data[0]),
+          amount: storageData?.data?.length,
+        },
       });
       return;
     }
 
     let AccountKeys = props.filterdKeys;
     let AccountNames = AccountKeys.map((Account: any) => {
-      let card: any[] = props.castumers.filter((cas: any) => cas["מפתח"] == Account);
+      let card: any[] = props.castumers.filter(
+        (cas: any) => cas["מפתח"] == Account
+      );
 
       return card[0]["שם חשבון"];
     });
@@ -132,7 +152,7 @@ function Storage(props: StorageProps) {
   //   console.log("in use effect for loging weighet !!!!!!");
   // }, [itemsData.data, storageData.data]);
   return (
-    <div className="mt-56">
+    <div className="mt-52">
       {storageData?.data && (
         <table>
           {/* <thead className="bg-white border-b">
@@ -161,7 +181,9 @@ function Storage(props: StorageProps) {
                         }}
                         /*@ts-ignore */
                         className={
-                          storageStyles.data[idx][ci] == false ? "td " : ci != 0 && "td bg-green-600 text-white"
+                          storageStyles.data[idx][ci] == false
+                            ? "td "
+                            : ci != 0 && "td bg-green-600 text-white"
                         }
                       >
                         {cell}
@@ -191,7 +213,11 @@ function Storage(props: StorageProps) {
         </table>
       )}
       {!storageData?.data?.filter((row: any) => row.isDone === false)[0] && (
-        <button className={"btn1"} id="stockReady" onClick={props.handleGlobalRender}>
+        <button
+          className={"btn1"}
+          id="stockReady"
+          onClick={props.handleGlobalRender}
+        >
           המשך
         </button>
       )}
@@ -212,7 +238,11 @@ function calcRowItemsWeight(itemsData: any[], storageData: any) {
   return amount;
 }
 
-function calcItemsWeight(itemsData: any[], storageData: any[], setStorageAddedSpecs: any) {
+function calcItemsWeight(
+  itemsData: any[],
+  storageData: any[],
+  setStorageAddedSpecs: any
+) {
   let itemsToWeight = [];
 
   for (let i = 0; i <= storageData.length - 1; i++) {
@@ -223,7 +253,8 @@ function calcItemsWeight(itemsData: any[], storageData: any[], setStorageAddedSp
         record["castumer"] = storageData[i][key];
       } else {
         itemsData.forEach((item) => {
-          if (item["שם פריט"] == key) record["weighet"] += item["משקל"] * storageData[i][key];
+          if (item["שם פריט"] == key)
+            record["weighet"] += item["משקל"] * storageData[i][key];
         });
       }
     });
