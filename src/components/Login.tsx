@@ -1,30 +1,19 @@
 import { QueryCache, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useState, useEffect } from "react";
-import {
-  fetchCastumersData,
-  fetchCurrentDayMarixes,
-  fetchDriversData,
-  fetchLastMatrix,
-} from "../api";
+import { fetchCastumersData, fetchCurrentDayMarixes, fetchDriversData, fetchLastMatrix, setMatrixUrl } from "../api";
 import Nav from "./Nav";
 import { driver } from "../typing";
-import {
-  backToLogin,
-  defaultRender,
-  Logger,
-  renderScreen,
-  useInitializedState,
-} from "../helper";
+import { backToLogin, defaultRender, Logger, renderScreen, useInitializedState } from "../helper";
 import useLocalStorage from "../Hooks/useLocalStorage";
 import AdminScreen from "./AdminScreen";
-
+import axios from "axios";
+const U =
+  "https://script.google.com/macros/s/AKfycbwYsPdgqWD6QNjllH8ZB_-Wde6br0CYcXUE2yShDvGb0486ojgzEKkF5_HbBb5Q34iV/exec?type=getcurrentid";
 export default function Login() {
-  // const [driver, setDriver] = useState<driver>();
-  // const [toShow, setToShow] = useState<any>();
-
   const [render, setRender] = useLocalStorage("render", {
     data: defaultRender,
   });
+  const [currentMatrix, setCurrentMatrix] = useState<any>();
   const [driver, setDriver] = useLocalStorage("driver", {
     data: null,
     subKey: null,
@@ -33,6 +22,30 @@ export default function Login() {
   const { drivers, castumers, matrixes } = setQueryData();
 
   Logger(matrixes.data, "matrixes sssss");
+  useEffect(() => {
+    console.log(matrixes.data);
+    if (matrixes?.data?.length) {
+      console.log("i  use effect login matrixes.length ");
+      const setMatrixID = async () =>
+        await axios.get(U).then((res) => {
+          return res.data.password;
+        });
+
+      setMatrixID().then((id: boolean | string) => {
+        console.log({ id });
+        setCurrentMatrix(() => {
+          if (id) {
+            console.log("is id !!");
+            const id_Matrix = matrixes.data.filter((mtx: any) => mtx["matrixID"] == id)[0];
+            console.log({ id_Matrix });
+            if (id_Matrix) return id_Matrix;
+          }
+          return matrixes.data[matrixes.data.length - 1];
+        });
+      });
+    }
+    console.log(currentMatrix);
+  }, [matrixes.data, render?.data?.login]);
 
   const responseToSubmitRequest = (value: string, driversData: driver[]) => {
     if (input === "1234") {
@@ -55,9 +68,7 @@ export default function Login() {
   const handleClick = (e: any) => {
     let name = e.target.name;
     let value = input;
-    name == "password_btn" &&
-      drivers?.data &&
-      responseToSubmitRequest(value, drivers.data);
+    name == "password_btn" && drivers?.data && responseToSubmitRequest(value, drivers.data);
   };
 
   return (
@@ -89,10 +100,7 @@ export default function Login() {
       {!render.data.login && !driver.data && input !== "1234" && (
         <div className="flex flex-col items-center justify-center h-screen">
           <p className="bg-red-600 text-white">נהג לא מזוהה</p>
-          <button
-            onClick={() => backToLogin(setRender, render)}
-            className="btn1"
-          >
+          <button onClick={() => backToLogin(setRender, render)} className="btn1">
             חזור
           </button>
         </div>
@@ -102,28 +110,21 @@ export default function Login() {
         driver?.data &&
         castumers.data &&
         drivers.data &&
-        matrixes?.data?.length && (
+        matrixes?.data?.length &&
+        currentMatrix && (
           <Nav
             render={render}
             setRender={setRender}
             user={driver.data}
-            matrix={matrixes.data[matrixes.data.length - 1].matrixesData}
-            fullMatrix={matrixes.data[matrixes.data.length - 1]}
+            matrix={currentMatrix.matrixesData}
+            fullMatrix={currentMatrix}
             castumers={castumers.data}
             driver={driver.data.pivotKey}
             //  loginShow={setToShow}
           />
         )}
-      {render?.data?.admin &&
-      castumers?.data &&
-      drivers?.data &&
-      matrixes?.data ? (
-        <AdminScreen
-          matrixes={matrixes.data}
-          castumers={castumers.data}
-          render={render}
-          setReder={setRender}
-        />
+      {render?.data?.admin && castumers?.data && drivers?.data && matrixes?.data ? (
+        <AdminScreen matrixes={matrixes.data} castumers={castumers.data} render={render} setReder={setRender} />
       ) : (
         render?.data?.admin && <h1>loadind admin....</h1>
       )}

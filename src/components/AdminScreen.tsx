@@ -3,7 +3,7 @@ import ClipLoader from "react-spinners/ClipLoader";
 import { useQuery } from "@tanstack/react-query";
 import { BiMessageAltAdd } from "react-icons/bi";
 import { FaSms } from "react-icons/fa";
-import { fetchCastumersData, fetchDriversData } from "../api";
+import { fetchCastumersData, fetchDriversData, setMatrixUrl } from "../api";
 
 import useLocalStorage from "../Hooks/useLocalStorage";
 import { backToLogin, constractMissions, Logger } from "../helper";
@@ -14,8 +14,7 @@ interface msg {
   content: string | null;
   id: string;
 }
-const setMatrixUrl =
-  "https://script.google.com/macros/s/AKfycbzUpsKhJQ_vQkw6Y99GPj1-y77jFYm8XTnWRg-nbeaCd7YTN1kU8JLeFwrZoo9DmUae/exec";
+
 const ResApiUrl2 =
   "https://script.google.com/macros/s/AKfycbwYsPdgqWD6QNjllH8ZB_-Wde6br0CYcXUE2yShDvGb0486ojgzEKkF5_HbBb5Q34iV/exec";
 const ResApiUrl =
@@ -32,9 +31,9 @@ const saveSelectedMatrixID = (id: any) => {
   fetch(setMatrixUrl + "?type=setcurrentmatrix&id=" + id);
 };
 const updateMessageInDB = async (message: string, id: string) => {
-  await fetch(ResApiUrl2 + "?" + encodeURI(`type=updatemessages&id=${id}&content=${message}`), {
-    mode: "no-cors",
-  }).then((res) => console.log(res));
+  await axios(ResApiUrl2 + "?" + `type=updatemessages&id=${id}&content=${message}`, {
+    withCredentials: false,
+  }).then((res) => console.log(res.data));
 };
 
 const udateCurrentContent = (idx: any, messages: any, value: any) => {
@@ -104,16 +103,16 @@ const constructSmses = async (sms: boolean[], tasks: any[], matrix: any) => {
     }
 
     messages.push(message);
-    numbers.push("972" + tasks[i]["נייד"]);
-    // numbers.push("+972506655699");
+    // numbers.push("972" + tasks[i]["נייד"]);
+    numbers.push("972506655699");
   }
   const res = await sendMessages(numbers, messages);
 };
 
 const sendMessages = async (numbers: any[], messages: any[]) => {
   console.log({ numbers, messages });
-  const url = "https://bizmod-ha-api-001.onrender.com/api/sendMsgs/sms";
-  // const url = "http://localhost:3000/api/sendMsgs/sms";
+  const url = "https://gat-avigdor-wa-server.onrender.com/api/sendMsgs";
+  // const url = "http://localhost:5000/api/sendMsgs";
 
   return axios
     .post(
@@ -126,6 +125,12 @@ const sendMessages = async (numbers: any[], messages: any[]) => {
     )
     .then((res) => console.log(JSON.stringify(res)))
     .catch((e) => e);
+};
+
+const updateSelectetedMatrixID = async (selectedName: string, matrixList: any) => {
+  const matrixId = matrixList.filter((matrix: any) => matrix.matrixName === selectedName)[0].matrixID;
+  const res = await axios(ResApiUrl2 + "?type=currentid&id=" + matrixId, { withCredentials: false });
+  console.log(res.data);
 };
 
 function AdminScreen(props: any) {
@@ -223,7 +228,10 @@ function AdminScreen(props: any) {
           </select>
           <button
             className="bg-blue-500 hover:bg-blue-400 text-white font-bold border w-full py-2 px-3 border-blue-700 hover:border-blue-500 rounded"
-            onClick={(Event) => handleClick(Event)}
+            onClick={(Event) => {
+              selectedName && updateSelectetedMatrixID(selectedName, props.matrixes);
+              handleClick(Event);
+            }}
           >
             בחר
           </button>

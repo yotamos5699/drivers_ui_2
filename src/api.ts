@@ -9,17 +9,11 @@ const mockMatrix = {
   matrixName: "מטריצה עם שם חדש",
   matrixesData: {
     mainMatrix: {
-      matrixID:
-        "66afcadc5a695e869b1b99a400787206debe958825867edb08c883bf343afa05",
+      matrixID: "66afcadc5a695e869b1b99a400787206debe958825867edb08c883bf343afa05",
       ActionID: [2, 1, 1, 1],
       AccountKey: ["6027", "6028", "6036", "6043"],
       DocumentID: [1, 1, 1, 1],
-      DriverID: [
-        "qewr135256edrfh",
-        "qewr135256edrfh",
-        "qewr135256edrfh",
-        "qewr135256edrfh",
-      ],
+      DriverID: ["qewr135256edrfh", "qewr135256edrfh", "qewr135256edrfh", "qewr135256edrfh"],
       ActionAutho: ["Default", "Default", "Default", "Default"],
       itemsHeaders: ["HI250SA", "SX250SA", "AB500SA", "XR100SA"],
       itemsNames: ["הרנה 250 גרם", "גת SPXP", "אבו מיסמר גדול", "גת XR"],
@@ -139,10 +133,7 @@ export const fetchMessagesData = async () => {
     method: "GET",
     headers: myHeaders,
   };
-  return await fetch(
-    `ResApiUrl?${encodeURI("type=getmessages")}`,
-    requestOptions
-  )
+  return await fetch(`ResApiUrl?${encodeURI("type=getmessages")}`, requestOptions)
     .then((response) => response.text())
     .then((result) => log && console.log(result))
     .catch((error) => console.log("error", error));
@@ -247,3 +238,6 @@ export const fetchMessagesContent = async (data: any) => {
     })
     .catch((err) => console.log);
 };
+
+export const setMatrixUrl =
+  "https://script.google.com/macros/s/AKfycbzUpsKhJQ_vQkw6Y99GPj1-y77jFYm8XTnWRg-nbeaCd7YTN1kU8JLeFwrZoo9DmUae/exec";
