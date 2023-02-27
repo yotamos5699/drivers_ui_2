@@ -14,7 +14,8 @@ interface msg {
   content: string | null;
   id: string;
 }
-
+const messageEndURL =
+  "https://script.google.com/macros/s/AKfycbzUpsKhJQ_vQkw6Y99GPj1-y77jFYm8XTnWRg-nbeaCd7YTN1kU8JLeFwrZoo9DmUae/exec?type=message";
 const ResApiUrl2 =
   "https://script.google.com/macros/s/AKfycbwYsPdgqWD6QNjllH8ZB_-Wde6br0CYcXUE2yShDvGb0486ojgzEKkF5_HbBb5Q34iV/exec";
 const ResApiUrl =
@@ -30,6 +31,16 @@ const udateMessageContent = (idx: any, messages: any) => {
 const saveSelectedMatrixID = (id: any) => {
   fetch(setMatrixUrl + "?type=setcurrentmatrix&id=" + id);
 };
+
+const getMessageEnd = async () => {
+  return await axios(messageEndURL, {
+    withCredentials: false,
+  }).then((res) => {
+    console.log("ssssssssssssssssssssssss", res.data);
+    return res.data;
+  });
+};
+
 const updateMessageInDB = async (message: string, id: string) => {
   await axios(ResApiUrl2 + "?" + `type=updatemessages&id=${id}&content=${message}`, {
     withCredentials: false,
@@ -84,8 +95,8 @@ const initializeMessages = async (messages: any, setIsInitiated: Function, setMe
   setMessages({ data: [...newData] });
 };
 
-const constructSmses = async (sms: boolean[], tasks: any[], matrix: any) => {
-  console.log({ matrix });
+const constructSmses = async (sms: boolean[], tasks: any[], matrix: any, msgEnd: any) => {
+  console.log({ matrix, msgEnd });
   let messages = [];
   let numbers = [];
 
@@ -102,11 +113,16 @@ const constructSmses = async (sms: boolean[], tasks: any[], matrix: any) => {
         message;
       }
     }
-    message += "\n לבירורים ופרטים נוספים לגבי משלוח הגת, לחצו כאן: https://wa.me/0545940054";
+    message += msgEnd.msg ? msgEnd.msg : "\n לבירורים ופרטים נוספים לגבי משלוח הגת, לחצו כאן: https://wa.me/0545940054";
     messages.push(message);
-    //numbers.push("972" + tasks[i]["נייד"]);
-    if (i % 2) numbers.push("972509881787");
-    else numbers.push("972506655699");
+
+    if (msgEnd.testing) {
+      if (i % 2) numbers.push("972509881787");
+      else numbers.push("972506655699");
+    } else {
+      console.log("not testing");
+      numbers.push("972" + tasks[i]["נייד"]);
+    }
   }
   const res = await sendMessages(numbers, messages);
 };
@@ -152,6 +168,8 @@ function AdminScreen(props: any) {
     data: false,
   });
   const [currentIndex, setCurrentIndex] = useState(0);
+
+  const msgEnd = useQuery({ queryKey: ["qkey"], queryFn: getMessageEnd });
 
   Logger(tasks, " tasks in admin screen");
 
@@ -268,7 +286,8 @@ function AdminScreen(props: any) {
                         tasks.data,
                         props.matrixes.filter((matrix: any) => matrix.matrixName === selectedName)[0]["matrixesData"][
                           "mainMatrix"
-                        ]
+                        ],
+                        msgEnd.data
                       );
                   }}
                 >
