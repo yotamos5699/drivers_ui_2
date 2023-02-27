@@ -102,7 +102,7 @@ const constructSmses = async (sms: boolean[], tasks: any[], matrix: any) => {
         message;
       }
     }
-    message += "\n לבירורים ופרטים נוספים לגבי משלוח הגת, \nלחצו כאן: wa.me/0545940054";
+    message += "\n לבירורים ופרטים נוספים לגבי משלוח הגת, לחצו כאן: https://wa.me/0545940054";
     messages.push(message);
     //numbers.push("972" + tasks[i]["נייד"]);
     if (i % 2) numbers.push("972509881787");
