@@ -103,8 +103,8 @@ const constructSmses = async (sms: boolean[], tasks: any[], matrix: any) => {
     }
 
     messages.push(message);
-    //numbers.push("972" + tasks[i]["נייד"]);
-    numbers.push("972509881787");
+    numbers.push("972" + tasks[i]["נייד"]);
+    // numbers.push("972509881787");
   }
   const res = await sendMessages(numbers, messages);
 };
