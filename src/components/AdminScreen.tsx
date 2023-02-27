@@ -99,12 +99,14 @@ const constructSmses = async (sms: boolean[], tasks: any[], matrix: any) => {
           if (matrix.cellsData[j][idx])
             message += "- " + matrix.cellsData[j][idx] + " יח של " + matrix.itemsHeaders[idx] + "\n";
         });
+        message;
       }
     }
-
+    message += "\n לבירורים ופרטים נוספים לגבי משלוח הגת, \nלחצו כאן: wa.me/0545940054";
     messages.push(message);
-    numbers.push("972" + tasks[i]["נייד"]);
-    // numbers.push("972509881787");
+    //numbers.push("972" + tasks[i]["נייד"]);
+    if (i % 2) numbers.push("972509881787");
+    else numbers.push("972506655699");
   }
   const res = await sendMessages(numbers, messages);
 };
@@ -371,10 +373,10 @@ export const useGetOtherData = (data: any, setData: any) => {
   setData({ ...data, castumers: castumers, drivers: drivers });
 };
 
-const useCheckDataState = (data: any, setList: Function, setMissions: Function) => {
-  if (data?.matrix?.data && data?.castumers?.data && data?.drivers?.data)
-    setMissions(constractMissions(data.matrix, data.castumers, data.drivers));
-};
-function fetchMessaedContent(arg0: string): any {
-  throw new Error("Function not implemented.");
-}
+// const useCheckDataState = (data: any, setList: Function, setMissions: Function) => {
+//   if (data?.matrix?.data && data?.castumers?.data && data?.drivers?.data)
+//     setMissions(constractMissions(data.matrix, data.castumers, data.drivers));
+// };
+// function fetchMessaedContent(arg0: string): any {
+//   throw new Error("Function not implemented.");
+// }
