@@ -117,8 +117,7 @@ const constructSmses = async (sms: boolean[], tasks: any[], matrix: any, msgEnd:
     messages.push(message);
 
     if (msgEnd.testing) {
-      if (i % 2) numbers.push("972509881787");
-      else numbers.push("972506655699");
+      numbers.push("972" + msgEnd.testNum);
     } else {
       console.log("not testing");
       numbers.push("972" + tasks[i]["נייד"]);
