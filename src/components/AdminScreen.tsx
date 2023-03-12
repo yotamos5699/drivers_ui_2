@@ -16,8 +16,7 @@ interface msg {
 }
 const messageEndURL =
   "https://script.google.com/macros/s/AKfycbzUpsKhJQ_vQkw6Y99GPj1-y77jFYm8XTnWRg-nbeaCd7YTN1kU8JLeFwrZoo9DmUae/exec?type=message";
-const ResApiUrl2 =
-  "https://script.google.com/macros/s/AKfycbwYsPdgqWD6QNjllH8ZB_-Wde6br0CYcXUE2yShDvGb0486ojgzEKkF5_HbBb5Q34iV/exec";
+const ResApiUrl2 = "https://script.google.com/macros/s/AKfycbwYsPdgqWD6QNjllH8ZB_-Wde6br0CYcXUE2yShDvGb0486ojgzEKkF5_HbBb5Q34iV/exec";
 const ResApiUrl =
   "https://script.google.com/macros/s/AKfycbwYsPdgqWD6QNjllH8ZB_-Wde6br0CYcXUE2yShDvGb0486ojgzEKkF5_HbBb5Q34iV/exec?type=getmessages";
 const udateMessageContent = (idx: any, messages: any) => {
@@ -107,8 +106,7 @@ const constructSmses = async (sms: boolean[], tasks: any[], matrix: any, msgEnd:
     for (let j = 0; j <= matrix.AccountKey.length - 1; j++) {
       if (tasks[i]["id"] == matrix.AccountKey[j]) {
         matrix.cellsData[j].forEach((cell: any, idx: number) => {
-          if (matrix.cellsData[j][idx])
-            message += "- " + matrix.cellsData[j][idx] + " יח של " + matrix.itemsHeaders[idx] + "\n";
+          if (matrix.cellsData[j][idx]) message += "- " + matrix.cellsData[j][idx] + " יח של " + matrix.itemsHeaders[idx] + "\n";
         });
         message;
       }
@@ -145,8 +143,12 @@ const sendMessages = async (numbers: any[], messages: any[]) => {
 };
 
 const updateSelectetedMatrixID = async (selectedName: string, matrixList: any) => {
-  const matrixId = matrixList.filter((matrix: any) => matrix.matrixName === selectedName)[0].matrixID;
-  const res = await axios(ResApiUrl2 + "?type=currentid&id=" + matrixId, { withCredentials: false });
+  console.log({ matrixList, selectedName });
+  console.log("first character ", selectedName[0]);
+  const selectedMtx = matrixList.filter((matrix: any) => matrix.matrixName === selectedName || matrix.matrixName == " " + selectedName)[0];
+  console.log({ selectedMtx }, selectedMtx.matrixID);
+  const id = selectedMtx.matrixID;
+  const res = await axios(ResApiUrl2 + "?type=currentid&id=" + id, { withCredentials: false });
   console.log(res.data);
 };
 
@@ -210,7 +212,9 @@ function AdminScreen(props: any) {
       console.log("before messages is exist !!!!!!!!", {});
     }
     if (tasks.data === null) {
-      const selectedMatrix = props.matrixes.filter((matrix: any) => matrix.matrixName === selectedName)[0];
+      const selectedMatrix = props.matrixes.filter(
+        (matrix: any) => matrix.matrixName === selectedName || matrix.matrixName === " " + selectedName
+      )[0];
 
       saveSelectedMatrixID(selectedMatrix.matrixID);
       const Rows = constractMissions(selectedMatrix["matrixesData"], props.castumers, "admin");
@@ -220,8 +224,7 @@ function AdminScreen(props: any) {
 
   const handleChange = (e: any) => {
     // update msegggahsdjalskdas
-    const value =
-      e.target.value == "אין הודעה ללקוח" || e.target.value == null || e.target.value == "" ? null : e.target.value;
+    const value = e.target.value == "אין הודעה ללקוח" || e.target.value == null || e.target.value == "" ? null : e.target.value;
     if (e.target.id == "msgContent") setMessages(udateCurrentContent(currentIndex, messages, value));
   };
 
@@ -273,9 +276,7 @@ function AdminScreen(props: any) {
                 />
 
                 <button
-                  className={
-                    sms?.filter((s: any) => s === true)[0] ? "btn1 w-32 bg-green-600" : "btn1 w-32 bg-gray-600 "
-                  }
+                  className={sms?.filter((s: any) => s === true)[0] ? "btn1 w-32 bg-green-600" : "btn1 w-32 bg-gray-600 "}
                   onClick={() => {
                     console.log(selectedName);
                     console.log("props matrixes ", props.matrixes);
@@ -283,9 +284,7 @@ function AdminScreen(props: any) {
                       constructSmses(
                         sms,
                         tasks.data,
-                        props.matrixes.filter((matrix: any) => matrix.matrixName === selectedName)[0]["matrixesData"][
-                          "mainMatrix"
-                        ],
+                        props.matrixes.filter((matrix: any) => matrix.matrixName === selectedName)[0]["matrixesData"]["mainMatrix"],
                         msgEnd.data
                       );
                   }}
@@ -319,9 +318,7 @@ function AdminScreen(props: any) {
           )}
           <div className="mt-3">
             {tasks?.data.map((task: any, index: number) => (
-              <div
-                className={"flex  items-baseline  px-4 py-3 w-4/5 bg-gray-100 shadow-md rounded-md gap-2 touch-none "}
-              >
+              <div className={"flex  items-baseline  px-4 py-3 w-4/5 bg-gray-100 shadow-md rounded-md gap-2 touch-none "}>
                 <p className=" flex-1/16 border-2 text-center font-bold border-red-500 ">מזהה:</p>
                 <p className=" flex-1/16 text-center">{JSON.stringify(task["id"])}</p>
                 <p className="w-15px flex-1/16 self-start border-2 text-center font-bold border-red-500 ">שם:</p>
@@ -337,9 +334,7 @@ function AdminScreen(props: any) {
                   //  color={ ? "green" : "black"}
                 />
                 <FaSms
-                  className={
-                    sms !== undefined && sms[index] ? "flex-1/16 text-green-600" : "flex-1/16 justify-self-end"
-                  }
+                  className={sms !== undefined && sms[index] ? "flex-1/16 text-green-600" : "flex-1/16 justify-self-end"}
                   size={24}
                   onClick={() => {
                     console.log({ sms });
