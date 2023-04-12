@@ -10,6 +10,8 @@ import bill200 from "../assets/BILLS/201.jpg";
 import { backToLogin, renderScreen, updateResponseDB } from "../helper";
 import { LazyLoadImage } from "react-lazy-load-image-component";
 import { useEffect, useState } from "react";
+import { useQuery } from "@tanstack/react-query";
+import { getDriverPayments } from "../api";
 
 const Bills = [
   { img: bill20, amount: 0, billValue: 20, name: "עשרים" },
@@ -42,6 +44,11 @@ function Summery(props: any) {
   // const handleClick = (idx: any) => {
   //   console.log({ idx });
   // };
+  const paymentsSummery = useQuery({ queryKey: ["paymentsSum"], queryFn: getDriverPayments });
+  useEffect(() => {
+    const p = paymentsSummery?.data;
+    console.log({ p });
+  }, [paymentsSummery.data]);
 
   const handleClick = (e: any, data: any) => {
     if (e.target.id == "main" && e.target?.name == "summery") {
@@ -50,6 +57,13 @@ function Summery(props: any) {
     }
   };
   console.log({ bills });
+  const dailySum = () => {
+    let sum = 0;
+    for (let i = 1; i <= paymentsSummery.data.length - 1; i++) {
+      sum += paymentsSummery.data[i][4];
+    }
+    return sum;
+  };
   return (
     <div>
       {!by && (
@@ -116,11 +130,7 @@ function Summery(props: any) {
 
                   <div className="relative">
                     <div className="absolute top-1/2 left-1/2 text-white text-9xl ">{bill.amount}</div>
-                    <LazyLoadImage
-                      src={bill.img}
-                      className="h-full w-full bg-gradient-to-tr from-black to-gra"
-                      alt="Image Alt"
-                    />
+                    <LazyLoadImage src={bill.img} className="h-full w-full bg-gradient-to-tr from-black to-gra" alt="Image Alt" />
                   </div>
                 </div>
               ))}
@@ -171,7 +181,27 @@ function Summery(props: any) {
       )}
       {by && (
         <div>
-          <p className="flex text-9xl text-center">ביי !!!!!!!!!!!!</p>
+          <div>
+            <div className="flex gap-10">
+              <p className="flex text-xl text-center ">סיכום</p>
+              <div className="flex">
+                <p className=" ml-4">סה"כ</p>
+                {paymentsSummery?.data && <p>{dailySum()}</p>}
+              </div>
+            </div>
+            <div className="flex flex-col h-full">
+              {paymentsSummery?.data.map((row: any[]) => {
+                return (
+                  <div className="flex  w-full  border-2 border-pink-400">
+                    {row.map((cell: any) => (
+                      <p className=" w-1/6 ">{cell}</p>
+                    ))}
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+
           <button
             id={"restart"}
             onClick={() => {

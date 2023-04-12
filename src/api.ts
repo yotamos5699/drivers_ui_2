@@ -47,6 +47,18 @@ const ofekBarier =
 const BaseHaURL = "https://bizmod-ha-api-001.onrender.com/api";
 //const lastMatrixUrl = "http://localhost:3000/api/loadmatrixes";
 const driversUrl = "https://script.google.com/macros/s/AKfycbzUpsKhJQ_vQkw6Y99GPj1-y77jFYm8XTnWRg-nbeaCd7YTN1kU8JLeFwrZoo9DmUae/exec";
+const currentPaymentsUrl =
+  "https://script.google.com/macros/s/AKfycbwYsPdgqWD6QNjllH8ZB_-Wde6br0CYcXUE2yShDvGb0486ojgzEKkF5_HbBb5Q34iV/exec?type=getcurrentpeyments";
+
+export const getDriverPayments = async () => {
+  return await axios(currentPaymentsUrl, { withCredentials: false })
+    .then((res) => {
+      log && console.log("drivers data ", res.data);
+
+      return res.data;
+    })
+    .catch((err) => console.log("error in google drivers !!!", err));
+};
 
 const fetchItemsWeighet = async () => {};
 
