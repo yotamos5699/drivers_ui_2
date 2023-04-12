@@ -2,8 +2,7 @@ import axios from "axios";
 import Missions from "./components/Missions";
 const log = true;
 //import { createTRPCClient } from "@trpc/client";
-const ResApiUrl =
-  "https://script.google.com/macros/s/AKfycbwYsPdgqWD6QNjllH8ZB_-Wde6br0CYcXUE2yShDvGb0486ojgzEKkF5_HbBb5Q34iV/exec";
+const ResApiUrl = "https://script.google.com/macros/s/AKfycbwYsPdgqWD6QNjllH8ZB_-Wde6br0CYcXUE2yShDvGb0486ojgzEKkF5_HbBb5Q34iV/exec";
 const mockMatrix = {
   matrixID: "66afcadc5a695e869b1b99a400787206debe958825867edb08c883bf343afa05",
   matrixName: "מטריצה עם שם חדש",
@@ -47,8 +46,7 @@ const ofekBarier =
 
 const BaseHaURL = "https://bizmod-ha-api-001.onrender.com/api";
 //const lastMatrixUrl = "http://localhost:3000/api/loadmatrixes";
-const driversUrl =
-  "https://script.google.com/macros/s/AKfycbzUpsKhJQ_vQkw6Y99GPj1-y77jFYm8XTnWRg-nbeaCd7YTN1kU8JLeFwrZoo9DmUae/exec";
+const driversUrl = "https://script.google.com/macros/s/AKfycbzUpsKhJQ_vQkw6Y99GPj1-y77jFYm8XTnWRg-nbeaCd7YTN1kU8JLeFwrZoo9DmUae/exec";
 
 const fetchItemsWeighet = async () => {};
 
@@ -151,8 +149,8 @@ export const fetchCarsData = async () => {
     .catch((err) => console.log("error in google drivers !!!", err));
 };
 
-export const fetchDriversData = async () => {
-  return await axios(driversUrl, { withCredentials: false })
+export const fetchDriversData = async (params = "") => {
+  return await axios(driversUrl + params, { withCredentials: false })
     .then((res) => {
       log && console.log("drivers data ", res.data);
 

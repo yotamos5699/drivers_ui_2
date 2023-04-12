@@ -4,6 +4,7 @@ import { fetchCarsData } from "../api";
 import { updateResponseDB } from "../helper";
 import { driver } from "../typing";
 interface carPairingProps {
+  jobs: any;
   driver: driver;
   setIsPaired: any;
 }
@@ -21,6 +22,7 @@ function CarPairing(props: carPairingProps) {
     driverName: null,
     car: null,
   });
+  console.log("pairing props...", { props });
   const cars = ["אופל", "סיטרואן", "קאיה"];
   const [ifError, setIfError] = useState(false);
   const handlePairing = (data: carPairing) => {
@@ -55,10 +57,42 @@ function CarPairing(props: carPairingProps) {
               </option>
             ))}
           </select>
-          <div className="flex flex-col w-full h-14 items-center">
-            <p>המשתמש הוא מסוג אזור, הקלד\י את שמך</p>
-            <textarea className="flex flex-col w-20 border-blue-400 border-2"></textarea>
-          </div>
+          {!props.jobs ? (
+            <div className="flex flex-col w-full h-14 items-center">
+              <p>המשתמש הוא מסוג אזור, הקלד\י את שמך</p>
+              <textarea
+                onChange={(Event) => {
+                  setCarPairingState({
+                    ...carPairingState,
+                    driverName: Event.target.value,
+                  });
+                }}
+                className="flex flex-col w-20 border-blue-400 border-2"
+              ></textarea>
+            </div>
+          ) : (
+            <select
+              className="flex shadow appearance-none text-center border-2 rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+              name="select"
+              //className={"flex bg-orange-100 align-middle text-5xl text-black"}
+              id="pivot"
+              onChange={(Event) => {
+                setCarPairingState({
+                  ...carPairingState,
+                  driverName: Event.target.value,
+                });
+              }}
+            >
+              <option value={undefined} selected hidden>
+                בחר נהג
+              </option>
+              {props.jobs.drivers.map((driver: any, idx: number) => (
+                <option className="text-black text-xl w-1/3" key={idx}>
+                  {driver}
+                </option>
+              ))}
+            </select>
+          )}
           <button
             className={ifError ? "btn1 bg-red-600" : "btn1"}
             onClick={() => {
@@ -73,9 +107,7 @@ function CarPairing(props: carPairingProps) {
           </button>
         </>
       ) : (
-        <h1 className="h-screen w-screen flex text-center justify-center align-middle ">
-          טוען רכבים....
-        </h1>
+        <h1 className="h-screen w-screen flex text-center justify-center align-middle ">טוען רכבים....</h1>
       )}
     </div>
   );

@@ -19,7 +19,7 @@ export default function Login() {
     subKey: null,
   });
   const [input, setInput] = useState("");
-  const { drivers, castumers, matrixes } = setQueryData();
+  const { drivers, castumers, matrixes, jobs } = setQueryData();
 
   Logger(matrixes.data, "matrixes sssss");
   useEffect(() => {
@@ -73,7 +73,14 @@ export default function Login() {
 
   return (
     <>
-      {render?.data?.login && !render?.data?.admin ? (
+      {matrixes?.data?.length == 0 ? (
+        <div className="flex flex-col items-center justify-center h-screen">
+          <p className="bg-red-600 text-white">אין מטריצות להציג </p>
+          <button onClick={() => backToLogin(setRender, render)} className="btn1">
+            חזור
+          </button>
+        </div>
+      ) : render?.data?.login && !render?.data?.admin ? (
         <div className="flex flex-col items-center justify-center h-screen  bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4">
           <input
             value={input}
@@ -111,8 +118,10 @@ export default function Login() {
         castumers.data &&
         drivers.data &&
         matrixes?.data?.length &&
-        currentMatrix && (
+        currentMatrix &&
+        jobs?.data && (
           <Nav
+            jobs={jobs?.data ?? null}
             render={render}
             setRender={setRender}
             user={driver.data}
@@ -135,7 +144,11 @@ export default function Login() {
 const setQueryData = () => {
   const drivers = useQuery({
     queryKey: ["drivers"],
-    queryFn: fetchDriversData,
+    queryFn: () => fetchDriversData(),
+  });
+  const jobs = useQuery({
+    queryKey: ["jobs"],
+    queryFn: () => fetchDriversData("?type=driver_mennager"),
   });
   const castumers = useQuery({
     queryKey: ["castumers"],
@@ -145,5 +158,5 @@ const setQueryData = () => {
     queryKey: ["matrixes"],
     queryFn: fetchCurrentDayMarixes,
   });
-  return { drivers, castumers, matrixes };
+  return { drivers, castumers, matrixes, jobs };
 };

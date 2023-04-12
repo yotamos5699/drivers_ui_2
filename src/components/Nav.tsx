@@ -3,17 +3,13 @@ import { driver, Tasks } from "../typing";
 import Specs from "./Specs";
 import Storage from "./Storage";
 import Header from "./Header";
-import {
-  backToLogin,
-  constractMissions,
-  Logger,
-  renderScreen,
-} from "../helper";
+import { backToLogin, constractMissions, Logger, renderScreen } from "../helper";
 import Missions from "./Missions";
 import useLocalStorage from "../Hooks/useLocalStorage";
 import CarPairing from "./CarPairing";
 
 type DashBoardProps = {
+  jobs: any;
   driver: string | number;
   user: driver;
   matrix?: any;
@@ -24,18 +20,16 @@ type DashBoardProps = {
 };
 
 function Nav(props: DashBoardProps) {
-  // console.log("nav props HHHH", { props });
+  console.log("nav props HHHH", { props });
   const [missions, setMissions] = useLocalStorage("missions", {
     data: constractMissions(props.matrix, props.castumers, props.driver),
   });
   const [storedCastumers] = useLocalStorage("castumers", {
     data: props.castumers,
   });
-  const [storageHeaders, setStorageHeaders] = useLocalStorage(
-    "storageHeaders",
-    { data: { headers: null, amount: 0 } }
-  );
+  const [storageHeaders, setStorageHeaders] = useLocalStorage("storageHeaders", { data: { headers: null, amount: 0 } });
   const [currentMission, setCurrentMission] = useState<any>();
+  const [mennagers, setMennagers] = useLocalStorage("mennagers", { data: props.jobs.mennagers });
   const [isPaired, setIsPaired] = useLocalStorage("isPaired", { data: false });
   const [movment, setMovment] = useLocalStorage("movment", { data: false });
   useEffect(() => {}, [missions.data]);
@@ -44,28 +38,14 @@ function Nav(props: DashBoardProps) {
   const handleRowClick = async (e: any) => {
     const MissionID = e?.active?.id ? e.active.id : null;
     const cellId = e.activatorEvent?.target?.id;
-    MissionID &&
-      useNavActions(
-        { type: cellId, payload: { MissionID: MissionID, cellId: cellId } },
-        props,
-        setCurrentMission
-      );
+    MissionID && useNavActions({ type: cellId, payload: { MissionID: MissionID, cellId: cellId } }, props, setCurrentMission);
   };
 
   const handleGlobalRender = async (e: any) => {
     setCurrentScreen(e.target.id);
-    useRendererActions(
-      { type: e.target.id },
-      props.render,
-      renderScreen,
-      props.setRender
-    );
+    useRendererActions({ type: e.target.id }, props.render, renderScreen, props.setRender);
     if (!missions) {
-      let tasks: Tasks = constractMissions(
-        props.matrix,
-        props.castumers,
-        props.driver
-      );
+      let tasks: Tasks = constractMissions(props.matrix, props.castumers, props.driver);
       setMissions(tasks);
     }
   };
@@ -74,9 +54,7 @@ function Nav(props: DashBoardProps) {
   console.log(props.render.data.table, missions.data);
   return (
     <div className="flex flex-col w-full border-4 border-red-500">
-      {!isPaired.data && (
-        <CarPairing setIsPaired={setIsPaired} driver={props.user} />
-      )}
+      {!isPaired.data && <CarPairing jobs={props.jobs} setIsPaired={setIsPaired} driver={props.user} />}
       {!props.render.data.admin && isPaired.data && (
         <Header
           fullMatrix={props.fullMatrix}
@@ -104,15 +82,14 @@ function Nav(props: DashBoardProps) {
 
       {props.render?.data?.details && currentMission && (
         <Specs
+          mennagers={mennagers}
           castumers={storedCastumers}
           matrix={props.matrix}
           mission={currentMission}
           handleGlobalRender={handleGlobalRender}
         />
       )}
-      {props.render?.data?.storage &&
-      isPaired.data &&
-      missions?.data?.missions?.length > 0 ? (
+      {props.render?.data?.storage && isPaired.data && missions?.data?.missions?.length > 0 ? (
         <Storage
           setStorageHeaders={setStorageHeaders}
           matrix={props.matrix}
@@ -126,18 +103,8 @@ function Nav(props: DashBoardProps) {
         isPaired.data &&
         missions?.data && (
           <div>
-            <h1
-              className={
-                "mt-24 text-center text-9xl justify-center border-4 border-red-500"
-              }
-            >
-              אין משימות לנהג
-            </h1>
-            <button
-              id={"backToLogin"}
-              className="btn1"
-              onClick={() => backToLogin(props.setRender, props.render.data)}
-            >
+            <h1 className={"mt-24 text-center text-9xl justify-center border-4 border-red-500"}>אין משימות לנהג</h1>
+            <button id={"backToLogin"} className="btn1" onClick={() => backToLogin(props.setRender, props.render.data)}>
               חזור
             </button>
           </div>
@@ -153,13 +120,7 @@ type UseRender = {
   type: string;
 };
 
-export const useRendererActions = (
-  action: UseRender,
-  render: any,
-  renderScreen: any,
-  setRender: any,
-  func?: any
-) => {
+export const useRendererActions = (action: UseRender, render: any, renderScreen: any, setRender: any, func?: any) => {
   switch (action.type) {
     case "stockReady":
       // localStorage.setItem("render", JSON.stringify(render));

@@ -13,6 +13,15 @@ type ReturnsProps = {
 
 function Returns(props: ReturnsProps) {
   const [list, setList] = useState<any>();
+  const [selectionStatus, setSelectionStatus] = useState<boolean>(false);
+  const [mennagers] = useState<{ data: any[] } | null>(() => {
+    const Mennagers = localStorage.getItem("mennagers");
+    if (Mennagers) return JSON.parse(Mennagers);
+    else {
+      setSelectionStatus(true);
+      return null;
+    }
+  });
 
   const items = useQuery({ queryKey: ["items"], queryFn: fetchItemsData });
   if (items.isLoading) return <h1>loading</h1>;
@@ -46,7 +55,7 @@ function Returns(props: ReturnsProps) {
 
   return (
     <div>
-      {items?.data && (
+      {items?.data && selectionStatus ? (
         <div>
           <Select items={items.data} handleClick={handleClick} />
           {list &&
@@ -58,6 +67,27 @@ function Returns(props: ReturnsProps) {
               </div>
             ))}
         </div>
+      ) : (
+        mennagers && (
+          <select
+            className="flex shadow appearance-none text-center border-2 rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+            name="select"
+            //className={"flex bg-orange-100 align-middle text-5xl text-black"}
+            id="pivot"
+            onChange={(Event) => {
+              setSelectionStatus(true);
+            }}
+          >
+            <option value={undefined} selected hidden>
+              מי מאשר את החזרת הסחורה ?
+            </option>
+            {mennagers.data.map((driver: any, idx: number) => (
+              <option className="text-black text-xl w-1/3" key={idx}>
+                {driver}
+              </option>
+            ))}
+          </select>
+        )
       )}
       <div>
         <button id="main" className="btn1" onClick={props.handleClick}>
