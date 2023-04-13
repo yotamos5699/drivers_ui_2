@@ -9,6 +9,11 @@ import useLocalStorage from "../Hooks/useLocalStorage";
 import { backToLogin, constractMissions, Logger } from "../helper";
 import Model from "./Model";
 import axios from "axios";
+
+// src/components/AdminScreen.tsx(377,7): error TS2769: No overload matches this call.
+//   The last overload gave the following error.
+//     Argument of type '{ queryKey: string[]; queryFn: (params?: string) => Promise<any>; }' is not assignable to parameter of type 'QueryKey'.
+//       Object literal may only specify known properties, and 'queryKey' does not exist in type 'readonly unknown[]'.
 interface msg {
   isExist: boolean;
   content: string | null;
@@ -16,12 +21,14 @@ interface msg {
 }
 const messageEndURL =
   "https://script.google.com/macros/s/AKfycbzUpsKhJQ_vQkw6Y99GPj1-y77jFYm8XTnWRg-nbeaCd7YTN1kU8JLeFwrZoo9DmUae/exec?type=message";
-const ResApiUrl2 = "https://script.google.com/macros/s/AKfycbwYsPdgqWD6QNjllH8ZB_-Wde6br0CYcXUE2yShDvGb0486ojgzEKkF5_HbBb5Q34iV/exec";
+const ResApiUrl2 =
+  "https://script.google.com/macros/s/AKfycbwYsPdgqWD6QNjllH8ZB_-Wde6br0CYcXUE2yShDvGb0486ojgzEKkF5_HbBb5Q34iV/exec";
 const ResApiUrl =
   "https://script.google.com/macros/s/AKfycbwYsPdgqWD6QNjllH8ZB_-Wde6br0CYcXUE2yShDvGb0486ojgzEKkF5_HbBb5Q34iV/exec?type=getmessages";
 const udateMessageContent = (idx: any, messages: any) => {
   let data = messages.data.map((msg: any, index: number) => {
-    if (idx === index) return { ...msg, content: msg.content ? msg.content : "אין הודעה ללקוח" };
+    if (idx === index)
+      return { ...msg, content: msg.content ? msg.content : "אין הודעה ללקוח" };
     else return msg;
   });
   return { data: data };
@@ -41,9 +48,12 @@ const getMessageEnd = async () => {
 };
 
 const updateMessageInDB = async (message: string, id: string) => {
-  await axios(ResApiUrl2 + "?" + `type=updatemessages&id=${id}&content=${message}`, {
-    withCredentials: false,
-  }).then((res) => console.log(res.data));
+  await axios(
+    ResApiUrl2 + "?" + `type=updatemessages&id=${id}&content=${message}`,
+    {
+      withCredentials: false,
+    }
+  ).then((res) => console.log(res.data));
 };
 
 const udateCurrentContent = (idx: any, messages: any, value: any) => {
@@ -66,7 +76,11 @@ const updateMessageIsExist = (messages: any) => {
     }),
   };
 };
-const initializeMessages = async (messages: any, setIsInitiated: Function, setMessages: any) => {
+const initializeMessages = async (
+  messages: any,
+  setIsInitiated: Function,
+  setMessages: any
+) => {
   console.log("in is initiated function");
 
   const result: msg[] = await axios
@@ -94,7 +108,12 @@ const initializeMessages = async (messages: any, setIsInitiated: Function, setMe
   setMessages({ data: [...newData] });
 };
 
-const constructSmses = async (sms: boolean[], tasks: any[], matrix: any, msgEnd: any) => {
+const constructSmses = async (
+  sms: boolean[],
+  tasks: any[],
+  matrix: any,
+  msgEnd: any
+) => {
   console.log({ matrix, msgEnd });
   let messages = [];
   let numbers = [];
@@ -106,12 +125,20 @@ const constructSmses = async (sms: boolean[], tasks: any[], matrix: any, msgEnd:
     for (let j = 0; j <= matrix.AccountKey.length - 1; j++) {
       if (tasks[i]["id"] == matrix.AccountKey[j]) {
         matrix.cellsData[j].forEach((cell: any, idx: number) => {
-          if (matrix.cellsData[j][idx]) message += "- " + matrix.cellsData[j][idx] + " יח של " + matrix.itemsHeaders[idx] + "\n";
+          if (matrix.cellsData[j][idx])
+            message +=
+              "- " +
+              matrix.cellsData[j][idx] +
+              " יח של " +
+              matrix.itemsHeaders[idx] +
+              "\n";
         });
         message;
       }
     }
-    message += msgEnd.msg ? msgEnd.msg : "\n לבירורים ופרטים נוספים לגבי משלוח הגת, לחצו כאן: https://wa.me/0545940054";
+    message += msgEnd.msg
+      ? msgEnd.msg
+      : "\n לבירורים ופרטים נוספים לגבי משלוח הגת, לחצו כאן: https://wa.me/0545940054";
     messages.push(message);
 
     if (msgEnd.testing) {
@@ -142,13 +169,22 @@ const sendMessages = async (numbers: any[], messages: any[]) => {
     .catch((e) => e);
 };
 
-const updateSelectetedMatrixID = async (selectedName: string, matrixList: any) => {
+const updateSelectetedMatrixID = async (
+  selectedName: string,
+  matrixList: any
+) => {
   console.log({ matrixList, selectedName });
   console.log("first character ", selectedName[0]);
-  const selectedMtx = matrixList.filter((matrix: any) => matrix.matrixName === selectedName || matrix.matrixName == " " + selectedName)[0];
+  const selectedMtx = matrixList.filter(
+    (matrix: any) =>
+      matrix.matrixName === selectedName ||
+      matrix.matrixName == " " + selectedName
+  )[0];
   console.log({ selectedMtx }, selectedMtx.matrixID);
   const id = selectedMtx.matrixID;
-  const res = await axios(ResApiUrl2 + "?type=currentid&id=" + id, { withCredentials: false });
+  const res = await axios(ResApiUrl2 + "?type=currentid&id=" + id, {
+    withCredentials: false,
+  });
   console.log(res.data);
 };
 
@@ -175,7 +211,8 @@ function AdminScreen(props: any) {
   Logger(tasks, " tasks in admin screen");
 
   useEffect(() => {
-    if (messages.data != null) setMessages({ ...updateMessageIsExist(messages) });
+    if (messages.data != null)
+      setMessages({ ...updateMessageIsExist(messages) });
   }, [toggle]);
   useEffect(() => {
     if (tasks?.data?.length > 0 && messages?.data === null) {
@@ -202,7 +239,8 @@ function AdminScreen(props: any) {
   };
 
   const handleClick = (e: any, idx?: number) => {
-    if (e.target.id == "generalMessage") updateMessageInDB(generalMessage, "12345678");
+    if (e.target.id == "generalMessage")
+      updateMessageInDB(generalMessage, "12345678");
     console.log({ e });
     if (idx || idx === 0) {
       setCurrentIndex(idx);
@@ -213,19 +251,31 @@ function AdminScreen(props: any) {
     }
     if (tasks.data === null) {
       const selectedMatrix = props.matrixes.filter(
-        (matrix: any) => matrix.matrixName === selectedName || matrix.matrixName === " " + selectedName
+        (matrix: any) =>
+          matrix.matrixName === selectedName ||
+          matrix.matrixName === " " + selectedName
       )[0];
 
       saveSelectedMatrixID(selectedMatrix.matrixID);
-      const Rows = constractMissions(selectedMatrix["matrixesData"], props.castumers, "admin");
+      const Rows = constractMissions(
+        selectedMatrix["matrixesData"],
+        props.castumers,
+        "admin"
+      );
       setTasks({ data: [...Rows.missions] });
     }
   };
 
   const handleChange = (e: any) => {
     // update msegggahsdjalskdas
-    const value = e.target.value == "אין הודעה ללקוח" || e.target.value == null || e.target.value == "" ? null : e.target.value;
-    if (e.target.id == "msgContent") setMessages(udateCurrentContent(currentIndex, messages, value));
+    const value =
+      e.target.value == "אין הודעה ללקוח" ||
+      e.target.value == null ||
+      e.target.value == ""
+        ? null
+        : e.target.value;
+    if (e.target.id == "msgContent")
+      setMessages(udateCurrentContent(currentIndex, messages, value));
   };
 
   return (
@@ -251,7 +301,8 @@ function AdminScreen(props: any) {
           <button
             className="bg-blue-500 hover:bg-blue-400 text-white font-bold border w-full py-2 px-3 border-blue-700 hover:border-blue-500 rounded"
             onClick={(Event) => {
-              selectedName && updateSelectetedMatrixID(selectedName, props.matrixes);
+              selectedName &&
+                updateSelectetedMatrixID(selectedName, props.matrixes);
               handleClick(Event);
             }}
           >
@@ -276,7 +327,11 @@ function AdminScreen(props: any) {
                 />
 
                 <button
-                  className={sms?.filter((s: any) => s === true)[0] ? "btn1 w-32 bg-green-600" : "btn1 w-32 bg-gray-600 "}
+                  className={
+                    sms?.filter((s: any) => s === true)[0]
+                      ? "btn1 w-32 bg-green-600"
+                      : "btn1 w-32 bg-gray-600 "
+                  }
                   onClick={() => {
                     console.log(selectedName);
                     console.log("props matrixes ", props.matrixes);
@@ -284,7 +339,9 @@ function AdminScreen(props: any) {
                       constructSmses(
                         sms,
                         tasks.data,
-                        props.matrixes.filter((matrix: any) => matrix.matrixName === selectedName)[0]["matrixesData"]["mainMatrix"],
+                        props.matrixes.filter(
+                          (matrix: any) => matrix.matrixName === selectedName
+                        )[0]["matrixesData"]["mainMatrix"],
                         msgEnd.data
                       );
                   }}
@@ -301,7 +358,11 @@ function AdminScreen(props: any) {
                 </button>
               </div>
               <div className="flex  border-red-500 border-2">
-                <button onClick={handleClick} id={"generalMessage"} className="btn1 h-full w-2/12">
+                <button
+                  onClick={handleClick}
+                  id={"generalMessage"}
+                  className="btn1 h-full w-2/12"
+                >
                   עדכן
                 </button>
                 <input
@@ -318,23 +379,45 @@ function AdminScreen(props: any) {
           )}
           <div className="mt-3">
             {tasks?.data.map((task: any, index: number) => (
-              <div className={"flex  items-baseline  px-4 py-3 w-4/5 bg-gray-100 shadow-md rounded-md gap-2 touch-none "}>
-                <p className=" flex-1/16 border-2 text-center font-bold border-red-500 ">מזהה:</p>
-                <p className=" flex-1/16 text-center">{JSON.stringify(task["id"])}</p>
-                <p className="w-15px flex-1/16 self-start border-2 text-center font-bold border-red-500 ">שם:</p>
-                <p className="w-40px flex-1/4 text-center">{JSON.stringify(task["שם"])} </p>
-                <p className="w-20px flex-1/16 all border-2 text-center font-bold border-red-500 ">נייד</p>
-                <p className="w-40px flex-1/16 text-center ">{JSON.stringify(task["נייד"])} </p>
+              <div
+                className={
+                  "flex  items-baseline  px-4 py-3 w-4/5 bg-gray-100 shadow-md rounded-md gap-2 touch-none "
+                }
+              >
+                <p className=" flex-1/16 border-2 text-center font-bold border-red-500 ">
+                  מזהה:
+                </p>
+                <p className=" flex-1/16 text-center">
+                  {JSON.stringify(task["id"])}
+                </p>
+                <p className="w-15px flex-1/16 self-start border-2 text-center font-bold border-red-500 ">
+                  שם:
+                </p>
+                <p className="w-40px flex-1/4 text-center">
+                  {JSON.stringify(task["שם"])}{" "}
+                </p>
+                <p className="w-20px flex-1/16 all border-2 text-center font-bold border-red-500 ">
+                  נייד
+                </p>
+                <p className="w-40px flex-1/16 text-center ">
+                  {JSON.stringify(task["נייד"])}{" "}
+                </p>
                 <BiMessageAltAdd
                   onClick={(Event) => {
                     handleClick(Event, index);
                   }}
-                  className={`flex ${messages?.data[index].isExist && "text-green-600"} flex-1/16 justify-self-end`}
+                  className={`flex ${
+                    messages?.data[index].isExist && "text-green-600"
+                  } flex-1/16 justify-self-end`}
                   size={24}
                   //  color={ ? "green" : "black"}
                 />
                 <FaSms
-                  className={sms !== undefined && sms[index] ? "flex-1/16 text-green-600" : "flex-1/16 justify-self-end"}
+                  className={
+                    sms !== undefined && sms[index]
+                      ? "flex-1/16 text-green-600"
+                      : "flex-1/16 justify-self-end"
+                  }
                   size={24}
                   onClick={() => {
                     console.log({ sms });
@@ -373,10 +456,10 @@ export const useGetOtherData = (data: any, setData: any) => {
   let castumers;
   let drivers;
   useEffect(() => {
-    drivers = useQuery({
-      queryKey: ["drivers"],
-      queryFn: fetchDriversData,
-    });
+    // drivers = useQuery({
+    //   queryKey: ["drivers"],
+    //   queryFn: fetchDriversData,
+    // });
     castumers = useQuery({
       queryKey: ["castumers"],
       queryFn: fetchCastumersData,
