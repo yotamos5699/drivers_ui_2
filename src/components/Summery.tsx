@@ -1,4 +1,3 @@
-import React from "react";
 import coin1 from "../assets/COINS/1.jpg";
 import coin2 from "../assets/COINS/2.jpg";
 import coin5 from "../assets/COINS/5.jpg";
@@ -44,7 +43,10 @@ function Summery(props: any) {
   // const handleClick = (idx: any) => {
   //   console.log({ idx });
   // };
-  const paymentsSummery = useQuery({ queryKey: ["paymentsSum"], queryFn: getDriverPayments });
+  const paymentsSummery = useQuery({
+    queryKey: ["paymentsSum"],
+    queryFn: getDriverPayments,
+  });
   useEffect(() => {
     const p = paymentsSummery?.data;
     console.log({ p });
@@ -53,7 +55,10 @@ function Summery(props: any) {
   const handleClick = (e: any, data: any) => {
     if (e.target.id == "main" && e.target?.name == "summery") {
       updateResponseDB(data, "payments", "סיכום", props.mission);
-      console.log('updateResponseDB(data,payment,"מזומן",props.mission)', { data, e });
+      console.log('updateResponseDB(data,payment,"מזומן",props.mission)', {
+        data,
+        e,
+      });
     }
   };
   console.log({ bills });
@@ -69,11 +74,19 @@ function Summery(props: any) {
       {!by && (
         <div className="flex-col w-full h-full border-blue-400 border-4">
           <div className="flex">
-            <button id="main" name="back" className="btn1 w-1/4" onClick={() => props.setSumRout(false)}>
+            <button
+              id="main"
+              name="back"
+              className="btn1 w-1/4"
+              onClick={() => props.setSumRout(false)}
+            >
               חזור
             </button>
             <div className="flex w-1/2">
-              <button className="btn1 w-1/2" onClick={() => setRender({ co: !render.co, bi: !render.bi })}>
+              <button
+                className="btn1 w-1/2"
+                onClick={() => setRender({ co: !render.co, bi: !render.bi })}
+              >
                 {render?.bi ? "מטבעות" : "שטרות"}
               </button>
               <div className="flex flex-col w-full items-center">
@@ -87,7 +100,7 @@ function Summery(props: any) {
               name="summery"
               onClick={(event: any) => {
                 setBy(true);
-                handleClick(event, [...coins, ...bills]);
+                handleClick(event, [...(coins ?? []), ...(bills ?? [])]);
               }}
               className="btn1 bg-yellow-200 text-black w-1/4"
             >
@@ -103,7 +116,8 @@ function Summery(props: any) {
                       onClick={() =>
                         setBills((prev) =>
                           prev.map((bill: any, i: number) => {
-                            if (i === idx) return { ...bill, amount: bill.amount + 1 };
+                            if (i === idx)
+                              return { ...bill, amount: bill.amount + 1 };
                             else return bill;
                           })
                         )
@@ -117,7 +131,8 @@ function Summery(props: any) {
                         setBills((prev) =>
                           prev.map((bill: any, i: number) => {
                             console.log({ prev, bill });
-                            if (i === idx) return { ...bill, amount: bill.amount - 1 };
+                            if (i === idx)
+                              return { ...bill, amount: bill.amount - 1 };
                             else return bill;
                           })
                         )
@@ -129,8 +144,14 @@ function Summery(props: any) {
                   </div>
 
                   <div className="relative">
-                    <div className="absolute top-1/2 left-1/2 text-white text-9xl ">{bill.amount}</div>
-                    <LazyLoadImage src={bill.img} className="h-full w-full bg-gradient-to-tr from-black to-gra" alt="Image Alt" />
+                    <div className="absolute top-1/2 left-1/2 text-white text-9xl ">
+                      {bill.amount}
+                    </div>
+                    <LazyLoadImage
+                      src={bill.img}
+                      className="h-full w-full bg-gradient-to-tr from-black to-gra"
+                      alt="Image Alt"
+                    />
                   </div>
                 </div>
               ))}
@@ -138,13 +159,17 @@ function Summery(props: any) {
           <div className="grid grid-cols-2 w-full">
             {render?.co &&
               coins.map((coin, idx) => (
-                <div key={idx} className="flex w-full h-full border-gray-500 border-4">
+                <div
+                  key={idx}
+                  className="flex w-full h-full border-gray-500 border-4"
+                >
                   <div className="flex flex-col text-center w-1/2 h-full">
                     <button
                       onClick={() =>
                         setCoins((prev) =>
                           prev.map((coin: any, i: number) => {
-                            if (i === idx) return { ...coin, amount: coin.amount + 1 };
+                            if (i === idx)
+                              return { ...coin, amount: coin.amount + 1 };
                             else return coin;
                           })
                         )
@@ -158,7 +183,8 @@ function Summery(props: any) {
                         setCoins((prev) =>
                           prev.map((coin: any, i: number) => {
                             console.log({ prev, coin });
-                            if (i === idx) return { ...coin, amount: coin.amount - 1 };
+                            if (i === idx)
+                              return { ...coin, amount: coin.amount - 1 };
                             else return coin;
                           })
                         )
@@ -171,15 +197,21 @@ function Summery(props: any) {
 
                   <div className="w-1/2 ">
                     {" "}
-                    <div className="absolute self-center text-white text-9xl ">{coin.amount}</div>
-                    <LazyLoadImage src={coin.img} className="h-full from-black to-gra" alt="Image Alt" />
+                    <div className="absolute self-center text-white text-9xl ">
+                      {coin.amount}
+                    </div>
+                    <LazyLoadImage
+                      src={coin.img}
+                      className="h-full from-black to-gra"
+                      alt="Image Alt"
+                    />
                   </div>
                 </div>
               ))}
           </div>
         </div>
       )}
-      {by && (
+      {by && paymentsSummery && (
         <div>
           <div>
             <div className="flex gap-10">
