@@ -20,7 +20,6 @@ type DashBoardProps = {
 };
 
 function Nav(props: DashBoardProps) {
-  console.log("nav props HHHH", { props });
   const [missions, setMissions] = useLocalStorage("missions", {
     data: constractMissions(props.matrix, props.castumers, props.driver),
   });
@@ -51,7 +50,7 @@ function Nav(props: DashBoardProps) {
   };
 
   Logger(storageHeaders, "  Logger(storageHeaders");
-  console.log(props.render.data.table, missions.data);
+
   return (
     <div className="flex flex-col w-full border-4 border-red-500">
       {!isPaired.data && <CarPairing jobs={props.jobs} setIsPaired={setIsPaired} driver={props.user} />}

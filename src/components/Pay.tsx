@@ -1,10 +1,20 @@
-import { useState } from "react";
+import { useLayoutEffect, useState } from "react";
+import useLocalStorage from "../Hooks/useLocalStorage";
 
 function Pay(props: any) {
+  const [cmission, setMission] = useLocalStorage("current_mission", { data: null });
+  const [totalPayed, setTotalPayed] = useLocalStorage("total_payed", { data: null });
   const [showPay, setShowPay] = useState(false);
+  const [payed, setPayed] = useState(false);
   const [sum, setSum] = useState(0);
   const [payType, setPayType] = useState();
-
+  console.log({ cmission, totalPayed });
+  useLayoutEffect(() => {
+    const castumerName = cmission.data["שם חשבון"];
+    const isPayed = totalPayed.data.find((row: any) => row[1] == castumerName);
+    if (isPayed) setPayed((prev) => !prev);
+  }, []);
+  console.log({ payed });
   const handleClick = (Event: any) => {
     setPayType(Event.target.name);
     setShowPay(!showPay);
@@ -17,8 +27,14 @@ function Pay(props: any) {
             <button className="btn1 h-1/3" onClick={(Event) => handleClick(Event)} id={"main"} name="check">
               תשלום בשיק
             </button>
-            <button className="btn1 h-1/3" onClick={(Event) => handleClick(Event)} id={"main"} name="cash">
-              תשלום במזומן
+            <button
+              disabled={payed}
+              className={`btn1 h-1/3 ${payed ? "bg-gray-400" : ""}`}
+              onClick={(Event) => handleClick(Event)}
+              id={"main"}
+              name="cash"
+            >
+              {payed ? "תשלום במזומן לא זמין(הלקוח שילם)" : "תשלום במזומן"}
             </button>
             <button className="btn1 h-1/3" onClick={props.handleClick} id={"main"} name="back">
               חזור

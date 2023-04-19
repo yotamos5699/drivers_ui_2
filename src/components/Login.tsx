@@ -23,28 +23,23 @@ export default function Login() {
 
   Logger(matrixes.data, "matrixes sssss");
   useEffect(() => {
-    console.log(matrixes.data);
     if (matrixes?.data?.length) {
-      console.log("i  use effect login matrixes.length ");
       const setMatrixID = async () =>
         await axios.get(U).then((res) => {
           return res.data.password;
         });
 
       setMatrixID().then((id: boolean | string) => {
-        console.log({ id });
         setCurrentMatrix(() => {
           if (id) {
-            console.log("is id !!");
             const id_Matrix = matrixes.data.filter((mtx: any) => mtx["matrixID"] == id)[0];
-            console.log({ id_Matrix });
+
             if (id_Matrix) return id_Matrix;
           }
           return matrixes.data[matrixes.data.length - 1];
         });
       });
     }
-    console.log(currentMatrix);
   }, [matrixes.data, render?.data?.login]);
 
   const responseToSubmitRequest = (value: string, driversData: driver[]) => {

@@ -119,7 +119,7 @@ function Specs(props: SpecsProps) {
         props.mission
       );
     }
-    console.log({ e, data });
+
     setReder((prev: any) => {
       let data = prev;
 
@@ -130,7 +130,7 @@ function Specs(props: SpecsProps) {
           data[Key] = false;
         }
       });
-      console.log("render in specs ", { data });
+
       return { ...data };
     });
   };

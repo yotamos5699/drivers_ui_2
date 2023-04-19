@@ -1,23 +1,18 @@
 import { useAutoAnimate } from "@formkit/auto-animate/react";
 import { useEffect, useReducer, useRef, useState } from "react";
-import {
-  DndContext,
-  closestCenter,
-  useSensor,
-  PointerSensor,
-} from "@dnd-kit/core";
-import {
-  SortableContext,
-  verticalListSortingStrategy,
-} from "@dnd-kit/sortable";
+import { DndContext, closestCenter, useSensor, PointerSensor } from "@dnd-kit/core";
+import { SortableContext, verticalListSortingStrategy } from "@dnd-kit/sortable";
 import DataRow from "./DataRow";
 import { missionsReducer, useInitializedState } from "../helper";
 
 import Summery from "./Summery";
+import { getDriverPayments } from "../api";
+import useLocalStorage from "../Hooks/useLocalStorage";
 
 export default function Missions(props: any) {
   console.log({ props });
   console.log("render in misssions ", props.render);
+  const [totalPayed, setTotalPayed] = useLocalStorage("total_payed", { data: null });
   const [allFinished, setAllFinished] = useState(false);
   const [sumRout, setSumRout] = useState(false);
   const [tableData, dispatch] = useReducer(missionsReducer, () => {
@@ -25,6 +20,13 @@ export default function Missions(props: any) {
     if (res !== null) return JSON.parse(res);
     else return { data: null, startIndex: 0, endIndex: 0 };
   });
+  useEffect(() => {
+    const tp = async () => {
+      const res = await getDriverPayments();
+      setTotalPayed({ data: [...res] });
+    };
+    tp();
+  }, []);
 
   useEffect(() => {
     console.log("mennage animate ");
@@ -59,9 +61,7 @@ export default function Missions(props: any) {
   }, [tableData.data]);
 
   const handleDragEnd = (e: any) => {
-    const nativeEvent = e.activatorEvent?.target?.id
-      ? e.activatorEvent.target.id
-      : null;
+    const nativeEvent = e.activatorEvent?.target?.id ? e.activatorEvent.target.id : null;
 
     if (!isNaN(nativeEvent) && e?.active?.id !== e?.over?.id) {
       dispatch({
@@ -83,62 +83,43 @@ export default function Missions(props: any) {
 
   return (
     <div className="mt-24">
-      {tableData?.data && !sumRout ? (
-        td && (
-          <DndContext
-            sensors={sensor}
-            collisionDetection={closestCenter}
-            onDragEnd={handleDragEnd}
-          >
-            <SortableContext
-              items={td.map((row: any) => row.id)}
-              strategy={verticalListSortingStrategy}
-            >
-              {allFinished && (
-                <button
-                  onClick={() => {
-                    console.log({ sumRout });
-                    setSumRout(!sumRout);
-                  }}
-                  className="btn1"
-                >
-                  {" "}
-                  סכם מסלול{" "}
-                </button>
-              )}
-              <div
-                ref={listRef}
-                className="flex flex-col w-full items-center justify-center gap-2"
-              >
-                {td.map((row: any, idx: number) => {
-                  return (
-                    <DataRow
-                      movment={props.movment}
-                      id={row.id}
-                      key={idx}
-                      index={idx}
-                      row={row}
-                      handleDragEnd={handleDragEnd}
-                      headers={Object.keys(td[0])}
-                    />
-                  );
-                })}
-              </div>
-            </SortableContext>
-          </DndContext>
-        )
-      ) : (
-        <h1>loading.....</h1>
-      )}
+      {tableData?.data && !sumRout
+        ? td && (
+            <DndContext sensors={sensor} collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
+              <SortableContext items={td.map((row: any) => row.id)} strategy={verticalListSortingStrategy}>
+                {allFinished && (
+                  <button
+                    onClick={() => {
+                      console.log({ sumRout });
+                      setSumRout(!sumRout);
+                    }}
+                    className="btn1"
+                  >
+                    {" "}
+                    סכם מסלול{" "}
+                  </button>
+                )}
+                <div ref={listRef} className="flex flex-col w-full items-center justify-center gap-2">
+                  {td.map((row: any, idx: number) => {
+                    return (
+                      <DataRow
+                        movment={props.movment}
+                        id={row.id}
+                        key={idx}
+                        index={idx}
+                        row={row}
+                        handleDragEnd={handleDragEnd}
+                        headers={Object.keys(td[0])}
+                      />
+                    );
+                  })}
+                </div>
+              </SortableContext>
+            </DndContext>
+          )
+        : !sumRout && <h1>loading.....</h1>}
 
-      {sumRout && (
-        <Summery
-          render={props.render}
-          setReder={props.setReder}
-          handleClick={props.handleClick}
-          setSumRout={setSumRout}
-        />
-      )}
+      {sumRout && <Summery render={props.render} setReder={props.setReder} handleClick={props.handleClick} setSumRout={setSumRout} />}
     </div>
   );
 }

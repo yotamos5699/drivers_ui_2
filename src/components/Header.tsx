@@ -1,8 +1,9 @@
 import { useQuery } from "@tanstack/react-query";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { fetchMessageData } from "../api";
 import { backToLogin, Logger, renderScreen } from "../helper";
 import Model from "./Model";
+import useLocalStorage from "../Hooks/useLocalStorage";
 
 type headerProps = {
   render: any;
@@ -16,7 +17,11 @@ type headerProps = {
 };
 
 function Header(props: headerProps) {
-  Logger(props, " headers props");
+  const [cmission, setMission] = useLocalStorage("current_mission", { data: null });
+  useEffect(() => {
+    if (props?.currentMission) setMission({ data: { ...props.currentMission } });
+  }, [props?.currentMission]);
+
   //const [visible, setVisible] = useState(false);
   const generalMessage = useQuery({
     queryKey: ["msg2"],
@@ -42,11 +47,7 @@ function Header(props: headerProps) {
           <div className="flex gap-2 border-blue-500 border-2">
             {/* <p> אפשר תנועה</p> */}
             <button
-              className={
-                !props.movment.data
-                  ? "btn1 h-full w-60 bg-green-600"
-                  : "btn1 h-full w-60 bg-red-400"
-              }
+              className={!props.movment.data ? "btn1 h-full w-60 bg-green-600" : "btn1 h-full w-60 bg-red-400"}
               //   value={props.movment.data}
               // checked={props.movment.data}
               onClick={() => {
@@ -58,17 +59,16 @@ function Header(props: headerProps) {
             </button>
           </div>
         )}
-        {props?.render?.data.storage &&
-          props?.storageHeaders?.data?.amount != 0 && (
-            <div className="flex gap-2">
-              <p className="flex gap-2">
-                <span>שם מטריצה</span>
-                <span>{props.fullMatrix?.matrixName}</span>
-              </p>
-              <p> מס לקוחות </p>
-              <p>{props.storageHeaders.data.amount}</p>
-            </div>
-          )}
+        {props?.render?.data.storage && props?.storageHeaders?.data?.amount != 0 && (
+          <div className="flex gap-2">
+            <p className="flex gap-2">
+              <span>שם מטריצה</span>
+              <span>{props.fullMatrix?.matrixName}</span>
+            </p>
+            <p> מס לקוחות </p>
+            <p>{props.storageHeaders.data.amount}</p>
+          </div>
+        )}
 
         {!props.render.data.storage && (
           <>
@@ -97,34 +97,26 @@ function Header(props: headerProps) {
         </button>
       </div>
       <div>
-        {props?.render?.data?.storage &&
-          props?.storageHeaders?.data?.headers && (
-            <div className="flex flex-col">
-              <tr
-                key={"asd"}
-                className="flex tr  top-0 max-h-24 overflow-clip border-green-500 border-2 "
-              >
-                {props.storageHeaders.data.headers.map(
-                  (header: any, idx: number) =>
-                    header != "isDone" && (
-                      <td className="td" key={idx + 1111}>
-                        {header}
-                      </td>
-                    )
-                )}
-                <p className="td3 mb-0">משקל</p>
-                <p className="td mb-0">מוכן</p>
-              </tr>
-              <div className="h-10 flex w-full items-center border-green-500 border-2">
-                <p className="w-1/5">הודעה כללית</p>
-                <div className={" w-full text-center"}>
-                  {generalMessage.isLoading
-                    ? "טוען"
-                    : generalMessage.data.data.content}
-                </div>
-              </div>
+        {props?.render?.data?.storage && props?.storageHeaders?.data?.headers && (
+          <div className="flex flex-col">
+            <tr key={"asd"} className="flex tr  top-0 max-h-24 overflow-clip border-green-500 border-2 ">
+              {props.storageHeaders.data.headers.map(
+                (header: any, idx: number) =>
+                  header != "isDone" && (
+                    <td className="td" key={idx + 1111}>
+                      {header}
+                    </td>
+                  )
+              )}
+              <p className="td3 mb-0">משקל</p>
+              <p className="td mb-0">מוכן</p>
+            </tr>
+            <div className="h-10 flex w-full items-center border-green-500 border-2">
+              <p className="w-1/5">הודעה כללית</p>
+              <div className={" w-full text-center"}>{generalMessage.isLoading ? "טוען" : generalMessage.data.data.content}</div>
             </div>
-          )}
+          </div>
+        )}
       </div>
     </div>
   );
