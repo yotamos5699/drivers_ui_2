@@ -31,6 +31,8 @@ function Summery(props: any) {
     data: null,
     subKey: null,
   });
+
+  console.log({ driver });
   const [bills, setBills] = useState([...Bills]);
   const [coins, setCoins] = useState([...Coins]);
   const [by, setBy] = useState(false);
@@ -67,12 +69,16 @@ function Summery(props: any) {
     }
   };
   console.log({ bills });
-  const dailySum = () => {
-    let sum = 0;
+  const dailySum = (type: string) => {
+    let sumCash = 0;
+    let sumShake = 0;
     for (let i = 1; i <= paymentsSummery.data.length - 1; i++) {
-      sum += paymentsSummery.data[i][4];
+      if (driver.data.name === paymentsSummery.data[i][0]) {
+        if (paymentsSummery.data[i][2] == "מזומן") sumCash += paymentsSummery.data[i][4];
+        if (paymentsSummery.data[i][2] == "שיק") sumShake += paymentsSummery.data[i][4];
+      }
     }
-    return sum;
+    return type == "מזומן" ? sumCash : sumShake;
   };
   return (
     <div>
@@ -231,13 +237,18 @@ function Summery(props: any) {
             <div className="flex gap-10">
               <p className="flex text-xl text-center ">סיכום</p>
               <div className="flex">
-                <p className=" ml-4">סה"כ</p>
-                {paymentsSummery?.data && <p>{dailySum()}</p>}
+                <p className=" ml-4"> סה"כ מזומן</p>
+                {paymentsSummery?.data && <p>{dailySum("מזומן")}</p>}
+              </div>
+              <div className="flex">
+                <p className=" ml-4"> סה"כ בשקים</p>
+                {paymentsSummery?.data && <p>{dailySum("שיק")}</p>}
               </div>
             </div>
             <div className="flex flex-col h-full">
-              {paymentsSummery?.data.map((row: any[]) => {
-                if (row[0] == driver)
+              {paymentsSummery?.data?.map((row: any[]) => {
+                console.log({ row });
+                if (row[0] == driver.data.name)
                   return (
                     <div className="flex  w-full  border-2 border-pink-400">
                       {row.map((cell: any) => (
