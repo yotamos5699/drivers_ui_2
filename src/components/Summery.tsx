@@ -85,6 +85,10 @@ function Summery(props: any) {
       {!by && (
         <div className="flex-col w-full h-full border-blue-400 border-4">
           <div className="flex">
+            <p className=" ml-4"> סה"כ מזומן</p>
+            {paymentsSummery?.data && <p>{dailySum("מזומן")}</p>}
+          </div>
+          <div className="flex">
             <button id="main" name="back" className="btn1 w-1/4" onClick={() => props.setSumRout(false)}>
               חזור
             </button>
