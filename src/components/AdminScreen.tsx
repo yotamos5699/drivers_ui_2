@@ -225,16 +225,6 @@ function AdminScreen(props: any) {
       console.log({ selectedName });
       console.log("props.matrixes", props.matrixes);
       const selectedMatrix = props.matrixes.filter((matrix: any) => {
-        console.log(
-          "in hndle click filter",
-          "\n",
-          matrix.matrixName.trim().replace("  ", " "),
-          "\n",
-          selectedName.trim().replace("  ", " "),
-
-          "is eauel?",
-          matrix.matrixName == selectedName
-        );
         // @ts-ignore
         return matrix.matrixName.trim().replace("  ", " ") === selectedName.trim().replace("  ", " ");
       })[0];
