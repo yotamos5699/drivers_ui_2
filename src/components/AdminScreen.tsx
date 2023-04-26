@@ -9,158 +9,44 @@ import useLocalStorage from "../Hooks/useLocalStorage";
 import { backToLogin, constractMissions, Logger } from "../helper";
 import Model from "./Model";
 import axios from "axios";
+import {
+  constructSmses,
+  getMessageEnd,
+  initializeMessages,
+  udateCurrentContent,
+  udateMessageContent,
+  updateMessageInDB,
+  updateMessageIsExist,
+} from "./utils/messages";
+const saveSelectedMatrixID = async (id: any) => {
+  const res = await axios(ResApiUrl2 + "?type=currentid&id=" + id, {
+    withCredentials: false,
+  });
+  console.log(res.data);
+  // fetch(setMatrixUrl + "?type=currentid&id=" + id);
+};
 
 // src/components/AdminScreen.tsx(377,7): error TS2769: No overload matches this call.
 //   The last overload gave the following error.
 //     Argument of type '{ queryKey: string[]; queryFn: (params?: string) => Promise<any>; }' is not assignable to parameter of type 'QueryKey'.
 //       Object literal may only specify known properties, and 'queryKey' does not exist in type 'readonly unknown[]'.
-interface msg {
-  isExist: boolean;
-  content: string | null;
-  id: string;
-}
-const messageEndURL =
-  "https://script.google.com/macros/s/AKfycbzUpsKhJQ_vQkw6Y99GPj1-y77jFYm8XTnWRg-nbeaCd7YTN1kU8JLeFwrZoo9DmUae/exec?type=message";
+
 const ResApiUrl2 = "https://script.google.com/macros/s/AKfycbwYsPdgqWD6QNjllH8ZB_-Wde6br0CYcXUE2yShDvGb0486ojgzEKkF5_HbBb5Q34iV/exec";
-const ResApiUrl =
-  "https://script.google.com/macros/s/AKfycbwYsPdgqWD6QNjllH8ZB_-Wde6br0CYcXUE2yShDvGb0486ojgzEKkF5_HbBb5Q34iV/exec?type=getmessages";
-const udateMessageContent = (idx: any, messages: any) => {
-  let data = messages.data.map((msg: any, index: number) => {
-    if (idx === index) return { ...msg, content: msg.content ? msg.content : "אין הודעה ללקוח" };
-    else return msg;
-  });
-  return { data: data };
-};
 
-const saveSelectedMatrixID = (id: any) => {
-  fetch(setMatrixUrl + "?type=setcurrentmatrix&id=" + id);
-};
+// const updateSelectetedMatrixID = async (selectedName: string, matrixList: any) => {
+//   console.log({ matrixList, selectedName });
+//   console.log("first character ", selectedName[0]);
+//   const selectedMtx = matrixList.filter(
+//     (matrix: any) => matrix.matrixName.trim() === selectedName.trim() || matrix.matrixName == " " + selectedName || selectedName + " "
+//   )[0];
 
-const getMessageEnd = async () => {
-  return await axios(messageEndURL, {
-    withCredentials: false,
-  }).then((res) => {
-    console.log("ssssssssssssssssssssssss", res.data);
-    return res.data;
-  });
-};
-
-const updateMessageInDB = async (message: string, id: string) => {
-  await axios(ResApiUrl2 + "?" + `type=updatemessages&id=${id}&content=${message}`, {
-    withCredentials: false,
-  }).then((res) => console.log(res.data));
-};
-
-const udateCurrentContent = (idx: any, messages: any, value: any) => {
-  let data = messages.data.map((msg: any, index: number) => {
-    if (idx === index) return { ...msg, content: value };
-    else return msg;
-  });
-  return { data: data };
-};
-const updateMessageIsExist = (messages: any) => {
-  console.log("in messsages is exist !!!!!!!");
-
-  return {
-    data: messages.data.map((msg: any, i: number) => {
-      console.log("msg in ssssssssssss", msg.content);
-      return {
-        ...msg,
-        isExist: msg.content && msg.content != "אין הודעה ללקוח" ? true : false,
-      };
-    }),
-  };
-};
-const initializeMessages = async (messages: any, setIsInitiated: Function, setMessages: any) => {
-  console.log("in is initiated function");
-
-  const result: msg[] = await axios
-    .get(ResApiUrl, {
-      withCredentials: false,
-    })
-    .then((res) => {
-      console.log({ res });
-      setIsInitiated({ data: true });
-      return res.data;
-    })
-    .catch((e) => {
-      console.log;
-      return e;
-    });
-  const newData: msg[] = messages.data;
-
-  if (messages?.data !== null) {
-    for (let i = 0; i <= messages.data.length - 1; i++) {
-      result.forEach((msg: msg) => {
-        if (msg.id == messages.data[i].id) newData[i] = { ...msg };
-      });
-    }
-  }
-  setMessages({ data: [...newData] });
-};
-
-const constructSmses = async (sms: boolean[], tasks: any[], matrix: any, msgEnd: any) => {
-  console.log({ matrix, msgEnd });
-  let messages = [];
-  let numbers = [];
-
-  for (let i = 0; i <= sms.length - 1; i++) {
-    if (!sms[i]) continue;
-    let message = `שלום ${tasks[i]["שם"]} מצורף פירוט המשלוח\n`;
-
-    for (let j = 0; j <= matrix.AccountKey.length - 1; j++) {
-      if (tasks[i]["id"] == matrix.AccountKey[j]) {
-        matrix.cellsData[j].forEach((cell: any, idx: number) => {
-          if (matrix.cellsData[j][idx]) message += "- " + matrix.cellsData[j][idx] + " יח של " + matrix.itemsHeaders[idx] + "\n";
-        });
-        message;
-      }
-    }
-    message += msgEnd.msg ? msgEnd.msg : "\n לבירורים ופרטים נוספים לגבי משלוח הגת, לחצו כאן: https://wa.me/0545940054";
-    messages.push(message);
-
-    if (msgEnd.testing) {
-      numbers.push("972" + msgEnd.testNum);
-    } else {
-      console.log("not testing");
-      numbers.push("972" + tasks[i]["נייד"]);
-    }
-  }
-  const res = await sendMessages(numbers, messages);
-};
-
-const sendMessages = async (numbers: any[], messages: any[]) => {
-  console.log({ numbers, messages });
-  const url = "https://gat-avigdor-wa-server.onrender.com/api/sendMsgs";
-  // const url = "http://localhost:5000/api/sendMsgs";
-
-  return axios
-    .post(
-      url,
-      {
-        numbers: numbers,
-        msg: messages,
-      },
-      { withCredentials: false }
-    )
-    .then((res) => console.log(JSON.stringify(res)))
-    .catch((e) => e);
-};
-
-const updateSelectetedMatrixID = async (selectedName: string, matrixList: any) => {
-  console.log({ matrixList, selectedName });
-  console.log("first character ", selectedName[0]);
-  const selectedMtx = matrixList.filter(
-    (matrix: any) => matrix.matrixName.trim() === selectedName.trim() || matrix.matrixName == " " + selectedName || selectedName + " "
-  )[0];
-
-  console.log({ selectedMtx });
-  const id = selectedMtx.matrixID;
-  const res = await axios(ResApiUrl2 + "?type=currentid&id=" + id, {
-    withCredentials: false,
-  });
-  console.log(res.data);
-};
+//   console.log({ selectedMtx });
+//   const id = selectedMtx.matrixID;
+//   const res = await axios(ResApiUrl2 + "?type=currentid&id=" + id, {
+//     withCredentials: false,
+//   });
+//   console.log(res.data);
+// };
 
 function AdminScreen(props: any) {
   const [matrixesNames] = useLocalStorage(
@@ -172,7 +58,6 @@ function AdminScreen(props: any) {
   const [messages, setMessages] = useLocalStorage("messages", { data: null });
   const [selectedName, setSelectedName] = useState();
   const [generalMessage, setGeneralMessage] = useState("");
-
   const [toggle, toggleModule] = useState(false);
   const [sms, setSms] = useState<any[]>();
   const [isInitiated, setIsInitiated] = useLocalStorage("isinitiated", {
@@ -181,30 +66,8 @@ function AdminScreen(props: any) {
   const [currentIndex, setCurrentIndex] = useState(0);
 
   const msgEnd = useQuery({ queryKey: ["qkey"], queryFn: getMessageEnd });
-
+  useInitiateAdminScreen({ messages, setMessages, toggle, isInitiated, setIsInitiated, tasks, setSms });
   Logger(tasks, " tasks in admin screen");
-
-  useEffect(() => {
-    if (messages.data != null) setMessages({ ...updateMessageIsExist(messages) });
-  }, [toggle]);
-  useEffect(() => {
-    if (tasks?.data?.length > 0 && messages?.data === null) {
-      console.log("in use EFFECT TASKS !!!!!!!!!!!!!!");
-      setMessages({
-        data: tasks.data.map((task: any) => {
-          return { isExist: false, content: null, id: task["id"] };
-        }),
-      });
-    }
-    if (!isInitiated.data && messages.data != null) {
-      console.log("in is initiated use effect");
-      initializeMessages(messages, setIsInitiated, setMessages);
-    } else {
-      console.log("smsss data 111");
-      setSms(messages?.data?.map((msg: any) => false));
-    }
-    console.log({ messages });
-  }, [tasks.data, messages.data]);
   Logger(messages, "messages");
 
   const handleSelect = (e: any) => {
@@ -217,13 +80,9 @@ function AdminScreen(props: any) {
     if (idx || idx === 0) {
       setCurrentIndex(idx);
       toggleModule(!toggle);
-
       setMessages(udateMessageContent(idx, messages));
-      console.log("before messages is exist !!!!!!!!", {});
     }
     if (tasks.data === null && selectedName) {
-      console.log({ selectedName });
-      console.log("props.matrixes", props.matrixes);
       const selectedMatrix = props.matrixes.filter((matrix: any) => {
         // @ts-ignore
         return matrix.matrixName.trim().replace("  ", " ") === selectedName.trim().replace("  ", " ");
@@ -265,7 +124,7 @@ function AdminScreen(props: any) {
           <button
             className="bg-blue-500 hover:bg-blue-400 text-white font-bold border w-full py-2 px-3 border-blue-700 hover:border-blue-500 rounded"
             onClick={(Event) => {
-              selectedName && updateSelectetedMatrixID(selectedName, props.matrixes);
+              // selectedName && updateSelectetedMatrixID(selectedName, props.matrixes);
               handleClick(Event);
             }}
           >
@@ -387,10 +246,6 @@ export const useGetOtherData = (data: any, setData: any) => {
   let castumers;
   let drivers;
   useEffect(() => {
-    // drivers = useQuery({
-    //   queryKey: ["drivers"],
-    //   queryFn: fetchDriversData,
-    // });
     castumers = useQuery({
       queryKey: ["castumers"],
       queryFn: fetchCastumersData,
@@ -398,6 +253,30 @@ export const useGetOtherData = (data: any, setData: any) => {
   }, [data]);
 
   setData({ ...data, castumers: castumers, drivers: drivers });
+};
+
+const useInitiateAdminScreen = (props: any) => {
+  useEffect(() => {
+    if (props.messages.data != null) props.setMessages({ ...updateMessageIsExist(props.messages) });
+  }, [props.toggle]);
+  useEffect(() => {
+    if (props.tasks?.data?.length > 0 && props.messages?.data === null) {
+      console.log("in use EFFECT TASKS !!!!!!!!!!!!!!");
+      props.setMessages({
+        data: props.tasks.data.map((task: any) => {
+          return { isExist: false, content: null, id: task["id"] };
+        }),
+      });
+    }
+    if (!props.isInitiated.data && props.messages.data != null) {
+      console.log("in is initiated use effect");
+      initializeMessages(props.messages, props.setIsInitiated, props.setMessages);
+    } else {
+      console.log("smsss data 111");
+      props.setSms(props.messages?.data?.map((msg: any) => false));
+    }
+    // console.log({ messages });
+  }, [props.tasks.data, props.messages.data]);
 };
 
 // const useCheckDataState = (data: any, setList: Function, setMissions: Function) => {
