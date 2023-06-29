@@ -31,8 +31,7 @@ const saveSelectedMatrixID = async (id: any) => {
 //     Argument of type '{ queryKey: string[]; queryFn: (params?: string) => Promise<any>; }' is not assignable to parameter of type 'QueryKey'.
 //       Object literal may only specify known properties, and 'queryKey' does not exist in type 'readonly unknown[]'.
 
-const ResApiUrl2 =
-  "https://script.google.com/macros/s/AKfycbwYsPdgqWD6QNjllH8ZB_-Wde6br0CYcXUE2yShDvGb0486ojgzEKkF5_HbBb5Q34iV/exec";
+const ResApiUrl2 = "https://script.google.com/macros/s/AKfycbwYsPdgqWD6QNjllH8ZB_-Wde6br0CYcXUE2yShDvGb0486ojgzEKkF5_HbBb5Q34iV/exec";
 const dMessagesUrl =
   "https://script.google.com/macros/s/AKfycbzUpsKhJQ_vQkw6Y99GPj1-y77jFYm8XTnWRg-nbeaCd7YTN1kU8JLeFwrZoo9DmUae/exec?type=defaultMessages";
 // const updateSelectetedMatrixID = async (selectedName: string, matrixList: any) => {
@@ -93,8 +92,7 @@ function AdminScreen(props: any) {
   };
 
   const handleClick = (e: any, idx?: number) => {
-    if (e.target.id == "generalMessage")
-      updateMessageInDB(generalMessage, "12345678");
+    if (e.target.id == "generalMessage") updateMessageInDB(generalMessage, "12345678");
     console.log({ e });
     if (idx || idx === 0) {
       setCurrentIndex(idx);
@@ -106,31 +104,22 @@ function AdminScreen(props: any) {
         // @ts-ignore
         return (
           matrix.matrixName.trim().replace("  ", " ") ===
-         selectedName.trim().replace("  ", " ")
+          //@ts-ignore
+          selectedName.trim().replace("  ", " ")
         );
       })[0];
       console.log("in handle click !!!", { selectedMatrix });
 
       saveSelectedMatrixID(selectedMatrix.matrixID);
-      const Rows = constractMissions(
-        selectedMatrix["matrixesData"],
-        props.castumers,
-        "admin"
-      );
+      const Rows = constractMissions(selectedMatrix["matrixesData"], props.castumers, "admin");
       setTasks({ data: [...Rows.missions] });
     }
   };
 
   const handleChange = (e: any) => {
     // update msegggahsdjalskdas
-    const value =
-      e.target.value == "אין הודעה ללקוח" ||
-      e.target.value == null ||
-      e.target.value == ""
-        ? null
-        : e.target.value;
-    if (e.target.id == "msgContent")
-      setMessages(udateCurrentContent(currentIndex, messages, value));
+    const value = e.target.value == "אין הודעה ללקוח" || e.target.value == null || e.target.value == "" ? null : e.target.value;
+    if (e.target.id == "msgContent") setMessages(udateCurrentContent(currentIndex, messages, value));
   };
 
   return (
@@ -181,11 +170,7 @@ function AdminScreen(props: any) {
                 />
 
                 <button
-                  className={
-                    sms?.filter((s: any) => s === true)[0]
-                      ? "btn1 w-32 bg-green-600"
-                      : "btn1 w-32 bg-gray-600 "
-                  }
+                  className={sms?.filter((s: any) => s === true)[0] ? "btn1 w-32 bg-green-600" : "btn1 w-32 bg-gray-600 "}
                   onClick={() => {
                     console.log(selectedName);
                     console.log("props matrixes ", props.matrixes);
@@ -193,9 +178,7 @@ function AdminScreen(props: any) {
                       constructSmses(
                         sms,
                         tasks.data,
-                        props.matrixes.filter(
-                          (matrix: any) => matrix.matrixName === selectedName
-                        )[0]["matrixesData"]["mainMatrix"],
+                        props.matrixes.filter((matrix: any) => matrix.matrixName === selectedName)[0]["matrixesData"]["mainMatrix"],
                         msgEnd.data
                       );
                   }}
@@ -216,11 +199,7 @@ function AdminScreen(props: any) {
           <div className="mt-3">
             {tasks?.data && (
               <div className="flex  border-red-500 border-2">
-                <button
-                  onClick={handleClick}
-                  id={"generalMessage"}
-                  className="btn1 h-full w-2/12"
-                >
+                <button onClick={handleClick} id={"generalMessage"} className="btn1 h-full w-2/12">
                   עדכן
                 </button>
                 <input
@@ -235,45 +214,23 @@ function AdminScreen(props: any) {
               </div>
             )}
             {tasks?.data.map((task: any, index: number) => (
-              <div
-                className={
-                  "flex  items-baseline  px-4 py-3 w-4/5 bg-gray-100 shadow-md rounded-md gap-2 touch-none "
-                }
-              >
-                <p className=" flex-1/16 border-2 text-center font-bold border-red-500 ">
-                  מזהה:
-                </p>
-                <p className=" flex-1/16 text-center">
-                  {JSON.stringify(task["id"])}
-                </p>
-                <p className="w-15px flex-1/16 self-start border-2 text-center font-bold border-red-500 ">
-                  שם:
-                </p>
-                <p className="w-40px flex-1/4 text-center">
-                  {JSON.stringify(task["שם"])}{" "}
-                </p>
-                <p className="w-20px flex-1/16 all border-2 text-center font-bold border-red-500 ">
-                  נייד
-                </p>
-                <p className="w-40px flex-1/16 text-center ">
-                  {JSON.stringify(task["נייד"])}{" "}
-                </p>
+              <div className={"flex  items-baseline  px-4 py-3 w-4/5 bg-gray-100 shadow-md rounded-md gap-2 touch-none "}>
+                <p className=" flex-1/16 border-2 text-center font-bold border-red-500 ">מזהה:</p>
+                <p className=" flex-1/16 text-center">{JSON.stringify(task["id"])}</p>
+                <p className="w-15px flex-1/16 self-start border-2 text-center font-bold border-red-500 ">שם:</p>
+                <p className="w-40px flex-1/4 text-center">{JSON.stringify(task["שם"])} </p>
+                <p className="w-20px flex-1/16 all border-2 text-center font-bold border-red-500 ">נייד</p>
+                <p className="w-40px flex-1/16 text-center ">{JSON.stringify(task["נייד"])} </p>
                 <BiMessageAltAdd
                   onClick={(Event) => {
                     handleClick(Event, index);
                   }}
-                  className={`flex ${
-                    messages?.data[index].isExist && "text-green-600"
-                  } flex-1/16 justify-self-end`}
+                  className={`flex ${messages?.data[index].isExist && "text-green-600"} flex-1/16 justify-self-end`}
                   size={24}
                   //  color={ ? "green" : "black"}
                 />
                 <FaSms
-                  className={
-                    sms !== undefined && sms[index]
-                      ? "flex-1/16 text-green-600"
-                      : "flex-1/16 justify-self-end"
-                  }
+                  className={sms !== undefined && sms[index] ? "flex-1/16 text-green-600" : "flex-1/16 justify-self-end"}
                   size={24}
                   onClick={() => {
                     console.log({ sms });
@@ -323,8 +280,7 @@ export const useGetOtherData = (data: any, setData: any) => {
 
 const useInitiateAdminScreen = (props: any) => {
   useEffect(() => {
-    if (props.messages.data != null)
-      props.setMessages({ ...updateMessageIsExist(props.messages) });
+    if (props.messages.data != null) props.setMessages({ ...updateMessageIsExist(props.messages) });
   }, [props.toggle]);
   useEffect(() => {
     if (props.tasks?.data?.length > 0 && props.messages?.data === null) {
@@ -337,11 +293,7 @@ const useInitiateAdminScreen = (props: any) => {
     }
     if (!props.isInitiated.data && props.messages.data != null) {
       console.log("in is initiated use effect");
-      initializeMessages(
-        props.messages,
-        props.setIsInitiated,
-        props.setMessages
-      );
+      initializeMessages(props.messages, props.setIsInitiated, props.setMessages);
     } else {
       console.log("smsss data 111");
       props.setSms(props.messages?.data?.map((msg: any) => false));
