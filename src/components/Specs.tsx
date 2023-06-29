@@ -4,9 +4,10 @@ import { GrAddCircle, GrSubtractCircle } from "react-icons/gr";
 import Pay from "./Pay";
 import Returns from "./Returns";
 import { useQuery } from "@tanstack/react-query";
-import { fetchMessageData, fetchMessagesData } from "../api";
+import { fetchDefaultMessageData, fetchMessageData, fetchMessagesData } from "../api";
 const ResApiUrl = "https://script.google.com/macros/s/AKfycbwYsPdgqWD6QNjllH8ZB_-Wde6br0CYcXUE2yShDvGb0486ojgzEKkF5_HbBb5Q34iV/exec";
 //import DataRow fro
+
 type SpecsProps = {
   mennagers: any[];
   matrix: any;
@@ -55,10 +56,10 @@ function Specs(props: SpecsProps) {
     queryFn: () => fetchMessageData(props.mission),
   });
 
-  // const msg2 = useQuery({
-  //   queryKey: ["msg2"],
-  //   queryFn: () => fetchMessagesData(),
-  // });
+  const msg3 = useQuery({
+    queryKey: ["msg3"],
+    queryFn: () => fetchDefaultMessageData(props.mission),
+  });
 
   useEffect(() => {
     if (data) localStorage.setItem("specData", JSON.stringify(data));
@@ -136,6 +137,12 @@ function Specs(props: SpecsProps) {
   };
   return (
     <div className="mt-20 w-full">
+      {msg3 && (
+        <div className="flex w-screen h-1/6 text-white bg-red-600">
+          <p className="w-2/12 text-xl"> הודעה ברירת מחדל </p>
+          <p className="w-10/12">{JSON.stringify(msg3.data.data)}</p>
+        </div>
+      )}
       {msg && (
         <div className="flex w-screen h-1/6 text-white bg-red-600">
           <p className="w-2/12 text-xl"> הודעה ממטריצה </p>

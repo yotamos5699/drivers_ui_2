@@ -2,24 +2,17 @@ import axios from "axios";
 import Missions from "./components/Missions";
 const log = true;
 //import { createTRPCClient } from "@trpc/client";
-const ResApiUrl =
-  "https://script.google.com/macros/s/AKfycbwYsPdgqWD6QNjllH8ZB_-Wde6br0CYcXUE2yShDvGb0486ojgzEKkF5_HbBb5Q34iV/exec";
+const ResApiUrl = "https://script.google.com/macros/s/AKfycbwYsPdgqWD6QNjllH8ZB_-Wde6br0CYcXUE2yShDvGb0486ojgzEKkF5_HbBb5Q34iV/exec";
 const mockMatrix = {
   matrixID: "66afcadc5a695e869b1b99a400787206debe958825867edb08c883bf343afa05",
   matrixName: "מטריצה עם שם חדש",
   matrixesData: {
     mainMatrix: {
-      matrixID:
-        "66afcadc5a695e869b1b99a400787206debe958825867edb08c883bf343afa05",
+      matrixID: "66afcadc5a695e869b1b99a400787206debe958825867edb08c883bf343afa05",
       ActionID: [2, 1, 1, 1],
       AccountKey: ["6027", "6028", "6036", "6043"],
       DocumentID: [1, 1, 1, 1],
-      DriverID: [
-        "qewr135256edrfh",
-        "qewr135256edrfh",
-        "qewr135256edrfh",
-        "qewr135256edrfh",
-      ],
+      DriverID: ["qewr135256edrfh", "qewr135256edrfh", "qewr135256edrfh", "qewr135256edrfh"],
       ActionAutho: ["Default", "Default", "Default", "Default"],
       itemsHeaders: ["HI250SA", "SX250SA", "AB500SA", "XR100SA"],
       itemsNames: ["הרנה 250 גרם", "גת SPXP", "אבו מיסמר גדול", "גת XR"],
@@ -53,8 +46,7 @@ const ofekBarier =
 
 const BaseHaURL = "https://bizmod-ha-api-001.onrender.com/api";
 //const lastMatrixUrl = "http://localhost:3000/api/loadmatrixes";
-const driversUrl =
-  "https://script.google.com/macros/s/AKfycbzUpsKhJQ_vQkw6Y99GPj1-y77jFYm8XTnWRg-nbeaCd7YTN1kU8JLeFwrZoo9DmUae/exec";
+const driversUrl = "https://script.google.com/macros/s/AKfycbzUpsKhJQ_vQkw6Y99GPj1-y77jFYm8XTnWRg-nbeaCd7YTN1kU8JLeFwrZoo9DmUae/exec";
 const currentPaymentsUrl =
   "https://script.google.com/macros/s/AKfycbwYsPdgqWD6QNjllH8ZB_-Wde6br0CYcXUE2yShDvGb0486ojgzEKkF5_HbBb5Q34iV/exec?type=getcurrentpeyments";
 
@@ -143,6 +135,22 @@ export const fetchMessageData = async (castumer: any) => {
     .catch((err) => console.log("error in google drivers !!!", err));
 };
 
+const defaultMessagesUrl =
+  "https://script.google.com/macros/s/AKfycbzUpsKhJQ_vQkw6Y99GPj1-y77jFYm8XTnWRg-nbeaCd7YTN1kU8JLeFwrZoo9DmUae/exec?type=singleDefaultMessage&id=sad";
+
+export const fetchDefaultMessageData = async (castumer: any) => {
+  const ID = await castumer["מפתח"];
+  const url = defaultMessagesUrl + "&id=" + ID;
+
+  return await axios(url, { withCredentials: false })
+    .then((res) => {
+      log && console.log("fetch default message data !!!!!! ", res.data);
+
+      return res.data;
+    })
+    .catch((err) => console.log("error in google drivers !!!", err));
+};
+
 export const fetchMessagesData = async () => {
   const myHeaders = new Headers();
   myHeaders.append("mode", "no-cors");
@@ -151,10 +159,7 @@ export const fetchMessagesData = async () => {
     method: "GET",
     headers: myHeaders,
   };
-  return await fetch(
-    `ResApiUrl?${encodeURI("type=getmessages")}`,
-    requestOptions
-  )
+  return await fetch(`ResApiUrl?${encodeURI("type=getmessages")}`, requestOptions)
     .then((response) => response.text())
     .then((result) => log && console.log(result))
     .catch((error) => console.log("error", error));
