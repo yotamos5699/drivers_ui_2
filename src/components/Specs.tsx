@@ -137,10 +137,10 @@ function Specs(props: SpecsProps) {
   };
   return (
     <div className="mt-20 w-full">
-      {msg3 && (
+      {msg3?.data && (
         <div className="flex w-screen h-1/6 text-white bg-red-600">
           <p className="w-2/12 text-xl"> הודעה ברירת מחדל </p>
-          <p className="w-10/12">{JSON.stringify(msg3.data.data)}</p>
+          <p className="w-10/12">{msg3.data.data}</p>
         </div>
       )}
       {msg && (

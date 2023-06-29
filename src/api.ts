@@ -136,15 +136,15 @@ export const fetchMessageData = async (castumer: any) => {
 };
 
 const defaultMessagesUrl =
-  "https://script.google.com/macros/s/AKfycbzUpsKhJQ_vQkw6Y99GPj1-y77jFYm8XTnWRg-nbeaCd7YTN1kU8JLeFwrZoo9DmUae/exec?type=singleDefaultMessage&id=sad";
+  "https://script.google.com/macros/s/AKfycbzUpsKhJQ_vQkw6Y99GPj1-y77jFYm8XTnWRg-nbeaCd7YTN1kU8JLeFwrZoo9DmUae/exec?type=singleDefaultMessage";
 
 export const fetchDefaultMessageData = async (castumer: any) => {
   const ID = await castumer["מפתח"];
   const url = defaultMessagesUrl + "&id=" + ID;
-
+  console.log({ ID });
   return await axios(url, { withCredentials: false })
     .then((res) => {
-      log && console.log("fetch default message data !!!!!! ", res.data);
+      log && console.log("fetch default message data !!!!!! ", res.data, { ID });
 
       return res.data;
     })
