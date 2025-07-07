@@ -190,7 +190,8 @@ export const fetchDriversData = async (params = "") => {
 export const fetchCastumersData = async () => {
   let data = {
     TID: "2",
-    sortKey: { "קוד מיון": 300 },
+    // ,
+    // sortKey: { "קוד מיון": 300 },
   };
 
   const headers = {
@@ -204,7 +205,8 @@ export const fetchCastumersData = async () => {
     })
     .then((res) => {
       log && console.log("castumers data ", res.data.data);
-      return res.data.data;
+      return res.data.data.filter((c: any) => c["קוד מיון"] === 300 || c["קוד מיון"] === 305);
+      // .map((customer) => {;
     })
     .catch((err) => console.log({ err }));
 };

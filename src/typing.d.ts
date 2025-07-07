@@ -1,4 +1,4 @@
-export type driver = {
+export type Driver_ = {
   pivotKey: string;
   pivotType: "driver" | "zone";
   name: string;

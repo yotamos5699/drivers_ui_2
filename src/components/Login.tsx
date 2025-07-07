@@ -24,10 +24,7 @@ export default function Login() {
   Logger(matrixes.data, "matrixes sssss");
   useEffect(() => {
     if (matrixes?.data?.length) {
-      const setMatrixID = async () =>
-        await axios.get(U).then((res) => {
-          return res.data.password;
-        });
+     
 
       setMatrixID().then((id: boolean | string) => {
         setCurrentMatrix(() => {
