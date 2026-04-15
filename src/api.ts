@@ -2,7 +2,8 @@ import axios from "axios";
 import Missions from "./components/Missions";
 const log = true;
 //import { createTRPCClient } from "@trpc/client";
-const ResApiUrl = "https://script.google.com/macros/s/AKfycbwYsPdgqWD6QNjllH8ZB_-Wde6br0CYcXUE2yShDvGb0486ojgzEKkF5_HbBb5Q34iV/exec";
+const ResApiUrl =
+  "https://script.google.com/macros/s/AKfycbwYsPdgqWD6QNjllH8ZB_-Wde6br0CYcXUE2yShDvGb0486ojgzEKkF5_HbBb5Q34iV/exec";
 const mockMatrix = {
   matrixID: "66afcadc5a695e869b1b99a400787206debe958825867edb08c883bf343afa05",
   matrixName: "מטריצה עם שם חדש",
@@ -12,7 +13,12 @@ const mockMatrix = {
       ActionID: [2, 1, 1, 1],
       AccountKey: ["6027", "6028", "6036", "6043"],
       DocumentID: [1, 1, 1, 1],
-      DriverID: ["qewr135256edrfh", "qewr135256edrfh", "qewr135256edrfh", "qewr135256edrfh"],
+      DriverID: [
+        "qewr135256edrfh",
+        "qewr135256edrfh",
+        "qewr135256edrfh",
+        "qewr135256edrfh",
+      ],
       ActionAutho: ["Default", "Default", "Default", "Default"],
       itemsHeaders: ["HI250SA", "SX250SA", "AB500SA", "XR100SA"],
       itemsNames: ["הרנה 250 גרם", "גת SPXP", "אבו מיסמר גדול", "גת XR"],
@@ -42,11 +48,12 @@ const mockMatrix = {
 };
 
 const ofekBarier =
-  "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJmZXRjaGVkRGF0YSI6eyJzdGF0dXMiOiJ5ZXMiLCJjb25maWdPYmoiOiJOTyBDT05GSUcgT0JKRUNUIiwidXNlcklEIjoiNjM1OGY4NzE3ZGQ5NWVjZWVlNTNlYWMzIn0sImlhdCI6MTY3MTg5NjY0Nn0.3mmq_cIKdYZSdywQeRXzpdv6CowPJuEEI9Q57yHNKFo";
+  "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJmZXRjaGVkRGF0YSI6eyJzdGF0dXMiOiJ5ZXMiLCJjb25maWdPYmoiOiJOTyBDT05GSUcgT0JKRUNUIiwidXNlcklEIjoiNjlkNjJlZDVmYWI2NGQxZGFlNzAwZDM0In0sImlhdCI6MTc3NjIzODMyMX0.aChPoU4whXX_0_vTRX569DFfid-PDKMwK0lHLpT9oOc";
 
 const BaseHaURL = "https://bizmod-ha-api-001.onrender.com/api";
 //const lastMatrixUrl = "http://localhost:3000/api/loadmatrixes";
-const driversUrl = "https://script.google.com/macros/s/AKfycbzUpsKhJQ_vQkw6Y99GPj1-y77jFYm8XTnWRg-nbeaCd7YTN1kU8JLeFwrZoo9DmUae/exec";
+const driversUrl =
+  "https://script.google.com/macros/s/AKfycbzUpsKhJQ_vQkw6Y99GPj1-y77jFYm8XTnWRg-nbeaCd7YTN1kU8JLeFwrZoo9DmUae/exec";
 const currentPaymentsUrl =
   "https://script.google.com/macros/s/AKfycbwYsPdgqWD6QNjllH8ZB_-Wde6br0CYcXUE2yShDvGb0486ojgzEKkF5_HbBb5Q34iV/exec?type=getcurrentpeyments";
 
@@ -75,7 +82,7 @@ export const fetchLastMatrix = async () => {
       {
         withCredentials: false,
         headers: headers,
-      }
+      },
     )
     .then((res) => {
       log && console.log("inner matrix ", res.data.result.data);
@@ -205,7 +212,9 @@ export const fetchCastumersData = async () => {
     })
     .then((res) => {
       log && console.log("castumers data ", res.data.data);
-      return res.data.data.filter((c: any) => c["קוד מיון"] === 300 || c["קוד מיון"] === 305);
+      return res.data.data.filter(
+        (c: any) => c["קוד מיון"] === 300 || c["קוד מיון"] === 305,
+      );
       // .map((customer) => {;
     })
     .catch((err) => console.log({ err }));
